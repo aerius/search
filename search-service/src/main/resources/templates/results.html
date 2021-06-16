@@ -1,0 +1,73 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head> 
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <title>AERIUS Search Results</title>
+  <style type="text/css">
+  body {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    
+    font-family: courier new, consolas, fixed-width;
+  }
+  
+  .container {
+    margin-top: 2em;
+    width: 550px;
+    border: 4px solid #f5f5f5;
+    padding: 1em;
+  }
+  
+  .table {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-auto-rows: auto;
+    border: 1px solid #d5d5d5;
+  }
+  
+  .header {
+    background: #f5f5f5;
+  }
+  
+  .column {
+    padding: 10px;
+  }
+  
+  .idx {
+    text-align: right;
+  }
+  
+  h1 {
+    text-align: center;
+  }
+  
+  .back {
+    padding: 20px;
+    display: block;
+    text-align: right;
+  }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Search results</h1>
+    
+    <p>Original query: <span th:text="${query}"></span></p>
+    <p>Capabilities: <span th:text="${capabilities}"></span></p>
+    <p>Flags: <span th:text="${T(java.lang.Integer).toBinaryString(capabilities)}"></span></p>
+    
+    <div class="table">
+      <div class="column header idx">#</div>
+      <div class="column header">Text</div>
+    
+      <th:block th:each="result,iter : ${results}">
+        <div class="column idx" th:text="${iter.index + 1}" />
+        <div class="column name" th:text="${result.description}" />
+      </th:block>
+    </div>
+    
+    <a class="back" href="/">back</a>
+  </div>
+</body>
+</html>
