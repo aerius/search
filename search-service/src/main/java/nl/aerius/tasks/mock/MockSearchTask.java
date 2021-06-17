@@ -21,6 +21,6 @@ public abstract class MockSearchTask implements SearchTaskService {
       // Eat
     }
 
-    return List.of(SearchSuggestionBuilder.create("Mock for query: " + query + " -- this suggestion was produced after " + delay + "ms"));
+    return List.of(SearchSuggestionBuilder.create("Mock for query: [" + query + "] produced after " + delay + "ms"));
   }
 }

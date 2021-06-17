@@ -24,7 +24,7 @@ import nl.aerius.tasks.mock.ImplementsCapability;
  */
 @Component
 public class TaskFactory {
-  private static final Logger LOG = LoggerFactory.getLogger(SearchTaskDelegatorImpl.class);
+  private static final Logger LOG = LoggerFactory.getLogger(SearchTaskDelegator.class);
 
   @Autowired private Set<SearchTaskService> scannedTasks;
 
