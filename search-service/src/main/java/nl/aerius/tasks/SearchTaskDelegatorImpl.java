@@ -3,46 +3,57 @@ package nl.aerius.tasks;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import io.reactivex.Flowable;
+import io.reactivex.schedulers.Schedulers;
+
 import nl.aerius.domain.SearchCapability;
 import nl.aerius.domain.SearchSuggestion;
-import nl.aerius.tasks.mock.Mock0SecondTask;
-import nl.aerius.tasks.mock.Mock1SecondTask;
-import nl.aerius.tasks.mock.Mock5SecondTask;
 
 /**
- * TODO Replace manual task selection with dynamic task selection
- * 
- * For example: https://stackoverflow.com/questions/19155345/spring-dynamic-factory-based-on-enum
+ * Delegate a single search task to multiple specialized search services based on the requested capabilities
  */
 @Component
 public class SearchTaskDelegatorImpl implements SearchTaskDelegator {
-  @Autowired Mock0SecondTask mock0SecondTask;
-  @Autowired Mock1SecondTask mock1SecondTask;
-  @Autowired Mock5SecondTask mock5SecondTask;
+  private static final Logger LOG = LoggerFactory.getLogger(SearchTaskDelegatorImpl.class);
 
-  /**
-   * TODO Parallelize
-   */
+  @Autowired TaskFactory taskFactory;
+
   @Override
   public List<SearchSuggestion> retrieveSearchResults(final String query, final long capabilities) {
-    final ArrayList<SearchSuggestion> lst = new ArrayList<>();
+    final ArrayList<SearchTaskService> tasks = findTasks(capabilities);
 
-    if (hasCapability(capabilities, SearchCapability.MOCK0)) {
-      lst.addAll(mock0SecondTask.retrieveSearchResults(query));
+    LOG.debug("Delegating search query [{}] to {} tasks", query, tasks.size());
+
+    return Flowable.fromIterable(tasks)
+        .parallel()
+        .runOn(Schedulers.computation())
+        .map(v -> v.retrieveSearchResults(query))
+        .sequential()
+        .collectInto(new ArrayList<SearchSuggestion>(), ArrayList::addAll)
+        .blockingGet();
+  }
+
+  private ArrayList<SearchTaskService> findTasks(final long capabilities) {
+    final ArrayList<SearchTaskService> tasks = new ArrayList<>();
+
+    for (final SearchCapability capability : SearchCapability.values()) {
+      if (hasCapability(capabilities, capability)) {
+
+        try {
+          tasks.add(taskFactory.getTask(capability));
+        } catch (final Exception e) {
+          // Log and eat
+          LOG.error("No task for known capability: " + capability, e);
+        }
+      }
     }
 
-    if (hasCapability(capabilities, SearchCapability.MOCK1)) {
-      lst.addAll(mock1SecondTask.retrieveSearchResults(query));
-    }
-
-    if (hasCapability(capabilities, SearchCapability.MOCK5)) {
-      lst.addAll(mock5SecondTask.retrieveSearchResults(query));
-    }
-
-    return lst;
+    return tasks;
   }
 
   private static boolean hasCapability(final long capabilities, final SearchCapability capability) {

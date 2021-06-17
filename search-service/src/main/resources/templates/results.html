@@ -54,6 +54,7 @@
     <h1>Search results</h1>
     
     <p>Original query: <span th:text="${query}"></span></p>
+    <p>Duration: <span th:text="${duration}"></span>ms</p>
     <p>Capabilities: <span th:text="${capabilities}"></span></p>
     <p>Flags: <span th:text="${T(java.lang.Integer).toBinaryString(capabilities)}"></span></p>
     
