@@ -8,14 +8,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import nl.aerius.domain.SearchSuggestion;
-import nl.aerius.tasks.SearchTaskDelegator;
+import nl.aerius.tasks.BlockingSearchTaskDelegator;
 
 /**
  * A simple
  */
 @Controller
 public class SearchViewController {
-  @Autowired SearchTaskDelegator delegator;
+  @Autowired BlockingSearchTaskDelegator delegator;
 
   @GetMapping(value = { "/" })
   public String searchForm(final Model model) {

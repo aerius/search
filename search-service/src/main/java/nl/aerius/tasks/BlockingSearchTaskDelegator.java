@@ -1,7 +1,6 @@
 package nl.aerius.tasks;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -18,17 +17,19 @@ import nl.aerius.domain.SearchCapability;
 import nl.aerius.domain.SearchSuggestion;
 
 /**
+ * Simple task delegator that blocks until all sub-tasks have completed.
+ * 
  * Delegate a single search task to multiple specialized search services based
  * on the requested capabilities
  */
 @Component
-public class SearchTaskDelegator {
-  private static final Logger LOG = LoggerFactory.getLogger(SearchTaskDelegator.class);
+public class BlockingSearchTaskDelegator {
+  private static final Logger LOG = LoggerFactory.getLogger(BlockingSearchTaskDelegator.class);
 
   @Autowired TaskFactory taskFactory;
 
   public List<SearchSuggestion> retrieveSearchResults(final String query, final long capabilities) {
-    final Map<SearchCapability, SearchTaskService> tasks = findTasks(capabilities);
+    final Map<SearchCapability, SearchTaskService> tasks = TaskUtils.findTaskServices(LOG, taskFactory, capabilities);
 
     if (LOG.isDebugEnabled()) {
       LOG.debug("Delegating search query [{}] to {} tasks ({})", query, tasks.size(), tasks.keySet()
@@ -41,29 +42,8 @@ public class SearchTaskDelegator {
         .runOn(Schedulers.computation())
         .map(v -> v.retrieveSearchResults(query))
         .sequential()
+        .map(v -> v.getSuggestions())
         .collectInto(new ArrayList<SearchSuggestion>(), ArrayList::addAll)
         .blockingGet();
-  }
-
-  private Map<SearchCapability, SearchTaskService> findTasks(final long capabilities) {
-    final Map<SearchCapability, SearchTaskService> tasks = new HashMap<>();
-
-    for (final SearchCapability capability : SearchCapability.values()) {
-      if (hasCapability(capabilities, capability)) {
-
-        try {
-          tasks.put(capability, taskFactory.getTask(capability));
-        } catch (final Exception e) {
-          // Log and eat
-          LOG.error("No task for known capability: " + capability, e);
-        }
-      }
-    }
-
-    return tasks;
-  }
-
-  private static boolean hasCapability(final long capabilities, final SearchCapability capability) {
-    return (capabilities & 1 << capability.getBit()) > 0;
   }
 }
