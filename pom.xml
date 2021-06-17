@@ -153,6 +153,7 @@
       </activation>
       <modules>
         <module>search-service</module>
+        <module>search-shared</module>
         <module>search-client</module>
       </modules>
     </profile>

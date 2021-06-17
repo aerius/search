@@ -24,6 +24,9 @@ import nl.aerius.tasks.TaskUtils;
  * 
  * Delegate a single search task to multiple specialized search services based
  * on the requested capabilities.
+ * 
+ * NOTE: While this delegator works, it has not been sufficiently stress tested
+ * or its approach reviewed
  */
 @Component
 public class AsyncSearchTaskDelegator {
