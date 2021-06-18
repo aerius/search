@@ -16,8 +16,8 @@ body {
   flex-direction: column;
 }
 
-.form>* {
-  margin: 1em 0;
+.form > * {
+  margin-bottom: 1em;
 }
 
 .search {
@@ -47,13 +47,22 @@ body {
 }
 
 .submit {
+  margin-top: 1em;
   padding: 2em
+}
+
+h5 {
+  cursor: pointer;
+}
+
+#reserved {
+  columns: 3;
 }
 </style>
 
 <script>
   function toggleCapability(elem) {
-    let bit = elem.getAttribute("data-bit");
+    let bit = 1 << Number(elem.getAttribute("data-bit"));
     
     let checked = elem.checked;
     
@@ -72,15 +81,13 @@ body {
   function init() {
     document.querySelector("#capabilities").value = 0;
     
-    let change = query => {
+    let change = elem => {
       const e = new Event("change");
-      const element = document.querySelector(query);
-      element.dispatchEvent(e);
+      elem.dispatchEvent(e);
     };
     
-    change("#mock0");
-    change("#mock1");
-    change("#mock5");
+    document.querySelectorAll("input[type=checkbox]")
+      .forEach(elem => change(elem));
   }
   </script>
 </head>
@@ -94,19 +101,49 @@ body {
 
       <h3>Capabilities</h3>
       
-      <div>
-        <input type="checkbox" id="mock0" data-bit="268435456" onchange="toggleCapability(this)" checked> <label for="mock0">mock0 (instant
-          mock result)</label>
+      <h5>AERIUS</h5>
+      <div id="aerius">
+        <div><input type="checkbox" id="receptors_28992" data-bit="0" onchange="toggleCapability(this)" checked> <label for="receptors_28992">receptors_28992 (Receptor grid NL)</label></div>
       </div>
-      <div>
-        <input type="checkbox" id="mock1" data-bit="536870912" onchange="toggleCapability(this)"> <label for="mock1">mock1 (1 sec
-          delayed mock result)</label>
+      
+      <h5>Mocks</h5>
+      <div id="mocks">
+        <div><input type="checkbox" id="mock0" data-bit="28" onchange="toggleCapability(this)" checked><label for="mock0">mock0 (instant mock result)</label></div>
+        <div><input type="checkbox" id="mock1" data-bit="29" onchange="toggleCapability(this)"><label for="mock1">mock1 (1 sec delayed mock result)</label></div>
+        <div><input type="checkbox" id="mock5" data-bit="30" onchange="toggleCapability(this)"><label for="mock5">mock5 (5 sec delayed mock result)</label></div>
       </div>
-      <div>
-        <input type="checkbox" id="mock5" data-bit="1073741824" onchange="toggleCapability(this)"> <label for="mock5">mock5 (5 sec
-          delayed mock result)</label>
+      
+      <h5>Reserved (placeholders)</h5>
+      <div id="reserved">
+        <div><input type="checkbox" id="reserved1" data-bit="1" onchange="toggleCapability(this)"><label for="reserved1">reserved1</label></div>
+        <div><input type="checkbox" id="reserved2" data-bit="2" onchange="toggleCapability(this)"><label for="reserved2">reserved2</label></div>
+        <div><input type="checkbox" id="reserved3" data-bit="3" onchange="toggleCapability(this)"><label for="reserved3">reserved3</label></div>
+        <div><input type="checkbox" id="reserved4" data-bit="4" onchange="toggleCapability(this)"><label for="reserved4">reserved4</label></div>
+        <div><input type="checkbox" id="reserved5" data-bit="5" onchange="toggleCapability(this)"><label for="reserved5">reserved5</label></div>
+        <div><input type="checkbox" id="reserved6" data-bit="6" onchange="toggleCapability(this)"><label for="reserved6">reserved6</label></div>
+        <div><input type="checkbox" id="reserved7" data-bit="7" onchange="toggleCapability(this)"><label for="reserved7">reserved7</label></div>
+        <div><input type="checkbox" id="reserved8" data-bit="8" onchange="toggleCapability(this)"><label for="reserved8">reserved8</label></div>
+        <div><input type="checkbox" id="reserved9" data-bit="9" onchange="toggleCapability(this)"><label for="reserved9">reserved9</label></div>
+        <div><input type="checkbox" id="reserved10" data-bit="10" onchange="toggleCapability(this)"><label for="reserved10">reserved10</label></div>
+        <div><input type="checkbox" id="reserved11" data-bit="11" onchange="toggleCapability(this)"><label for="reserved11">reserved11</label></div>
+        <div><input type="checkbox" id="reserved12" data-bit="12" onchange="toggleCapability(this)"><label for="reserved12">reserved12</label></div>
+        <div><input type="checkbox" id="reserved13" data-bit="13" onchange="toggleCapability(this)"><label for="reserved13">reserved13</label></div>
+        <div><input type="checkbox" id="reserved14" data-bit="14" onchange="toggleCapability(this)"><label for="reserved14">reserved14</label></div>
+        <div><input type="checkbox" id="reserved15" data-bit="15" onchange="toggleCapability(this)"><label for="reserved15">reserved15</label></div>
+        <div><input type="checkbox" id="reserved16" data-bit="16" onchange="toggleCapability(this)"><label for="reserved16">reserved16</label></div>
+        <div><input type="checkbox" id="reserved17" data-bit="17" onchange="toggleCapability(this)"><label for="reserved17">reserved17</label></div>
+        <div><input type="checkbox" id="reserved18" data-bit="18" onchange="toggleCapability(this)"><label for="reserved18">reserved18</label></div>
+        <div><input type="checkbox" id="reserved19" data-bit="19" onchange="toggleCapability(this)"><label for="reserved19">reserved19</label></div>
+        <div><input type="checkbox" id="reserved20" data-bit="20" onchange="toggleCapability(this)"><label for="reserved20">reserved20</label></div>
+        <div><input type="checkbox" id="reserved21" data-bit="21" onchange="toggleCapability(this)"><label for="reserved21">reserved21</label></div>
+        <div><input type="checkbox" id="reserved22" data-bit="22" onchange="toggleCapability(this)"><label for="reserved22">reserved22</label></div>
+        <div><input type="checkbox" id="reserved23" data-bit="23" onchange="toggleCapability(this)"><label for="reserved23">reserved23</label></div>
+        <div><input type="checkbox" id="reserved24" data-bit="24" onchange="toggleCapability(this)"><label for="reserved24">reserved24</label></div>
+        <div><input type="checkbox" id="reserved25" data-bit="25" onchange="toggleCapability(this)"><label for="reserved25">reserved25</label></div>
+        <div><input type="checkbox" id="reserved26" data-bit="26" onchange="toggleCapability(this)"><label for="reserved26">reserved26</label></div>
+        <div><input type="checkbox" id="reserved27" data-bit="27" onchange="toggleCapability(this)"><label for="reserved27">reserved27</label></div>
       </div>
-
+      
       <div class="capabilitiesContainer">
         <span>Capabilities code</span> <input type="text" id="capabilities" name="capabilities" class="capabilities">
       </div>
