@@ -18,9 +18,55 @@ A simple interface will be available on `localhost:8090`.
 
 ## Service extensions
 
-The search service can be extended with independent implementations of a search task that fullfill a set capability.
+The search service can be extended with independent implementations of a search task that fulfill a set capability.
 
-**WIP**
+An extension project must include the following dependency in order to create search task components:
+
+```xml
+    <dependency>
+      <groupId>nl.aerius</groupId>
+      <artifactId>search-service-extension</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+```
+
+Aswell as a Spring dependency:
+
+```xml
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+```
+
+In this project, a component can be created that will fulfill a SearchCapability, for example:
+
+```java
+@Component
+@ImplementsCapability(SearchCapability.RECEPTORS_28992)
+public class RDNewReceptorSearchService implements SearchTaskService {
+  @Autowired ReceptorUtil util;
+
+  @Override
+  public SearchTaskResult retrieveSearchResults(final String query) {
+    try {
+      final int id = Integer.parseInt(query);
+
+      final ReceptorPoint rec = util.createReceptorPointFromId(id);
+      if (rec != null) {
+        return SearchResultBuilder
+            .of(SearchSuggestionBuilder.create("Receptor id " + rec.getId() + " at " + (int) rec.getX() + ":" + (int) rec.getY()));
+      }
+    } catch (final NumberFormatException e) {
+      // Eat
+    }
+
+    return SearchResultBuilder.empty();
+  }
+}
+```
+
+When an extension project is included (i.e. depended on) in the main project's classpath, the additional search task components will be automatically found and added.
 
 ## Client library
 
