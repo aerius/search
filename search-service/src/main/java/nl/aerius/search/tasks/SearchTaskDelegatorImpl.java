@@ -12,7 +12,7 @@ import nl.aerius.search.tasks.async.SearchResult;
 import nl.aerius.search.tasks.sync.BlockingSearchTaskDelegator;
 
 /**
- * Simple task delegator offering both synchronous and asynchronous operations. 
+ * Simple task delegator offering both synchronous and asynchronous operations.
  */
 @Component
 @Primary
@@ -27,7 +27,13 @@ public class SearchTaskDelegatorImpl implements SearchTaskDelegator {
 
   @Override
   public String retrieveSearchResultsAsync(final String query, final long capabilities) {
-    return asyncDelegator.retrieveSearchResultsAsync(query, capabilities);
+    System.out.println("Starting async search");
+
+    final String id = asyncDelegator.retrieveSearchResultsAsync(query, capabilities);
+
+    System.out.println("Returning task id: " + id);
+
+    return id;
   }
 
   @Override

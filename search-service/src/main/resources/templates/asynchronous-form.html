@@ -1,0 +1,36 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head> 
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <title>AERIUS Search Results</title>
+  
+  <link rel="stylesheet" href="/style.css">
+  
+  <style>
+    .area {
+      flex-grow: 1;
+      
+      width: 100%;
+      height: 100px;
+    }
+  </style>
+  
+  <script>
+    function init() {
+      let txt = document.getElementById("txt");
+      let endpoint = window.location.href.substring(0, window.location.href.indexOf("/", 7));
+      let curl = `curl ${endpoint}/api/query-async -F query=test -F capabilities=1879048192 | xargs -I '{}' watch 'curl ${endpoint}/api/search-task/'{}' | json_pp -json_opt pretty,canonical'`;
+      
+      txt.innerHTML = curl; 
+    }
+  </script>
+</head>
+<body onload="init()">
+  <div class="container">
+    <h1>ASYNCHRONOUS Search form</h1>
+    
+    <p>Copy and paste into console:</p>
+    <textarea id="txt" onclick="this.select()" class="area"></textarea>
+  </div>
+</body>
+</html>

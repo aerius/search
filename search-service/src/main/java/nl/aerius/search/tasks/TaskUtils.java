@@ -1,16 +1,12 @@
 package nl.aerius.search.tasks;
 
-import java.util.List;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.slf4j.Logger;
-
-import io.reactivex.Flowable;
-import io.reactivex.schedulers.Schedulers;
 
 import nl.aerius.search.domain.SearchCapability;
 import nl.aerius.search.domain.SearchSuggestion;
@@ -19,6 +15,11 @@ import nl.aerius.search.domain.SearchSuggestion;
  * Boiler-plate for task-related code
  */
 public final class TaskUtils {
+  /**
+   * TODO Create another comparator, based on weight or some other value
+   */
+  private static final Comparator<SearchSuggestion> COMPARATOR = (o1, o2) -> o1.getDescription().compareTo(o2.getDescription());
+
   private TaskUtils() {}
 
   public static boolean hasCapability(final long capabilities, final SearchCapability capability) {
@@ -50,22 +51,7 @@ public final class TaskUtils {
         .collect(Collectors.toMap(v -> v, v -> taskFactory.getTask(v)));
   }
 
-  /**
-   * Create a Flowable from the given search services, retrieve search results for the given query in parallel,
-   * and combine the result into a single list. Return a Future for this result.
-   */
-  public static Future<List<SearchSuggestion>> futureFromTasks(final String query, final Iterable<SearchTaskService> values,
-      final Logger logger) {
-    return Flowable.fromIterable(values)
-        .parallel()
-        .runOn(Schedulers.computation())
-        .map(v -> v.retrieveSearchResults(query))
-        .doOnError(e -> logger.error("Error while performing search task:", e))
-        .sequential()
-        .flatMap(v -> Flowable.fromIterable(v.getSuggestions()))
-        // TODO Don't sort on description but on weight or something (see SearchSuggestion)
-        .sorted((o1, o2) -> o1.getDescription().compareTo(o2.getDescription()))
-        .toList()
-        .toFuture();
+  public static Comparator<SearchSuggestion> getResultComparator() {
+    return COMPARATOR;
   }
 }

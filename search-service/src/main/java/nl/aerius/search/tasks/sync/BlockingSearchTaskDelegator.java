@@ -2,13 +2,15 @@ package nl.aerius.search.tasks.sync;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import io.reactivex.Flowable;
+import io.reactivex.schedulers.Schedulers;
 
 import nl.aerius.search.domain.SearchCapability;
 import nl.aerius.search.domain.SearchSuggestion;
@@ -37,10 +39,19 @@ public class BlockingSearchTaskDelegator {
           .collect(Collectors.joining(",")));
     }
 
-    try {
-      return TaskUtils.futureFromTasks(query, tasks.values(), LOG).get();
-    } catch (InterruptedException | ExecutionException e) {
-      throw new RuntimeException(e);
-    }
+    /**
+     * Create a Flowable from the given search services, retrieve search results for
+     * the given query in parallel, and combine the result into a single list.
+     */
+    return Flowable.fromIterable(tasks.values())
+        .parallel()
+        .runOn(Schedulers.computation())
+        .map(v -> v.retrieveSearchResults(query))
+        .doOnError(e -> LOG.error("Error while performing search task:", e))
+        .sequential()
+        .flatMap(v -> Flowable.fromIterable(v.getSuggestions()))
+        .sorted(TaskUtils.getResultComparator())
+        .toList()
+        .blockingGet();
   }
 }

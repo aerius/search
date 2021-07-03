@@ -1,43 +1,57 @@
 package nl.aerius.search.tasks.async;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
+import java.util.TreeSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import nl.aerius.search.domain.SearchSuggestion;
+import nl.aerius.search.domain.SearchTaskResult;
 
 public class SearchResult {
   private static final Logger LOG = LoggerFactory.getLogger(SearchResult.class);
 
   private final String uuid;
 
-  private Future<List<SearchSuggestion>> future;
+  private final TreeSet<SearchSuggestion> results;
 
-  public SearchResult(final String uuid) {
+  private boolean complete;
+
+  public SearchResult(final String uuid, final Comparator<SearchSuggestion> comparator) {
     this.uuid = uuid;
+    results = new TreeSet<>(comparator);
   }
 
   public boolean isComplete() {
-    return future.isDone();
+    return complete;
+  }
+
+  public void complete() {
+    if (LOG.isTraceEnabled()) {
+      LOG.info("Search task {} has fully completed.", uuid);
+    }
+
+    complete = true;
   }
 
   public List<SearchSuggestion> getResults() {
-    try {
-      return future.get();
-    } catch (InterruptedException | ExecutionException e) {
-      throw new RuntimeException(e);
-    }
+    // Defensively return a copy of the results in a list
+    return new ArrayList<>(results);
   }
 
-  public void initialize(final Future<List<SearchSuggestion>> future) {
-    if (future != null) {
-      throw new IllegalStateException("Initializing a task twice is not allowed.");
+  public void complete(final SearchTaskResult result) {
+    if (result.getSuggestions() == null) {
+      return;
     }
 
-    this.future = future;
+    if (LOG.isTraceEnabled()) {
+      LOG.trace("Completing delegated subtask for search query {} with {} suggestions.", uuid, result.getSuggestions().size());
+    }
+
+    results.addAll(result.getSuggestions());
   }
 
   public String getUuid() {

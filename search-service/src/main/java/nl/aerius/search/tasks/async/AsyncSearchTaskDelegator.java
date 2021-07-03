@@ -1,10 +1,8 @@
 package nl.aerius.search.tasks.async;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -12,8 +10,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import io.reactivex.Flowable;
+import io.reactivex.schedulers.Schedulers;
+
 import nl.aerius.search.domain.SearchCapability;
-import nl.aerius.search.domain.SearchSuggestion;
 import nl.aerius.search.domain.collections.CacheMap;
 import nl.aerius.search.tasks.SearchTaskService;
 import nl.aerius.search.tasks.TaskFactory;
@@ -52,9 +52,19 @@ public class AsyncSearchTaskDelegator {
           .collect(Collectors.joining(",")));
     }
 
-    final Future<List<SearchSuggestion>> future = TaskUtils.futureFromTasks(query, services.values(), LOG);
+    final SearchResult task = initializeTask();
 
-    return initializeTask(future);
+    Flowable.fromIterable(services.values())
+        .parallel()
+        .runOn(Schedulers.computation())
+        .map(v -> v.retrieveSearchResults(query))
+        .doOnNext(v -> task.complete(v))
+        .doOnError(e -> LOG.error("Error while performing search task:", e))
+        .sequential()
+        .doOnComplete(() -> task.complete())
+        .subscribe();
+
+    return task.getUuid();
   }
 
   /**
@@ -74,13 +84,16 @@ public class AsyncSearchTaskDelegator {
     return task.orElse(null);
   }
 
-  private String initializeTask(final Future<List<SearchSuggestion>> future) {
+  private SearchResult initializeTask() {
     final String uuid = UUID.randomUUID().toString();
-    final SearchResult task = new SearchResult(uuid);
+
+    if (LOG.isTraceEnabled()) {
+      LOG.trace("Initializing search task with uuid: {}", uuid);
+    }
+
+    final SearchResult task = new SearchResult(uuid, TaskUtils.getResultComparator());
     tasks.put(uuid, task);
 
-    task.initialize(future);
-
-    return task.getUuid();
+    return task;
   }
 }

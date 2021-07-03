@@ -21,7 +21,11 @@ public class SearchViewController {
 
   @GetMapping(value = { "/" })
   public String searchForm(final Model model) {
-    return "form";
+    return "synchronous-form";
+  }
+  @GetMapping(value = { "/async" })
+  public String searchFormAsync(final Model model) {
+    return "asynchronous-form";
   }
 
   @GetMapping(value = { "/results" })
