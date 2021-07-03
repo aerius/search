@@ -99,7 +99,12 @@ h5 {
       <h3>Query</h3>
       <input type="text" class="search" name="query" placeholder="Search...">
 
-      <h3>Capabilities</h3>
+      <h4>Capabilities</h4>
+      <div class="capabilitiesContainer">
+        <input type="text" id="capabilities" name="capabilities" class="capabilities">
+      </div>
+      
+      <h4>Flags</h4>
       
       <h5>AERIUS</h5>
       <div id="aerius">
@@ -142,10 +147,6 @@ h5 {
         <div><input type="checkbox" id="reserved25" data-bit="25" onchange="toggleCapability(this)"><label for="reserved25">reserved25</label></div>
         <div><input type="checkbox" id="reserved26" data-bit="26" onchange="toggleCapability(this)"><label for="reserved26">reserved26</label></div>
         <div><input type="checkbox" id="reserved27" data-bit="27" onchange="toggleCapability(this)"><label for="reserved27">reserved27</label></div>
-      </div>
-      
-      <div class="capabilitiesContainer">
-        <span>Capabilities code</span> <input type="text" id="capabilities" name="capabilities" class="capabilities">
       </div>
 
       <input class="submit" type="submit" text="Submit">

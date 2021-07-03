@@ -1,5 +1,7 @@
 package nl.aerius.search.tasks;
 
+import nl.aerius.search.domain.SearchTaskResult;
+
 public interface SearchTaskService {
-  SearchResult retrieveSearchResults(String query);
+  SearchTaskResult retrieveSearchResults(String query);
 }

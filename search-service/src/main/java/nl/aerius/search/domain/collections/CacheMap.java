@@ -30,7 +30,7 @@ public class CacheMap<K, V> extends HashMap<K, V> {
   private static final long serialVersionUID = 1L;
 
   private static final Logger LOG = LoggerFactory.getLogger(CacheMap.class);
-  
+
   private static final int MILLISECONDS_IN_SECONDS = 1000;
 
   /**
@@ -72,7 +72,8 @@ public class CacheMap<K, V> extends HashMap<K, V> {
   private final int timeToLive;
 
   /**
-   * The logger to log to.
+   * The logger to log to - can be overridden, which is useful to pin down whoever
+   * owns this cachemap
    */
   private transient Logger logger;
 
@@ -97,7 +98,9 @@ public class CacheMap<K, V> extends HashMap<K, V> {
 
   @Override
   public V put(final K key, final V value) {
-    logger.debug("Adding key {} to map.", key);
+    if (logger.isTraceEnabled()) {
+      logger.trace("Adding key {} to map.", key);
+    }
 
     timeRegistry.add(new Registration(System.currentTimeMillis(), key));
 
@@ -111,20 +114,23 @@ public class CacheMap<K, V> extends HashMap<K, V> {
     // Mark time before which all records should be removed
     final long mark = now - timeToLive * MILLISECONDS_IN_SECONDS;
 
-    // Iterate over the time register, which is assumed to be (at least roughly) time-ordered naturally
+    // Iterate over the time register, which is assumed to be (at least roughly)
+    // time-ordered naturally
     final Iterator<Registration> it = timeRegistry.iterator();
     while (it.hasNext()) {
       final Registration reg = it.next();
 
-      // Instead of iterating over everything, take advantage of chronological insertion being roughly sequential in the nominal case and break out
-      // when the mark is exceeded - if by some miracle entries are not _exactly_ inserted in a sequentially chronological fashion, which is possible,
+      // Instead of iterating over everything, take advantage of chronological
+      // insertion being roughly sequential in the nominal case and break out
+      // when the mark is exceeded - if by some miracle entries are not _exactly_
+      // inserted in a sequentially chronological fashion, which is possible,
       // then the next sweep will catch them
       if (reg.getTime() > mark) {
         break;
       }
 
-      if (logger.isDebugEnabled()) {
-        logger.debug("Removing key {} from map. Added {} seconds ago.", reg.getKey(), (now - reg.getTime()) / MILLISECONDS_IN_SECONDS);
+      if (logger.isTraceEnabled()) {
+        logger.trace("Removing key {} from map. Added {} seconds ago.", reg.getKey(), (now - reg.getTime()) / MILLISECONDS_IN_SECONDS);
       }
 
       // Remove the key out of the underlying map and the time register
@@ -132,17 +138,18 @@ public class CacheMap<K, V> extends HashMap<K, V> {
       it.remove();
     }
 
-    if (logger.isDebugEnabled() || logger.isInfoEnabled()) {
+    if (logger.isTraceEnabled() || logger.isDebugEnabled()) {
       final int endSize = size();
       final long current = System.currentTimeMillis();
 
-      if (logger.isInfoEnabled()) {
+      // Only log to debug if size differs, otherwise log to trace
+      if (logger.isDebugEnabled()) {
         if (endSize != startSize) {
-          logger.info("Performing cache sweep at {}. Removed {} entries in {}ms.", now / MILLISECONDS_IN_SECONDS, startSize - endSize,
+          logger.debug("Performing cache sweep at {}. Removed {} entries in {}ms.", now / MILLISECONDS_IN_SECONDS, startSize - endSize,
               current - now);
         }
       } else {
-        logger.debug("Performing cache sweep at {}. Removed {} entries in {}ms.", now / MILLISECONDS_IN_SECONDS, startSize - endSize, current - now);
+        logger.trace("Performing cache sweep at {}. Removed {} entries in {}ms.", now / MILLISECONDS_IN_SECONDS, startSize - endSize, current - now);
       }
     }
   }

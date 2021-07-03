@@ -13,28 +13,19 @@
     <relativePath /> <!-- lookup parent from repository -->
   </parent>
   <groupId>nl.aerius</groupId>
-  <artifactId>search-service</artifactId>
+  <artifactId>search-service-geo</artifactId>
   <version>1.0-SNAPSHOT</version>
-  <name>AERIUS :: Search Service</name>
+  <name>AERIUS :: Search Service Geo Capabilities</name>
 
   <properties>
     <java.version>11</java.version>
+    <gwt-client-common.version>1.1-SNAPSHOT</gwt-client-common.version>
   </properties>
 
   <dependencies>
     <dependency>
       <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-web</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-thymeleaf</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-devtools</artifactId>
-      <scope>runtime</scope>
-      <optional>true</optional>
+      <artifactId>spring-boot-starter</artifactId>
     </dependency>
 
     <dependency>
@@ -45,18 +36,8 @@
     
     <dependency>
       <groupId>nl.aerius</groupId>
-      <artifactId>search-service-mocks</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>nl.aerius</groupId>
-      <artifactId>search-service-geo</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>io.reactivex.rxjava2</groupId>
-      <artifactId>rxjava</artifactId>
+      <artifactId>gwt-client-geo</artifactId>
+      <version>${gwt-client-common.version}</version>
     </dependency>
 
     <dependency>
@@ -69,8 +50,12 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-maven-plugin</artifactId>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
+        </configuration>
       </plugin>
     </plugins>
   </build>

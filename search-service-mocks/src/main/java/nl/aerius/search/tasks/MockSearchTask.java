@@ -5,6 +5,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import nl.aerius.search.domain.SearchTaskResult;
 import nl.aerius.search.domain.SearchSuggestion;
 import nl.aerius.search.domain.SearchSuggestionBuilder;
 
@@ -18,7 +19,7 @@ public abstract class MockSearchTask implements SearchTaskService {
   }
 
   @Override
-  public SearchResult retrieveSearchResults(final String query) {
+  public SearchTaskResult retrieveSearchResults(final String query) {
     LOG.debug("Retrieving mock search result for query [{}] at delay of {}ms", query, delay);
 
     try {
@@ -27,9 +28,9 @@ public abstract class MockSearchTask implements SearchTaskService {
       // Eat
     }
     
-    final SearchSuggestion suggestion = SearchSuggestionBuilder.create("Mock for query: [" + query + "] produced after " + delay + "ms");
+    final SearchSuggestion suggestion = SearchSuggestionBuilder.create("Mock for query [" + query + "] produced after " + delay + "ms");
 
-    final SearchResult result = new SearchResult();
+    final SearchTaskResult result = new SearchTaskResult();
     result.setSuggestions(List.of(suggestion));
 
     return result;

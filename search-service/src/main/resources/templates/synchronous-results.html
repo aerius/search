@@ -47,16 +47,35 @@
     display: block;
     text-align: right;
   }
+  
+  .info {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1em;
+    padding: 20px 0px;
+  }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>Search results</h1>
     
-    <p>Original query: <span th:text="${query}"></span></p>
-    <p>Duration: <span th:text="${duration}"></span>ms</p>
-    <p>Capabilities: <span th:text="${capabilities}"></span></p>
-    <p>Flags: <span th:text="${T(java.lang.Integer).toBinaryString(capabilities)}"></span></p>
+    <div class="info">
+      <div>Query:</div>
+      <div th:text="${query}"></div>
+      
+      <div>Duration:</div>
+      <div th:text="${duration} + ms"></div>
+      
+      <div>Capabilities:</div>
+      <div th:text="${capabilities}"></div>
+      
+      <div></div>
+      <div th:text="${T(java.lang.Integer).toBinaryString(capabilities)}"></div>
+      
+      <div></div>
+      <div th:text="${capabilityNames}"></div>
+    </div>
     
     <div class="table">
       <div class="column header idx">#</div>

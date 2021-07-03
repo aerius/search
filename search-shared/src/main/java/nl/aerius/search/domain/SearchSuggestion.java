@@ -1,5 +1,8 @@
 package nl.aerius.search.domain;
 
+/**
+ * TODO Expand with more useful fields, such as a weight, type, icon, link, or whatever else
+ */
 public class SearchSuggestion {
   private String description;
 

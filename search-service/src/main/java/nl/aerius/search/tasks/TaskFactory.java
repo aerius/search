@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import nl.aerius.search.domain.SearchCapability;
+import nl.aerius.search.tasks.sync.BlockingSearchTaskDelegator;
 
 /**
  * Scan all components implementing {@link SearchTaskService}, then index them
@@ -37,6 +38,10 @@ public class TaskFactory {
   public SearchTaskService getTask(final SearchCapability capability) {
     return Optional.ofNullable(tasks.get(capability))
         .orElseThrow(() -> new RuntimeException("No task for capability: " + capability));
+  }
+
+  public boolean hasCapability(final SearchCapability capability) {
+    return tasks.containsKey(capability);
   }
 
   @PostConstruct

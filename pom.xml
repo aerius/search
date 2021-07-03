@@ -155,6 +155,7 @@
         <module>search-service</module>
         <module>search-service-extension</module>
         <module>search-service-mocks</module>
+        <module>search-service-geo</module>
         <module>search-shared</module>
         <module>search-client</module>
       </modules>
