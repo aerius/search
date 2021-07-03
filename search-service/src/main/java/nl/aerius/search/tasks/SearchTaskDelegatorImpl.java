@@ -27,13 +27,7 @@ public class SearchTaskDelegatorImpl implements SearchTaskDelegator {
 
   @Override
   public String retrieveSearchResultsAsync(final String query, final long capabilities) {
-    System.out.println("Starting async search");
-
-    final String id = asyncDelegator.retrieveSearchResultsAsync(query, capabilities);
-
-    System.out.println("Returning task id: " + id);
-
-    return id;
+    return asyncDelegator.retrieveSearchResultsAsync(query, capabilities);
   }
 
   @Override
