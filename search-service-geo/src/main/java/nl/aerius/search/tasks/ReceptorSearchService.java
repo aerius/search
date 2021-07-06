@@ -12,7 +12,7 @@ import nl.aerius.search.domain.SearchTaskResult;
 
 @Component
 @ImplementsCapability(SearchCapability.RECEPTORS_28992)
-public class RDNewReceptorSearchService implements SearchTaskService {
+public class ReceptorSearchService implements SearchTaskService {
   @Autowired ReceptorUtil util;
 
   @Override

@@ -49,19 +49,8 @@ public class RDNewReceptorSearchService implements SearchTaskService {
 
   @Override
   public SearchTaskResult retrieveSearchResults(final String query) {
-    try {
-      final int id = Integer.parseInt(query);
-
-      final ReceptorPoint rec = util.createReceptorPointFromId(id);
-      if (rec != null) {
-        return SearchResultBuilder
-            .of(SearchSuggestionBuilder.create("Receptor id " + rec.getId() + " at " + (int) rec.getX() + ":" + (int) rec.getY()));
-      }
-    } catch (final NumberFormatException e) {
-      // Eat
-    }
-
-    return SearchResultBuilder.empty();
+    return Optional.ofNullable(ReceptorUtils.tryParse(util, query))
+        .orElse(SearchResultBuilder.empty());
   }
 }
 ```
