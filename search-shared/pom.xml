@@ -26,7 +26,7 @@
   </parent>
 
   <artifactId>search-shared</artifactId>
-  <name>AERIUS Search :: shared</name>
+  <name>AERIUS Search :: Shared</name>
   <packaging>gwt-lib</packaging>
 
   <build>

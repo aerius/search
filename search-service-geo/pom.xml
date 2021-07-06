@@ -15,7 +15,7 @@
   <groupId>nl.aerius</groupId>
   <artifactId>search-service-geo</artifactId>
   <version>1.0-SNAPSHOT</version>
-  <name>AERIUS :: Search Service Geo Capabilities</name>
+  <name>AERIUS Search :: Service Geo Capabilities</name>
 
   <properties>
     <java.version>11</java.version>
@@ -33,7 +33,7 @@
       <artifactId>search-service-extension</artifactId>
       <version>${project.version}</version>
     </dependency>
-    
+
     <dependency>
       <groupId>nl.aerius</groupId>
       <artifactId>gwt-client-geo</artifactId>

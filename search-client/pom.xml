@@ -7,7 +7,7 @@
   </parent>
 
   <artifactId>search-client</artifactId>
-  <name>AERIUS ::: Search Client</name>
+  <name>AERIUS Search :: Client library</name>
 
   <packaging>gwt-lib</packaging>
 

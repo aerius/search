@@ -26,9 +26,9 @@
   </parent>
 
   <artifactId>search-service-extension</artifactId>
-  <name>AERIUS Search :: service extension</name>
+  <name>AERIUS Search :: Service extension</name>
   <packaging>gwt-lib</packaging>
-  
+
   <dependencies>
     <dependency>
       <groupId>nl.aerius</groupId>

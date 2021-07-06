@@ -24,7 +24,7 @@
   <artifactId>search-parent</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>AERIUS :: Search Parent</name>
+  <name>AERIUS Search :: Parent</name>
   <url>https://www.aerius.nl</url>
 
   <organization>
@@ -109,6 +109,10 @@
   <build>
     <pluginManagement>
       <plugins>
+	<plugin>
+          <artifactId>maven-source-plugin</artifactId>
+          <version>3.2.0</version>
+        </plugin>
         <plugin>
           <artifactId>maven-jar-plugin</artifactId>
           <version>3.2.0</version>
