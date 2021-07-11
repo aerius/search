@@ -8,13 +8,32 @@ The search service accepts search requests and delegates these to one or multipl
 
 Components implementing `SearchTaskService` will be scanned from the classpath, and indexed based on the search capability they implement.
 
-Search queries can be sent to `/api/query`
+### Usage
+
+Search queries (`GET|POST`) can be sent to `/api/query`
+
+Possible parameters are currently:
+
+- `query`, plain text search query
+- `capabilities`, comma-separated list of requested capabilities
+- `locale`, the locale for this request, possible values are `nl|uk`, defaults to `nl`
+
+For a list of capabilities, see [SearchCapability.java](search-shared/src/main/java/nl/aerius/search/domain/SearchCapability.java).
 
 ### Running
 
 Navigate to `/scripts/` and execute `search-service.sh`, or execute `mvn spring-boot:run -pl :search-service` on the command line.
 
 A simple interface will be available on `localhost:8090`.
+
+#### Example
+
+```shell
+curl http://localhost:8090/api/query \
+  -F query=test \
+  -F capabilities=MOCK0,MOCK1 \
+  -F locale=nl
+```
 
 ## Service extensions
 

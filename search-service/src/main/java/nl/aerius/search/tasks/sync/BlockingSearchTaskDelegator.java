@@ -2,6 +2,7 @@ package nl.aerius.search.tasks.sync;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -30,7 +31,7 @@ public class BlockingSearchTaskDelegator {
 
   @Autowired TaskFactory taskFactory;
 
-  public List<SearchSuggestion> retrieveSearchResults(final String query, final long capabilities) {
+  public List<SearchSuggestion> retrieveSearchResults(final String query, final Set<SearchCapability> capabilities) {
     final Map<SearchCapability, SearchTaskService> tasks = TaskUtils.findTaskServices(taskFactory, capabilities, LOG);
 
     if (LOG.isDebugEnabled()) {

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import nl.aerius.search.domain.SearchSuggestion;
 import nl.aerius.search.tasks.TaskUtils;
@@ -23,25 +24,24 @@ public class SearchViewController {
   public String searchForm(final Model model) {
     return "synchronous-form";
   }
+
   @GetMapping(value = { "/async" })
   public String searchFormAsync(final Model model) {
     return "asynchronous-form";
   }
 
   @GetMapping(value = { "/results" })
-  public String search(final String query, final long capabilities, final Model model) {
+  public String search(final String query, @RequestParam final List<String> capabilities, final Model model) {
     final long timeStart = System.currentTimeMillis();
 
-    final List<SearchSuggestion> results = delegator.retrieveSearchResults(query, capabilities);
+    final List<SearchSuggestion> results = delegator.retrieveSearchResults(query, TaskUtils.parseCapabilities(capabilities));
 
     final long timeEnd = System.currentTimeMillis();
 
     model.addAttribute("duration", timeEnd - timeStart);
 
     model.addAttribute("query", query);
-    model.addAttribute("capabilities", capabilities);
-    model.addAttribute("capabilityNames", TaskUtils.findCapabilities(capabilities)
-        .stream().map(v -> v.name())
+    model.addAttribute("capabilities", capabilities.stream()
         .collect(Collectors.joining(", ")));
 
     model.addAttribute("results", results);

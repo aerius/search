@@ -1,10 +1,10 @@
 package nl.aerius.search.tasks;
 
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 
@@ -22,24 +22,12 @@ public final class TaskUtils {
 
   private TaskUtils() {}
 
-  public static boolean hasCapability(final long capabilities, final SearchCapability capability) {
-    return (capabilities & 1 << capability.bit()) > 0;
-  }
-
-  /**
-   * Find all defined capabilities in the given capability num
-   */
-  public static Set<SearchCapability> findCapabilities(final long capabilities) {
-    return Stream.of(SearchCapability.values())
-        .filter(v -> hasCapability(capabilities, v))
-        .collect(Collectors.toSet());
-  }
-
   /**
    * Find all task services that satisfy the given set of capabilities
    */
-  public static Map<SearchCapability, SearchTaskService> findTaskServices(final TaskFactory taskFactory, final long capabilities, final Logger log) {
-    return findCapabilities(capabilities).stream()
+  public static Map<SearchCapability, SearchTaskService> findTaskServices(final TaskFactory taskFactory, final Set<SearchCapability> capabilities,
+      final Logger log) {
+    return capabilities.stream()
         .filter(v -> {
           if (taskFactory.hasCapability(v)) {
             return true;
@@ -53,5 +41,12 @@ public final class TaskUtils {
 
   public static Comparator<SearchSuggestion> getResultComparator() {
     return COMPARATOR;
+  }
+
+  public static Set<SearchCapability> parseCapabilities(final List<String> capabilities) {
+    return capabilities.stream()
+        .map(v -> SearchCapability.safeValueOf(v))
+        .filter(v -> v != null)
+        .collect(Collectors.toSet());
   }
 }

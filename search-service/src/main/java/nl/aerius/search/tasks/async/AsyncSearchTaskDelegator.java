@@ -2,6 +2,7 @@ package nl.aerius.search.tasks.async;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -43,7 +44,7 @@ public class AsyncSearchTaskDelegator {
 
   private final CacheMap<String, SearchResult> tasks = new CacheMap<>(TIME_TO_LIVE, INTERVAL, LOG);
 
-  public String retrieveSearchResultsAsync(final String query, final long capabilities) {
+  public String retrieveSearchResultsAsync(final String query, final Set<SearchCapability> capabilities) {
     final Map<SearchCapability, SearchTaskService> services = TaskUtils.findTaskServices(taskFactory, capabilities, LOG);
 
     if (LOG.isDebugEnabled()) {

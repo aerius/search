@@ -7,6 +7,10 @@
   margin-bottom: 1em;
 }
 
+select {
+  padding: 10px;
+}
+
 .search {
   padding: 20px;
 }

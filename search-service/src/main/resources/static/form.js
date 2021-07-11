@@ -1,18 +1,25 @@
+let capabilities = new Set();
+
 function toggleCapability(elem) {
-  let bit = 1 << Number(elem.getAttribute("data-bit"));
+  let capability = elem.getAttribute("data-name");
+  
+  console.log("capability: " + capability);
   
   let checked = elem.checked;
+  let includes = capabilities.has(capability);
   
-  let capabilitiesElement = document.querySelector("#capabilities");
-  let capabilities = Number(capabilitiesElement.value);
-  
-  if (checked) {
-    capabilities =  capabilities | bit;
-  } else {
-    capabilities =  capabilities & ~bit;
+  if (checked && !includes) { // Adding
+    capabilities.add(capability);
+  } else if (!checked && includes) { // Removing
+    capabilities.delete(capability);
   }
   
-  capabilitiesElement.value = capabilities;
+  let capabilitiesElement = document.querySelector("#capabilities");
+  
+  let arr = Array.from(capabilities);
+  arr.sort();
+  
+  capabilitiesElement.value = arr.toString()
 }
 
 function init() {

@@ -11,7 +11,7 @@ import nl.aerius.search.domain.SearchResultBuilder;
 import nl.aerius.search.domain.SearchTaskResult;
 
 @Component
-@ImplementsCapability(SearchCapability.RECEPTORS_28992)
+@ImplementsCapability(SearchCapability.RECEPTOR)
 public class ReceptorSearchService implements SearchTaskService {
   @Autowired ReceptorUtil util;
 
