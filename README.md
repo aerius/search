@@ -78,6 +78,50 @@ When an extension project is included (i.e. depended on) in the main project's c
 
 ## Client library
 
-The client library contains client code and UI components that allow projects to easily tap into the search service.
+The client library contains client code and UI components that allow projects to easily tap into the search service. It can be patched into your project as follows:
 
-**WIP**
+Add the maven dependency:
+
+```xml
+<dependency>
+  <groupId>nl.aerius</groupId>
+  <artifactId>search-client</artifactId>
+  <type>gwt-lib</type>
+  <version>${search.version}</version>
+</dependency>
+```
+
+Add the search input component somewhere:
+
+```html
+  <map-search class="search"
+    :eventBus="eventBus">
+  </map-search>
+```
+
+Inherit the GWT module:
+
+```xml
+  <inherits name="nl.aerius.Search" />
+```
+
+Patch the SearchConfiguration into your configuration setup, for example by binding it to your EnvironmentConfiguration (or equivalent) in the client module. In this case, make EnvironmentConfiguration extend SearchConfiguration and implement it.
+
+```java
+    bind(SearchConfiguration.class).to(EnvironmentConfiguration.class);
+```
+
+Activate a Daemon to handle search tasks, and pass it an eventBus, use one of:
+
+
+```java
+  /**
+   * Simple synchronous search daemon setting results when the entire search query has completed.
+   */
+  private @Inject SearchDaemonSynchronous searchDaemon;
+
+  /**
+   * More complex asynchronous search daemon pushing results as they come in, by polling the search service.
+   */
+  private @Inject SearchDaemonAsynchronous searchDaemon;
+```
