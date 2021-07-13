@@ -108,13 +108,17 @@ Inherit the GWT module:
 Patch the SearchConfiguration into your configuration setup, for example by binding it to your EnvironmentConfiguration (or equivalent) in the client module. In this case, make EnvironmentConfiguration extend SearchConfiguration and implement it.
 
 ```java
+  @Override
+  protected void configure() {
     bind(SearchConfiguration.class).to(EnvironmentConfiguration.class);
+  }
 ```
 
-Activate a Daemon to handle search tasks, and pass it an eventBus, use one of:
+Activate a Daemon to handle search tasks (typically in a DaemonBootstrapper), and pass it an eventBus, use one of:
 
 
 ```java
+public class ApplicationDaemonBootstrapper extends BasicEventComponent implements DaemonBootstrapper {
   /**
    * Simple synchronous search daemon setting results when the entire search query has completed.
    */
@@ -124,4 +128,10 @@ Activate a Daemon to handle search tasks, and pass it an eventBus, use one of:
    * More complex asynchronous search daemon pushing results as they come in, by polling the search service.
    */
   private @Inject SearchDaemonAsynchronous searchDaemon;
+
+  @Override
+  public void setEventBus(final EventBus eventBus) {
+    super.setEventBus(eventBus, searchDaemon);
+  }
+}
 ```
