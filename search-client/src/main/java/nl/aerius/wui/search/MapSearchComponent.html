@@ -1,0 +1,83 @@
+<vue-gwt:import class="nl.aerius.wui.search.SearchSuggestion" />
+
+<div class="searchContainer">
+  <input v-model="search" type="text" class="search-input" placeholder="Zoek op de kaart">
+
+  <vertical-collapse>
+    <div class="resultsContainer"
+      v-if="showing">
+      <vertical-collapse>
+        <p v-show="searching">Bezig met zoeken....</p>
+      </vertical-collapse>
+
+      <vertical-collapse>
+        <div v-if="hasResults()"
+          class="results">
+          <vertical-collapse-group>
+            <div v-for="SearchSuggestion result in context.getResults()"
+              :key="result.description"
+              class="item">
+              {{ result.description }}
+            </div>
+          </vertical-collapse-group>
+        </div>
+      </vertical-collapse>
+    </div>
+  </vertical-collapse>
+</div>
+
+<style lang="scss" scoped>
+@import "vertical-collapse.scss";
+
+/** Override styles **/
+.list-enter {
+  border-color: white !important;
+}
+.list-leave-to{
+  border-color: white !important;
+}
+
+.list-enter-active {
+  transition: height .25s ease-out .25s, border .25s ease-out .25s;
+}
+.list-leave-active {
+  transition: height .25s ease-out, border .25s ease-out;
+}
+
+.searchContainer {
+  display: flex;
+}
+
+.search-input {
+  width: 200px;
+  border: 1px solid gray;
+  padding: 3px;
+}
+
+.resultsContainer {
+  background: white;
+  top: 31px;
+  
+  border: 1px solid #333;
+  box-sizing: border-box;
+  
+  left: -200px;
+  width: calc(100% + 200px);
+  max-width: 100vw;
+  
+  position: absolute;
+  
+  .results {
+    box-sizing: content-box;
+  }
+  
+  .item {
+    border-bottom: 1px solid #333;
+    
+    &:last-child {
+      border-bottom: none;
+    }
+  
+  }
+}
+</style>
