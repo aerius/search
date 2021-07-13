@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import nl.aerius.search.domain.SearchCapability;
@@ -28,12 +29,18 @@ public class SearchTaskDelegatorImpl implements SearchTaskDelegator {
   }
 
   @Override
-  public String retrieveSearchResultsAsync(final String query, final Set<SearchCapability> capabilities) {
+  public SearchResult retrieveSearchResultsAsync(final String query, final Set<SearchCapability> capabilities) {
     return asyncDelegator.retrieveSearchResultsAsync(query, capabilities);
   }
 
   @Override
   public SearchResult retrieveSearchTask(final String uuid) {
     return asyncDelegator.retrieveSearchTask(uuid);
+  }
+
+  @Override
+  @Async
+  public void cancelSearchTask(final String uuid) {
+    asyncDelegator.cancelSearchTask(uuid);
   }
 }

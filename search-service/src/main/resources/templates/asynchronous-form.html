@@ -19,7 +19,7 @@
     function init() {
       let txt = document.getElementById("txt");
       let endpoint = window.location.href.substring(0, window.location.href.indexOf("/", 7));
-      let curl = `curl ${endpoint}/api/query-async -F query=test -F capabilities=MOCK0,MOCK1,MOCK5,RECEPTOR | xargs -I '{}' watch 'curl ${endpoint}/api/search-task/'{}' | json_pp -json_opt pretty,canonical'`;
+      let curl = `curl ${endpoint}/api/search-async -F query=test -F capabilities=MOCK0,MOCK1,MOCK5,RECEPTOR | xargs -I '{}' watch 'curl ${endpoint}/api/results/'{}' | json_pp -json_opt pretty,canonical'`;
       
       txt.innerHTML = curl; 
     }

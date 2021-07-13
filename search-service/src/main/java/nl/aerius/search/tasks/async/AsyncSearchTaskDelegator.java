@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import io.reactivex.Flowable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 import nl.aerius.search.domain.SearchCapability;
@@ -44,7 +45,9 @@ public class AsyncSearchTaskDelegator {
 
   private final CacheMap<String, SearchResult> tasks = new CacheMap<>(TIME_TO_LIVE, INTERVAL, LOG);
 
-  public String retrieveSearchResultsAsync(final String query, final Set<SearchCapability> capabilities) {
+  private final CacheMap<String, Disposable> disposables = new CacheMap<>(TIME_TO_LIVE, INTERVAL, LOG);
+
+  public SearchResult retrieveSearchResultsAsync(final String query, final Set<SearchCapability> capabilities) {
     final Map<SearchCapability, SearchTaskService> services = TaskUtils.findTaskServices(taskFactory, capabilities, LOG);
 
     if (LOG.isDebugEnabled()) {
@@ -55,17 +58,25 @@ public class AsyncSearchTaskDelegator {
 
     final SearchResult task = initializeTask();
 
-    Flowable.fromIterable(services.values())
+    final Disposable disposable = Flowable.fromIterable(services.values())
         .parallel()
         .runOn(Schedulers.computation())
         .map(v -> v.retrieveSearchResults(query))
         .doOnNext(v -> task.complete(v))
         .doOnError(e -> LOG.error("Error while performing search task:", e))
+//        .doOnCancel(() -> {
+//          // Can we do something here?
+//        })
         .sequential()
         .doOnComplete(() -> task.complete())
+//        .doOnCancel(() -> {
+//          // Can we do something useful here?
+//        })
         .subscribe();
 
-    return task.getUuid();
+    disposables.put(task.getUuid(), disposable);
+
+    return task;
   }
 
   /**
@@ -96,5 +107,15 @@ public class AsyncSearchTaskDelegator {
     tasks.put(uuid, task);
 
     return task;
+  }
+
+  public void cancelSearchTask(final String uuid) {
+    LOG.info("Cancelling: {}", uuid);
+    Optional.ofNullable(disposables.remove(uuid))
+        .ifPresent(disposable -> {
+          LOG.info("Cancelled: {}", uuid);
+          disposable.dispose();
+          tasks.remove(uuid);
+        });
   }
 }

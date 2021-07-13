@@ -10,7 +10,7 @@ Components implementing `SearchTaskService` will be scanned from the classpath, 
 
 ### Usage
 
-Search queries (`GET|POST`) can be sent to `/api/query`
+Search queries (`GET|POST`) can be sent to `/api/search`
 
 Possible parameters are currently:
 

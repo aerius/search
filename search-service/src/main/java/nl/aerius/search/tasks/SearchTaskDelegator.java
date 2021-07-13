@@ -10,7 +10,9 @@ import nl.aerius.search.tasks.async.SearchResult;
 public interface SearchTaskDelegator {
   List<SearchSuggestion> retrieveSearchResults(final String query, final Set<SearchCapability> capabilities);
 
-  String retrieveSearchResultsAsync(final String query, final Set<SearchCapability> capabilities);
+  SearchResult retrieveSearchResultsAsync(final String query, final Set<SearchCapability> capabilities);
 
   SearchResult retrieveSearchTask(String uuid);
+
+  void cancelSearchTask(String uuid);
 }

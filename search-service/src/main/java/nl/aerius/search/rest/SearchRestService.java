@@ -1,6 +1,7 @@
 package nl.aerius.search.rest;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -25,17 +26,20 @@ public class SearchRestService {
    * 
    * Accept both GET and POST requests
    */
-  @RequestMapping(value = "/api/query")
+  @RequestMapping(value = "/api/search")
   public List<SearchSuggestion> retrieveSearchResults(final String query, @RequestParam final List<String> capabilities) {
     return taskDelegator.retrieveSearchResults(query, TaskUtils.parseCapabilities(capabilities));
   }
 
-  @RequestMapping(value = "/api/query-async")
-  public String retrieveSearchResultsAsync(final String query, @RequestParam final List<String> capabilities) {
+  @RequestMapping(value = "/api/search-async")
+  public SearchResult retrieveSearchResultsAsync(final String query, @RequestParam final List<String> capabilities,
+      final Optional<String> cancel) {
+    cancel.ifPresent(uuid -> taskDelegator.cancelSearchTask(uuid));
+
     return taskDelegator.retrieveSearchResultsAsync(query, TaskUtils.parseCapabilities(capabilities));
   }
 
-  @GetMapping(value = "/api/search-task/{uuid}")
+  @GetMapping(value = "/api/results/{uuid}")
   public SearchResult retrieveSearchResultsAsync(final @PathVariable("uuid") String uuid) {
     return taskDelegator.retrieveSearchTask(uuid);
   }
