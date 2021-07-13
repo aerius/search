@@ -44,4 +44,8 @@ public class SearchContext {
     setSearching(false);
     results.clear();
   }
+
+  public void failSearch() {
+    clear();
+  }
 }

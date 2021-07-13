@@ -104,7 +104,8 @@ public class SearchDaemonAsynchronous extends BasicEventComponent {
   }
 
   private void searchFailure(final Throwable e) {
-    GWTProd.error("Could not complete search: " + e.getMessage(), e);
+    context.failSearch();
+    GWTProd.error("Could not complete search query: " + e.getMessage(), e);
   }
 
   @Override
