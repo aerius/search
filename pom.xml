@@ -172,6 +172,7 @@
     <profile>
       <id>publish</id>
       <modules>
+        <module>search-shared</module>
         <module>search-client</module>
       </modules>
     </profile>
