@@ -1,7 +1,9 @@
 package nl.aerius.search.tasks;
 
+import io.reactivex.rxjava3.core.Single;
+
 import nl.aerius.search.domain.SearchTaskResult;
 
 public interface SearchTaskService {
-  SearchTaskResult retrieveSearchResults(String query);
+  Single<SearchTaskResult> retrieveSearchResults(String query);
 }

@@ -62,17 +62,26 @@ In this project, a component can be created that will fulfill a SearchCapability
 
 ```java
 @Component
-@ImplementsCapability(SearchCapability.RECEPTORS_28992)
+@ImplementsCapability(SearchCapability.RECEPTORS)
 public class RDNewReceptorSearchService implements SearchTaskService {
   @Autowired ReceptorUtil util;
 
   @Override
-  public SearchTaskResult retrieveSearchResults(final String query) {
-    return Optional.ofNullable(ReceptorUtils.tryParse(util, query))
-        .orElse(SearchResultBuilder.empty());
+  public Single<SearchTaskResult> retrieveSearchResults(final String query) {
+    return Single.just(query)
+        .map(v -> ReceptorUtils.tryParse(util, v))
+        .onErrorReturn(e -> SearchResultBuilder.empty())
+        .doOnDispose(() -> {
+          // Handle cancellation
+        })
+        .doAfterTerminate(() -> {
+          // Handle termination cleanup
+        });
   }
 }
 ```
+
+The return type for a SearchTaskService is a Single, be sure to implement a `doOnDispose` or other lifecycle steps if the search task needs to close any resources on cancellation, termination, or error.
 
 When an extension project is included (i.e. depended on) in the main project's classpath, the additional search task components will be automatically found and added.
 

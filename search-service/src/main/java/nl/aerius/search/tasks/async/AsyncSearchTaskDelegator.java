@@ -11,9 +11,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import io.reactivex.Flowable;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
+import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 import nl.aerius.search.domain.SearchCapability;
 import nl.aerius.search.domain.collections.CacheMap;
@@ -60,18 +60,15 @@ public class AsyncSearchTaskDelegator {
 
     final Disposable disposable = Flowable.fromIterable(services.values())
         .parallel()
-        .runOn(Schedulers.computation())
+        .runOn(Schedulers.io())
         .map(v -> v.retrieveSearchResults(query))
-        .doOnNext(v -> task.complete(v))
-        .doOnError(e -> LOG.error("Error while performing search task:", e))
-//        .doOnCancel(() -> {
-//          // Can we do something here?
-//        })
+        .doOnError(e -> {
+          LOG.error("Error while executing search task:", e);
+        })
+        .flatMap(v -> v.toFlowable())
+        .doAfterNext(r -> task.complete(r))
         .sequential()
         .doOnComplete(() -> task.complete())
-//        .doOnCancel(() -> {
-//          // Can we do something useful here?
-//        })
         .subscribe();
 
     disposables.put(task.getUuid(), disposable);
@@ -110,10 +107,12 @@ public class AsyncSearchTaskDelegator {
   }
 
   public void cancelSearchTask(final String uuid) {
-    LOG.info("Cancelling: {}", uuid);
+    if (LOG.isTraceEnabled()) {
+      LOG.trace("Cancelling search task: {}", uuid);
+    }
+
     Optional.ofNullable(disposables.remove(uuid))
         .ifPresent(disposable -> {
-          LOG.info("Cancelled: {}", uuid);
           disposable.dispose();
           tasks.remove(uuid);
         });

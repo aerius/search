@@ -7,6 +7,8 @@ public enum SearchCapability {
    * Capabilities used for testing purposes
    */
   MOCK0,
+  MOCK01,
+  MOCK05,
   MOCK1,
   MOCK5;
 
@@ -16,6 +18,5 @@ public enum SearchCapability {
     } catch (final Exception e) {
       return null;
     }
-
   }
 }

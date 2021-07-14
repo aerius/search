@@ -10,8 +10,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import io.reactivex.Flowable;
-import io.reactivex.schedulers.Schedulers;
+import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 import nl.aerius.search.domain.SearchCapability;
 import nl.aerius.search.domain.SearchSuggestion;
@@ -46,8 +46,9 @@ public class BlockingSearchTaskDelegator {
      */
     return Flowable.fromIterable(tasks.values())
         .parallel()
-        .runOn(Schedulers.computation())
+        .runOn(Schedulers.io())
         .map(v -> v.retrieveSearchResults(query))
+        .map(v -> v.blockingGet())
         .doOnError(e -> LOG.error("Error while performing search task:", e))
         .sequential()
         .flatMap(v -> Flowable.fromIterable(v.getSuggestions()))

@@ -31,7 +31,7 @@ public class SearchResult {
 
   public void complete() {
     if (LOG.isTraceEnabled()) {
-      LOG.info("Search task {} has fully completed.", uuid);
+      LOG.trace("Search task {} has fully completed.", uuid);
     }
 
     complete = true;
@@ -42,9 +42,9 @@ public class SearchResult {
     return new ArrayList<>(results);
   }
 
-  public void complete(final SearchTaskResult result) {
+  public SearchResult complete(final SearchTaskResult result) {
     if (result.getSuggestions() == null) {
-      return;
+      return this;
     }
 
     if (LOG.isTraceEnabled()) {
@@ -52,6 +52,7 @@ public class SearchResult {
     }
 
     results.addAll(result.getSuggestions());
+    return this;
   }
 
   public String getUuid() {

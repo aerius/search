@@ -35,6 +35,12 @@
       <artifactId>search-shared</artifactId>
       <version>${project.version}</version>
     </dependency>
+    
+    <dependency>
+      <groupId>io.reactivex.rxjava3</groupId>
+      <artifactId>rxjava</artifactId>
+      <version>3.0.13</version>
+    </dependency>
   </dependencies>
 
   <build>

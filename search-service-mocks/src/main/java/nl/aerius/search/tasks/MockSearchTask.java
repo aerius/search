@@ -1,16 +1,20 @@
 package nl.aerius.search.tasks;
 
-import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import nl.aerius.search.domain.SearchTaskResult;
-import nl.aerius.search.domain.SearchSuggestion;
+import io.reactivex.rxjava3.core.Single;
+
+import nl.aerius.search.domain.SearchResultBuilder;
 import nl.aerius.search.domain.SearchSuggestionBuilder;
+import nl.aerius.search.domain.SearchTaskResult;
 
 public abstract class MockSearchTask implements SearchTaskService {
   private static final Logger LOG = LoggerFactory.getLogger(MockSearchTask.class);
+
+  private static final String TEXT = "Mock for query [%s] produced after %sms";
 
   private final long delay;
 
@@ -19,20 +23,21 @@ public abstract class MockSearchTask implements SearchTaskService {
   }
 
   @Override
-  public SearchTaskResult retrieveSearchResults(final String query) {
+  public Single<SearchTaskResult> retrieveSearchResults(final String query) {
     LOG.debug("Retrieving mock search result for query [{}] at delay of {}ms", query, delay);
 
-    try {
-      Thread.sleep(delay);
-    } catch (final InterruptedException e) {
-      // Eat
-    }
-    
-    final SearchSuggestion suggestion = SearchSuggestionBuilder.create("Mock for query [" + query + "] produced after " + delay + "ms");
-
-    final SearchTaskResult result = new SearchTaskResult();
-    result.setSuggestions(List.of(suggestion));
-
-    return result;
+    return Single.just(SearchResultBuilder
+        .of(SearchSuggestionBuilder.create(String.format(TEXT, query, delay))))
+        .delay(delay, TimeUnit.MILLISECONDS)
+        .doOnDispose(() -> {
+          // Handle cancellation
+        })
+        .doAfterTerminate(() -> {
+          // Handle termination cleanup
+        })
+        .doOnError(e -> {
+          // Handle error
+          throw e;
+        });
   }
 }
