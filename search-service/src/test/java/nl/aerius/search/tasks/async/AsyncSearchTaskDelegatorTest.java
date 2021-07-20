@@ -18,7 +18,7 @@ public class AsyncSearchTaskDelegatorTest {
 
   @Test
   public void responseDelays() {
-    final Set<SearchCapability> caps = Set.of(SearchCapability.MOCK0, SearchCapability.MOCK01, SearchCapability.MOCK05);
+    final Set<SearchCapability> caps = Set.of(SearchCapability.MOCK_0, SearchCapability.MOCK_01, SearchCapability.MOCK_05);
     final SearchResult result1 = delegator.retrieveSearchResultsAsync("test", caps);
 
     assertFalse(result1.isComplete(), "Result should not be complete at this point.");
@@ -45,7 +45,7 @@ public class AsyncSearchTaskDelegatorTest {
 
   @Test
   public void responseCancellation() {
-    final Set<SearchCapability> caps = Set.of(SearchCapability.MOCK01);
+    final Set<SearchCapability> caps = Set.of(SearchCapability.MOCK_01);
     final SearchResult result1 = delegator.retrieveSearchResultsAsync("test", caps);
 
     assertFalse(result1.isComplete(), "Result should not be complete at this point.");

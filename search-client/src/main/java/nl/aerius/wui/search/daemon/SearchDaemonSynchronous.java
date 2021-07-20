@@ -24,15 +24,16 @@ import nl.aerius.wui.search.util.SearchUtils;
 import nl.aerius.wui.util.GWTAtomicInteger;
 
 /**
- * Synchronous daemon that takes advantage of the search service's synchronous search call
+ * Synchronous daemon that takes advantage of the search service's synchronous
+ * search call
  */
 public class SearchDaemonSynchronous extends BasicEventComponent {
   private static final SearchDaemonSynchronousEventBinder EVENT_BINDER = GWT.create(SearchDaemonSynchronousEventBinder.class);
 
   interface SearchDaemonSynchronousEventBinder extends EventBinder<SearchDaemonSynchronous> {}
 
-  private static final Set<SearchCapability> CAPS = SearchUtils.of(SearchCapability.MOCK0, SearchCapability.MOCK1,
-      SearchCapability.RECEPTOR);
+  private static final Set<SearchCapability> CAPS = SearchUtils.of(SearchCapability.MOCK_0, SearchCapability.MOCK_1,
+      SearchCapability.RECEPTOR, SearchCapability.MOCK_GROUP_0, SearchCapability.MOCK_GROUP_1);
 
   @Inject @Data SearchContext context;
 
@@ -81,9 +82,9 @@ public class SearchDaemonSynchronous extends BasicEventComponent {
     GWTProd.error("Could not complete search: " + e.getMessage(), e);
   }
 
-  private void completeSearch(final SearchSuggestion[] v) {
+  private void completeSearch(final SearchSuggestion[] results) {
     context.completeSearch();
-    context.setResults(Stream.of(v)
+    context.addResults(Stream.of(results)
         .collect(Collectors.toList()));
   }
 

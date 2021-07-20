@@ -1,47 +1,54 @@
+<vue-gwt:import class="java.util.Map.Entry" />
+<vue-gwt:import class="java.util.Collection" />
 <vue-gwt:import class="nl.aerius.wui.search.domain.SearchSuggestion" />
 
 <div class="searchContainer">
   <input v-model="search" type="text" class="search-input" placeholder="Zoek op de kaart">
+  <horizontal-collapse>
+    <div v-show="searching"
+      class="loading">Searching...</div>
+  </horizontal-collapse>
 
-  <vertical-collapse>
-    <div class="resultsContainer"
-      v-if="showing">
+  <div class="resultsContainer"
+    :class='map("hasResults", hasResults())'>
+    <div v-for="Entry entry in context.getResults().entrySet()"
+      class="group">
       <vertical-collapse>
-        <p v-show="searching">Bezig met zoeken....</p>
+        <div class="title"
+          v-if="!isEmpty(entry.getValue())">{{ entry.getKey() == null ? "-" : entry.getKey() }}</div>
       </vertical-collapse>
-
-      <vertical-collapse>
-        <div v-if="hasResults()"
-          class="results">
-          <vertical-collapse-group>
-            <div v-for="SearchSuggestion result in context.getResults()"
-              :key="result.description"
-              class="item">
-              {{ result.description }}
-            </div>
-          </vertical-collapse-group>
+      <vertical-collapse-group>
+        <div v-for="SearchSuggestion result in (Collection) entry.getValue()"
+          :key="result.description"
+          class="itemContainer"
+          @click="selectSuggestion(result)">
+          <div class="item"
+            role="result">{{ result.description }}</div>
         </div>
-      </vertical-collapse>
+      </vertical-collapse-group>
     </div>
-  </vertical-collapse>
+  </div>
 </div>
 
 <style lang="scss" scoped>
 @import "vertical-collapse.scss";
+@import "horizontal-collapse.scss";
 
 /** Override styles **/
-.list-enter {
-  border-color: white !important;
-}
-.list-leave-to{
-  border-color: white !important;
-}
-
 .list-enter-active {
-  transition: height .25s ease-out .25s, border .25s ease-out .25s;
+  transition: background 0.1s ease-out, height .25s ease-out .3s;
 }
 .list-leave-active {
-  transition: height .25s ease-out, border .25s ease-out;
+  transition: background 0.1s ease-out, height .25s ease-out .5s;
+}
+
+.loading {
+  position: absolute;
+  right: 0px;
+  pointer-events: none;
+  z-index: 2;
+  line-height: 36px;
+  margin: 0px 10px;
 }
 
 .searchContainer {
@@ -49,15 +56,16 @@
 }
 
 .search-input {
-  border: 1px solid gray;
-  padding: 3px;
+  border: 1px solid #888;
+  padding: 5px 10px;
+  width: 100%;
+  z-index: 1;
 }
 
 .resultsContainer {
   background: white;
-  top: 31px;
+  top: 35px;
   
-  border: 1px solid #333;
   box-sizing: border-box;
   
   width: 100%;
@@ -65,17 +73,27 @@
   
   position: absolute;
   
-  .results {
-    box-sizing: content-box;
+  &.hasResults {
+    border: 1px solid #888;
   }
   
-  .item {
-    border-bottom: 1px solid #333;
-    
-    &:last-child {
-      border-bottom: none;
+  .group {
+    .title {
+      padding: 5px 10px;
+      background: #f5f5f5;
     }
   
+    .itemContainer {
+      cursor: pointer;
+      
+      &:hover {
+        background: var(--theme-color-light);
+      }
+      
+      .item {
+        padding: 5px 10px;
+      }
+    }
   }
 }
 </style>

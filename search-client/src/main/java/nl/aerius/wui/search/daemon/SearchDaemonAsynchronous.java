@@ -21,6 +21,7 @@ import nl.aerius.wui.future.AppAsyncCallback;
 import nl.aerius.wui.search.command.SearchTextCommand;
 import nl.aerius.wui.search.context.SearchContext;
 import nl.aerius.wui.search.domain.SearchResult;
+import nl.aerius.wui.search.domain.SearchSuggestion;
 import nl.aerius.wui.search.service.SearchServiceAsync;
 import nl.aerius.wui.search.util.SearchUtils;
 import nl.aerius.wui.util.GWTAtomicInteger;
@@ -34,8 +35,8 @@ public class SearchDaemonAsynchronous extends BasicEventComponent {
 
   interface SearchDaemonAsynchronousEventBinder extends EventBinder<SearchDaemonAsynchronous> {}
 
-  private static final Set<SearchCapability> CAPS = SearchUtils.of(SearchCapability.MOCK0, SearchCapability.MOCK1,
-      SearchCapability.MOCK5, SearchCapability.RECEPTOR);
+  private static final Set<SearchCapability> CAPS = SearchUtils.of(SearchCapability.MOCK_0, SearchCapability.MOCK_1,
+      SearchCapability.RECEPTOR, SearchCapability.MOCK_GROUP_0, SearchCapability.MOCK_GROUP_1);
 
   private static final int DELAY = 250;
 
@@ -78,7 +79,7 @@ public class SearchDaemonAsynchronous extends BasicEventComponent {
 
   private void processResults(final SearchResult result, final Integer count) {
     currentSearchId = result.uuid;
-    context.setResults(Stream.of(result.results)
+    context.addResults(Stream.of(result.results)
         .collect(Collectors.toList()));
 
     if (result.complete) {

@@ -9,9 +9,9 @@ import nl.aerius.search.domain.SearchCapability;
  * after a 1 second delay
  */
 @Component
-@ImplementsCapability(SearchCapability.MOCK_1)
-public class Mock1SecondTask extends MockSearchTask {
-  public Mock1SecondTask() {
+@ImplementsCapability(SearchCapability.MOCK_GROUP_1)
+public class Mock1SecondGroupedTask extends MockGroupSearchTask {
+  public Mock1SecondGroupedTask() {
     super(1000);
   }
 }

@@ -1,7 +1,9 @@
 package nl.aerius.wui.search.context;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
 
 import javax.inject.Singleton;
 
@@ -13,17 +15,32 @@ import nl.aerius.wui.search.domain.SearchSuggestion;
 
 @Singleton
 public class SearchContext {
-  @Data @JsProperty private final List<SearchSuggestion> results = new ArrayList<>();
+  @Data @JsProperty private final Map<String, Collection<SearchSuggestion>> results = new HashMap<>();
 
   @Data private boolean searching;
 
-  public List<SearchSuggestion> getResults() {
+  private boolean cleanFirst;
+
+  public Map<String, Collection<SearchSuggestion>> getResults() {
     return results;
   }
 
-  public void setResults(final List<SearchSuggestion> lst) {
-    this.results.clear();
-    this.results.addAll(lst);
+  public void addResults(final Collection<SearchSuggestion> results) {
+    if (cleanFirst) {
+      this.results.values().forEach(v -> v.clear());
+    }
+    
+    results.forEach(result -> {
+      this.results.computeIfAbsent(result.group, key -> new LinkedHashSet<>());
+      this.results.compute(result.group, (v, lst) -> {
+        if (!lst.stream()
+            .map(e -> e.id)
+            .anyMatch(id -> id.equals(result.id))) {
+          lst.add(result);
+        }
+        return lst;
+      });
+    });
   }
 
   public boolean isSearching() {
@@ -36,6 +53,7 @@ public class SearchContext {
 
   public void beginSearch() {
     setSearching(true);
+    cleanFirst = true;
   }
 
   public void completeSearch() {
@@ -45,6 +63,7 @@ public class SearchContext {
   public void clear() {
     setSearching(false);
     results.clear();
+    results.values().forEach(v -> v.clear());
   }
 
   public void failSearch() {

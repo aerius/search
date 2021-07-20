@@ -6,11 +6,14 @@ public enum SearchCapability {
   /**
    * Capabilities used for testing purposes
    */
-  MOCK0,
-  MOCK01,
-  MOCK05,
-  MOCK1,
-  MOCK5;
+  MOCK_0,
+  MOCK_01,
+  MOCK_05,
+  MOCK_1,
+  MOCK_5,
+
+  MOCK_GROUP_0,
+  MOCK_GROUP_1;
 
   public static SearchCapability safeValueOf(final String name) {
     try {
