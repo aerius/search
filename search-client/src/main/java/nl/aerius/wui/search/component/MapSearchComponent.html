@@ -1,4 +1,4 @@
-<vue-gwt:import class="nl.aerius.wui.search.SearchSuggestion" />
+<vue-gwt:import class="nl.aerius.wui.search.domain.SearchSuggestion" />
 
 <div class="searchContainer">
   <input v-model="search" type="text" class="search-input" placeholder="Zoek op de kaart">
@@ -49,7 +49,6 @@
 }
 
 .search-input {
-  width: 200px;
   border: 1px solid gray;
   padding: 3px;
 }
@@ -61,8 +60,7 @@
   border: 1px solid #333;
   box-sizing: border-box;
   
-  left: -200px;
-  width: calc(100% + 200px);
+  width: 100%;
   max-width: 100vw;
   
   position: absolute;

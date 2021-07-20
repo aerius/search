@@ -1,4 +1,4 @@
-package nl.aerius.wui.search;
+package nl.aerius.wui.search.daemon;
 
 import java.util.Set;
 import java.util.function.Function;
@@ -18,6 +18,11 @@ import nl.aerius.search.domain.SearchCapability;
 import nl.aerius.wui.dev.GWTProd;
 import nl.aerius.wui.event.BasicEventComponent;
 import nl.aerius.wui.future.AppAsyncCallback;
+import nl.aerius.wui.search.command.SearchTextCommand;
+import nl.aerius.wui.search.context.SearchContext;
+import nl.aerius.wui.search.domain.SearchResult;
+import nl.aerius.wui.search.service.SearchServiceAsync;
+import nl.aerius.wui.search.util.SearchUtils;
 import nl.aerius.wui.util.GWTAtomicInteger;
 import nl.aerius.wui.util.SchedulerUtil;
 

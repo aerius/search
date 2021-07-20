@@ -1,4 +1,4 @@
-package nl.aerius.wui.search;
+package nl.aerius.wui.search.component;
 
 import javax.inject.Inject;
 
@@ -12,6 +12,8 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import jsinterop.annotations.JsMethod;
 
+import nl.aerius.wui.search.command.SearchTextCommand;
+import nl.aerius.wui.search.context.SearchContext;
 import nl.aerius.wui.vue.transition.VerticalCollapse;
 import nl.aerius.wui.vue.transition.VerticalCollapseGroup;
 

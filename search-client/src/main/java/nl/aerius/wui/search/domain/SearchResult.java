@@ -1,4 +1,4 @@
-package nl.aerius.wui.search;
+package nl.aerius.wui.search.domain;
 
 import jsinterop.annotations.JsPackage;
 import jsinterop.annotations.JsProperty;

@@ -1,0 +1,33 @@
+<div>
+  <button class="searchButton"
+    @click="searchShowing = !searchShowing"
+    :class='map("active", searchShowing)'
+    v-vector="img.searchButton()"
+    aria-label="search popout">
+    X
+  </button>
+  
+  <horizontal-collapse>
+    <map-search v-if="searchShowing"
+      :eventBus="eventBus"
+      class="searchPopout"></map-search>
+  </horizontal-collapse>
+</div>
+
+<style scoped lang="scss">
+@import "horizontal-collapse.scss";
+
+.searchButton {
+  width: 24px;
+  height: 24px;
+  padding: 10px;
+  
+  &.active {
+    background: var(--theme-color);
+  }
+}
+
+.searchPopout {
+  width: 250px;
+}
+</style>

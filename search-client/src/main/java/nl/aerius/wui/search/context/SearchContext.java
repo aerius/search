@@ -1,4 +1,4 @@
-package nl.aerius.wui.search;
+package nl.aerius.wui.search.context;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +8,8 @@ import javax.inject.Singleton;
 import com.axellience.vuegwt.core.annotations.component.Data;
 
 import jsinterop.annotations.JsProperty;
+
+import nl.aerius.wui.search.domain.SearchSuggestion;
 
 @Singleton
 public class SearchContext {

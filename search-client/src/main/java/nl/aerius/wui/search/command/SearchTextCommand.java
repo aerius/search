@@ -1,4 +1,4 @@
-package nl.aerius.wui.search;
+package nl.aerius.wui.search.command;
 
 import nl.aerius.wui.event.SimpleGenericEvent;
 
