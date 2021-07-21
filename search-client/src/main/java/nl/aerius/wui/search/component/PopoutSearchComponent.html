@@ -5,9 +5,17 @@
     v-vector="img.searchButton()"
     aria-label="search popout">
   </button>
+  
+  <!-- While this overlay works, it does not always work well due to parent z-indexing
+  <!-- Disable for now, and make user deselect search content themselves.
+  <div class="overlay"
+    @click.stop="searchShowing = false"
+    :class='map("active", searchShowing)'></div>
+   -->
 
   <horizontal-collapse :seek="(boolean) false">
     <map-search v-show="searchShowing"
+      ref="input"
       :visible="searchShowing"
       :eventBus="eventBus"
       class="searchPopout"
@@ -19,11 +27,30 @@
 <style scoped lang="scss">
 @import "horizontal-collapse.scss";
 
+/*
+.overlay {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  background: #ffffff00;
+  z-index: 0;
+  inset: 0;
+  pointer-events: none;
+  transition: background 0.15s ease-out;
+  
+  &.active {
+    pointer-events: all;
+    background: #ffffff88;
+  }
+}
+*/
+
 .searchContainer {
 
 }
 
 .searchButton {
+  z-index: 1;
   width: 48px;
   height: 48px;
   border: 2px solid #cacaca;
@@ -46,6 +73,7 @@
 }
 
 .searchPopout {
+  z-index: 1;
   position: absolute;
   width: 420px;
   right: 55px;

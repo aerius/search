@@ -4,11 +4,15 @@ import com.axellience.vuegwt.core.annotations.component.Component;
 import com.axellience.vuegwt.core.annotations.component.Data;
 import com.axellience.vuegwt.core.annotations.component.Emit;
 import com.axellience.vuegwt.core.annotations.component.Prop;
+import com.axellience.vuegwt.core.annotations.component.PropDefault;
+import com.axellience.vuegwt.core.annotations.component.Ref;
+import com.axellience.vuegwt.core.annotations.component.Watch;
 import com.axellience.vuegwt.core.client.component.IsVueComponent;
 import com.google.web.bindery.event.shared.EventBus;
 
 import jsinterop.annotations.JsMethod;
 
+import nl.aerius.wui.dev.GWTProd;
 import nl.aerius.wui.search.domain.SearchSuggestion;
 import nl.aerius.wui.search.resources.SearchImageResources;
 import nl.aerius.wui.search.resources.SearchResources;
@@ -30,7 +34,23 @@ public class PopoutSearchComponent implements IsVueComponent {
 
   @Data boolean searchShowing = false;
 
+  @Ref MapSearchComponent input;
+
+  @PropDefault("auto")
+  boolean autoDefault() {
+    return true;
+  }
+
+  @Watch("searchShowing")
+  public void onSearchShowingChange(final boolean neww) {
+    if (neww) {
+      input.focus();
+    }
+  }
+
   @JsMethod
   @Emit
-  public void selectSuggestion(final SearchSuggestion value) {}
+  public void selectSuggestion(final SearchSuggestion value) {
+    GWTProd.log("Selecting: " + value.description);
+  }
 }
