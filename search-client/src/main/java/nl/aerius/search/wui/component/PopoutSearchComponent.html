@@ -1,10 +1,12 @@
 <div class="searchContainer">
-  <button class="searchButton"
-    @click="searchShowing = !searchShowing"
-    :class='map("active", searchShowing)'
-    v-vector="img.searchButton()"
-    aria-label="search popout">
-  </button>
+  <slot>
+    <button class="searchButton"
+      @click="toggle()"
+      :class='map("active", isSearchShowing())'
+      v-vector="img.searchButton()"
+      aria-label="search popout">
+    </button>
+  </slot>
   
   <!-- While this overlay works, it does not always work well due to parent z-indexing
   <!-- Disable for now, and make user deselect search content themselves.
@@ -77,7 +79,6 @@
   position: absolute;
   width: 420px;
   right: 55px;
-  top: 6px;
   
   div {
     width: 100%;

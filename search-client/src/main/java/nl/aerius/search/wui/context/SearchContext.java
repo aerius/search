@@ -1,4 +1,4 @@
-package nl.aerius.wui.search.context;
+package nl.aerius.search.wui.context;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -11,7 +11,7 @@ import com.axellience.vuegwt.core.annotations.component.Data;
 
 import jsinterop.annotations.JsProperty;
 
-import nl.aerius.wui.search.domain.SearchSuggestion;
+import nl.aerius.search.wui.domain.SearchSuggestion;
 
 @Singleton
 public class SearchContext {

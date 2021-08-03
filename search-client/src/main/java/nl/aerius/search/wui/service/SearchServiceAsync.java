@@ -1,4 +1,4 @@
-package nl.aerius.wui.search.service;
+package nl.aerius.search.wui.service;
 
 import java.util.Set;
 
@@ -6,8 +6,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.ImplementedBy;
 
 import nl.aerius.search.domain.SearchCapability;
-import nl.aerius.wui.search.domain.SearchResult;
-import nl.aerius.wui.search.domain.SearchSuggestion;
+import nl.aerius.search.wui.domain.SearchResult;
+import nl.aerius.search.wui.domain.SearchSuggestion;
 
 @ImplementedBy(SearchServiceAsyncImpl.class)
 public interface SearchServiceAsync {

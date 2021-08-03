@@ -73,6 +73,7 @@
       <groupId>nl.aerius</groupId>
       <artifactId>search-shared</artifactId>
       <version>${project.version}</version>
+      <type>gwt-lib</type>
     </dependency>
 
     <dependency>

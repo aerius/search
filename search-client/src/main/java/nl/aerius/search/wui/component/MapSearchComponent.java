@@ -1,4 +1,4 @@
-package nl.aerius.wui.search.component;
+package nl.aerius.search.wui.component;
 
 import java.util.Collection;
 import java.util.Map.Entry;
@@ -28,10 +28,10 @@ import elemental2.dom.ClientRect;
 import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
 
-import nl.aerius.wui.search.command.SearchTextCommand;
-import nl.aerius.wui.search.context.SearchContext;
-import nl.aerius.wui.search.domain.SearchSuggestion;
-import nl.aerius.wui.search.event.SearchSuggestionSelectionEvent;
+import nl.aerius.search.wui.command.SearchTextCommand;
+import nl.aerius.search.wui.context.SearchContext;
+import nl.aerius.search.wui.domain.SearchSuggestion;
+import nl.aerius.search.wui.event.SearchSuggestionSelectionEvent;
 import nl.aerius.wui.vue.transition.HorizontalCollapse;
 import nl.aerius.wui.vue.transition.VerticalCollapse;
 import nl.aerius.wui.vue.transition.VerticalCollapseGroup;

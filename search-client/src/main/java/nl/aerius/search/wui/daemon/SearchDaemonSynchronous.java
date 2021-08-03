@@ -1,4 +1,4 @@
-package nl.aerius.wui.search.daemon;
+package nl.aerius.search.wui.daemon;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -13,14 +13,14 @@ import com.google.web.bindery.event.shared.binder.EventBinder;
 import com.google.web.bindery.event.shared.binder.EventHandler;
 
 import nl.aerius.search.domain.SearchCapability;
+import nl.aerius.search.wui.command.SearchTextCommand;
+import nl.aerius.search.wui.context.SearchContext;
+import nl.aerius.search.wui.domain.SearchSuggestion;
+import nl.aerius.search.wui.service.SearchServiceAsync;
+import nl.aerius.search.wui.util.SearchUtils;
 import nl.aerius.wui.dev.GWTProd;
 import nl.aerius.wui.event.BasicEventComponent;
 import nl.aerius.wui.future.AppAsyncCallback;
-import nl.aerius.wui.search.command.SearchTextCommand;
-import nl.aerius.wui.search.context.SearchContext;
-import nl.aerius.wui.search.domain.SearchSuggestion;
-import nl.aerius.wui.search.service.SearchServiceAsync;
-import nl.aerius.wui.search.util.SearchUtils;
 import nl.aerius.wui.util.GWTAtomicInteger;
 
 /**

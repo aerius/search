@@ -1,4 +1,4 @@
-package nl.aerius.wui.search.resources;
+package nl.aerius.search.wui.resources;
 
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.DataResource;

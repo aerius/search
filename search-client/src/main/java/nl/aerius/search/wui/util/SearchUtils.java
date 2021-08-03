@@ -1,4 +1,4 @@
-package nl.aerius.wui.search.util;
+package nl.aerius.search.wui.util;
 
 import java.util.Set;
 import java.util.stream.Collectors;
