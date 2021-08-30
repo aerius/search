@@ -13,9 +13,10 @@ import com.google.web.bindery.event.shared.EventBus;
 import jsinterop.annotations.JsMethod;
 
 import nl.aerius.search.wui.domain.SearchSuggestion;
+import nl.aerius.search.wui.i18n.SearchM;
+import nl.aerius.search.wui.i18n.SearchMessages;
 import nl.aerius.search.wui.resources.SearchImageResources;
 import nl.aerius.search.wui.resources.SearchResources;
-import nl.aerius.wui.dev.GWTProd;
 import nl.aerius.wui.vue.directives.VectorDirective;
 import nl.aerius.wui.vue.transition.HorizontalCollapse;
 
@@ -30,17 +31,18 @@ public class PopoutSearchComponent implements IsVueComponent {
 
   @Prop EventBus eventBus;
 
+  @Data SearchMessages i18n = SearchM.messages();
   @Data SearchImageResources img = SearchResources.images();
 
   @Data boolean searchShowing = false;
 
   @Ref MapSearchComponent input;
-  
+
   @JsMethod
   public boolean isSearchShowing() {
     return searchShowing;
   }
-  
+
   @JsMethod
   public void toggle() {
     searchShowing = !searchShowing;
@@ -60,7 +62,5 @@ public class PopoutSearchComponent implements IsVueComponent {
 
   @JsMethod
   @Emit
-  public void selectSuggestion(final SearchSuggestion value) {
-    GWTProd.log("Selecting: " + value.description);
-  }
+  public void selectSuggestion(final SearchSuggestion value) {}
 }

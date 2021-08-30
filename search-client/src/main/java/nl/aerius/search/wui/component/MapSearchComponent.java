@@ -22,16 +22,18 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Window;
 import com.google.web.bindery.event.shared.EventBus;
 
-import jsinterop.annotations.JsMethod;
-
 import elemental2.dom.ClientRect;
 import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
+
+import jsinterop.annotations.JsMethod;
 
 import nl.aerius.search.wui.command.SearchTextCommand;
 import nl.aerius.search.wui.context.SearchContext;
 import nl.aerius.search.wui.domain.SearchSuggestion;
 import nl.aerius.search.wui.event.SearchSuggestionSelectionEvent;
+import nl.aerius.search.wui.i18n.SearchM;
+import nl.aerius.search.wui.i18n.SearchMessages;
 import nl.aerius.wui.vue.transition.HorizontalCollapse;
 import nl.aerius.wui.vue.transition.VerticalCollapse;
 import nl.aerius.wui.vue.transition.VerticalCollapseGroup;
@@ -45,7 +47,8 @@ public class MapSearchComponent implements IsVueComponent, HasCreated, HasMounte
   @Prop boolean auto;
 
   @Prop EventBus eventBus;
-  @Prop boolean visible;
+  
+  @Data SearchMessages i18n = SearchM.messages();
 
   @Data String maxHeight;
   @Data boolean scrolling;
@@ -66,11 +69,6 @@ public class MapSearchComponent implements IsVueComponent, HasCreated, HasMounte
 
   @PropDefault("auto")
   boolean autoDefault() {
-    return true;
-  }
-
-  @PropDefault("visible")
-  boolean visibleDefault() {
     return true;
   }
 

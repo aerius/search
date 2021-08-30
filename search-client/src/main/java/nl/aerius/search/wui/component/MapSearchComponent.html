@@ -7,12 +7,12 @@
     type="text"
     ref="input"
     class="search-input"
-    aria-label="Search input"
+    :aria-label="i18n.searchInputFieldAria()"
     aria-haspopup="true"
-    placeholder="Zoeken op de kaart...">
+    :placeholder="i18n.searchInputFieldPlaceholder()">
   <horizontal-collapse>
     <div v-show="searching"
-      class="loading">Searching...</div>
+      class="loading">{{ i18n.searchTextLoading() }}</div>
   </horizontal-collapse>
 
   <div class="resultsContainer"

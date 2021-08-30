@@ -4,7 +4,7 @@
       @click="toggle()"
       :class='map("active", isSearchShowing())'
       v-vector="img.searchButton()"
-      aria-label="search popout">
+      aria-label="i18n.searchButtonTitle()">
     </button>
   </slot>
   
@@ -18,7 +18,6 @@
   <horizontal-collapse :seek="(boolean) false">
     <map-search v-show="searchShowing"
       ref="input"
-      :visible="searchShowing"
       :eventBus="eventBus"
       class="searchPopout"
       :auto="auto"
