@@ -77,7 +77,6 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <java.version>11</java.version>
 
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
@@ -129,10 +128,6 @@
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
           <version>${maven.compiler.plugin.version}</version>
-          <configuration>
-            <source>${java.version}</source>
-            <target>${java.version}</target>
-          </configuration>
         </plugin>
         <plugin>
           <groupId>net.ltgt.gwt.maven</groupId>
@@ -140,7 +135,7 @@
           <version>1.0.0</version>
           <extensions>true</extensions>
           <configuration>
-            <sourceLevel>${java.version}</sourceLevel>
+            <sourceLevel>${maven.compiler.source}</sourceLevel>
             <failOnError>true</failOnError>
             <codeserverArgs>
               <arg>-generateJsInteropExports</arg>

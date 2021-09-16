@@ -63,8 +63,6 @@
           <compilerArgument>-parameters</compilerArgument>
           <testCompilerArgument>-parameters</testCompilerArgument>
           <useIncrementalCompilation>false</useIncrementalCompilation>
-          <source>${java.version}</source>
-          <target>${java.version}</target>
         </configuration>
       </plugin>
 
