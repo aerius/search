@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import nl.aerius.search.domain.SearchCapability;
 import nl.aerius.search.domain.SearchSuggestion;
@@ -15,6 +16,7 @@ import nl.aerius.search.domain.SearchSuggestion;
  * Boiler-plate for task-related code
  */
 public final class TaskUtils {
+  private static final Logger LOG = LoggerFactory.getLogger(TaskUtils.class);
   /**
    * TODO Create another comparator, based on weight or some other value
    */
@@ -45,7 +47,13 @@ public final class TaskUtils {
 
   public static Set<SearchCapability> parseCapabilities(final List<String> capabilities) {
     return capabilities.stream()
-        .map(v -> SearchCapability.safeValueOf(v))
+        .map(v -> {
+          final SearchCapability cap = SearchCapability.safeValueOf(v);
+          if (cap == null) {
+            LOG.warn("Requested capability that does not exist: {}", cap);
+          }
+          return cap;
+        })
         .filter(v -> v != null)
         .collect(Collectors.toSet());
   }

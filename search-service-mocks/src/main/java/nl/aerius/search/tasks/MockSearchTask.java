@@ -31,12 +31,15 @@ public abstract class MockSearchTask implements SearchTaskService {
         .delay(delay, TimeUnit.MILLISECONDS)
         .doOnDispose(() -> {
           // Handle cancellation
+          LOG.info("Cancelled.");
         })
         .doAfterTerminate(() -> {
           // Handle termination cleanup
+          LOG.info("Terminated.");
         })
         .doOnError(e -> {
           // Handle error
+          LOG.error("Thrown.", e);
           throw e;
         });
   }
