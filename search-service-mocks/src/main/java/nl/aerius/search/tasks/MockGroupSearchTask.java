@@ -36,12 +36,15 @@ public abstract class MockGroupSearchTask implements SearchTaskService {
         .delay(delay, TimeUnit.MILLISECONDS)
         .doOnDispose(() -> {
           // Handle cancellation
+          LOG.info("Cancelled mock [{}] with delay {}", query, delay);
         })
         .doAfterTerminate(() -> {
           // Handle termination cleanup
+          LOG.info("Terminated mock [{}] with delay {}", query, delay);
         })
         .doOnError(e -> {
           // Handle error
+          LOG.error("Thrown mock [{}] with delay {}\", query, delay", e);
           throw e;
         });
   }
