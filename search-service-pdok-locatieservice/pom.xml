@@ -5,12 +5,8 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <!--
-      NOTE: 2.4.6-2.5.0 (at time of writing) breaks ./config/* configurations
-      https://www.gitmemory.com/issue/spring-projects/spring-boot/26627/845829865
-    -->
-    <version>2.4.5</version>
-    <relativePath /> <!-- lookup parent from repository -->
+    <version>2.5.6</version>
+    <relativePath/> <!-- lookup parent from repository -->
   </parent>
   <groupId>nl.aerius</groupId>
   <artifactId>search-service-pdok-locatieservice</artifactId>
@@ -39,6 +35,12 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.konghq</groupId>
+      <artifactId>unirest-java</artifactId>
+      <version>3.13.3</version>
     </dependency>
 
     <dependency>
