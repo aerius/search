@@ -4,6 +4,11 @@ public enum SearchCapability {
   RECEPTOR,
 
   /**
+   * Addresses, municipalities, postal codes, etc.
+   */
+  BASIC_INFO,
+
+  /**
    * Capabilities used for testing purposes
    */
   MOCK_0,
