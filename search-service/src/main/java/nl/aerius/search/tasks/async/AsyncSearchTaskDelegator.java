@@ -15,8 +15,8 @@ import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-import nl.aerius.search.domain.SearchCapability;
 import nl.aerius.search.domain.collections.CacheMap;
+import nl.aerius.search.tasks.CapabilityKey;
 import nl.aerius.search.tasks.SearchTaskService;
 import nl.aerius.search.tasks.TaskFactory;
 import nl.aerius.search.tasks.TaskUtils;
@@ -47,12 +47,12 @@ public class AsyncSearchTaskDelegator {
 
   private final CacheMap<String, Disposable> disposables = new CacheMap<>(TIME_TO_LIVE, INTERVAL, LOG);
 
-  public SearchResult retrieveSearchResultsAsync(final String query, final Set<SearchCapability> capabilities) {
-    final Map<SearchCapability, SearchTaskService> services = TaskUtils.findTaskServices(taskFactory, capabilities, LOG);
+  public SearchResult retrieveSearchResultsAsync(final String query, final Set<CapabilityKey> capabilities) {
+    final Map<CapabilityKey, SearchTaskService> services = TaskUtils.findTaskServices(taskFactory, capabilities, LOG);
 
     if (LOG.isDebugEnabled()) {
       LOG.debug("Delegating search query [{}] to {} tasks ({})", query, services.size(), services.keySet()
-          .stream().map(v -> v.name())
+          .stream().map(v -> v.toString())
           .collect(Collectors.joining(",")));
     }
 

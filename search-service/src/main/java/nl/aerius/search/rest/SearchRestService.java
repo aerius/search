@@ -19,6 +19,9 @@ import nl.aerius.search.tasks.async.SearchResult;
 @CrossOrigin
 @RestController
 public class SearchRestService {
+  private static final String DEFAULT_CAPABILITIES = "MOCK_0,MOCK_01,MOCK_05,RECEPTOR";
+  private static final String DEFAULT_REGION = "NL";
+
   @Autowired SearchTaskDelegator taskDelegator;
 
   /**
@@ -27,16 +30,19 @@ public class SearchRestService {
    * Accept both GET and POST requests
    */
   @RequestMapping(value = "/api/search")
-  public List<SearchSuggestion> retrieveSearchResults(final String query, @RequestParam final List<String> capabilities) {
-    return taskDelegator.retrieveSearchResults(query, TaskUtils.parseCapabilities(capabilities));
+  public List<SearchSuggestion> retrieveSearchResults(final String query,
+      @RequestParam(defaultValue = DEFAULT_CAPABILITIES) final List<String> capabilities,
+      @RequestParam(defaultValue = DEFAULT_REGION) final String region) {
+    return taskDelegator.retrieveSearchResults(query, TaskUtils.parseCapabilities(capabilities, region));
   }
 
   @RequestMapping(value = "/api/search-async")
-  public SearchResult retrieveSearchResultsAsync(final String query, @RequestParam final List<String> capabilities,
-      final Optional<String> cancel) {
+  public SearchResult retrieveSearchResultsAsync(final String query,
+      @RequestParam(defaultValue = DEFAULT_CAPABILITIES) final List<String> capabilities,
+      @RequestParam(defaultValue = DEFAULT_REGION) final String region, final Optional<String> cancel) {
     cancel.ifPresent(uuid -> taskDelegator.cancelSearchTask(uuid));
 
-    return taskDelegator.retrieveSearchResultsAsync(query, TaskUtils.parseCapabilities(capabilities));
+    return taskDelegator.retrieveSearchResultsAsync(query, TaskUtils.parseCapabilities(capabilities, region));
   }
 
   @GetMapping(value = "/api/results/{uuid}")

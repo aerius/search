@@ -12,4 +12,6 @@ import nl.aerius.search.domain.SearchCapability;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ImplementsCapability {
   SearchCapability value();
+
+  SearchRegion[] region() default {};
 }

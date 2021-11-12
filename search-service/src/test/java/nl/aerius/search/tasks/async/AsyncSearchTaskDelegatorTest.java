@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import nl.aerius.search.domain.SearchCapability;
+import nl.aerius.search.tasks.CapabilityKey;
+import nl.aerius.search.tasks.SearchRegion;
 
 @SpringBootTest
 public class AsyncSearchTaskDelegatorTest {
@@ -18,7 +20,9 @@ public class AsyncSearchTaskDelegatorTest {
 
   @Test
   public void responseDelays() {
-    final Set<SearchCapability> caps = Set.of(SearchCapability.MOCK_0, SearchCapability.MOCK_01, SearchCapability.MOCK_05);
+    final Set<CapabilityKey> caps = Set.of(CapabilityKey.of(SearchCapability.MOCK_0, SearchRegion.NL),
+        CapabilityKey.of(SearchCapability.MOCK_01, SearchRegion.NL),
+        CapabilityKey.of(SearchCapability.MOCK_05, SearchRegion.NL));
     final SearchResult result1 = delegator.retrieveSearchResultsAsync("test", caps);
 
     assertFalse(result1.isComplete(), "Result should not be complete at this point.");
@@ -45,7 +49,7 @@ public class AsyncSearchTaskDelegatorTest {
 
   @Test
   public void responseCancellation() {
-    final Set<SearchCapability> caps = Set.of(SearchCapability.MOCK_01);
+    final Set<CapabilityKey> caps = Set.of(CapabilityKey.of(SearchCapability.MOCK_01, SearchRegion.NL));
     final SearchResult result1 = delegator.retrieveSearchResultsAsync("test", caps);
 
     assertFalse(result1.isComplete(), "Result should not be complete at this point.");
@@ -72,7 +76,7 @@ public class AsyncSearchTaskDelegatorTest {
 
   @Test
   public void testReceptorNonNull() {
-    final Set<SearchCapability> caps = Set.of(SearchCapability.RECEPTOR);
+    final Set<CapabilityKey> caps = Set.of(CapabilityKey.of(SearchCapability.RECEPTOR, SearchRegion.NL));
     final SearchResult result1 = delegator.retrieveSearchResultsAsync("123123", caps);
 
     try {
@@ -85,7 +89,7 @@ public class AsyncSearchTaskDelegatorTest {
 
   @Test
   public void testReceptorNull() {
-    final Set<SearchCapability> caps = Set.of(SearchCapability.RECEPTOR);
+    final Set<CapabilityKey> caps = Set.of(CapabilityKey.of(SearchCapability.RECEPTOR, SearchRegion.NL));
 
     final SearchResult res = delegator.retrieveSearchResultsAsync("nothing", caps);
 

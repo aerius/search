@@ -1,9 +1,13 @@
 package nl.aerius.search.tasks;
 
+import java.util.AbstractMap;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
 
@@ -33,23 +37,29 @@ public class TaskFactory {
 
   @Autowired private Set<SearchTaskService> scannedTasks;
 
-  private Map<SearchCapability, SearchTaskService> tasks;
+  private Map<CapabilityKey, List<SearchTaskService>> tasks;
 
-  public SearchTaskService getTask(final SearchCapability capability) {
+  public List<SearchTaskService> getTask(final CapabilityKey capability) {
     return Optional.ofNullable(tasks.get(capability))
         .orElseThrow(() -> new RuntimeException("No task for capability: " + capability));
   }
 
-  public boolean hasCapability(final SearchCapability capability) {
+  public boolean hasCapability(final CapabilityKey capability) {
     return tasks.containsKey(capability);
   }
 
   @PostConstruct
   public void onFactoryConstructed() {
     // Map all scanned task services by each respective capability it fulfills.
-    tasks = scannedTasks.stream()
+    // TODO Make this map support multiple services for the same CapabilityKey
+    final Map<List<CapabilityKey>, SearchTaskService> unflattened = scannedTasks.stream()
         .filter(v -> hasAnnotationOnClass(v.getClass()))
         .collect(Collectors.toMap(v -> extractCapabilityFromClass(v.getClass()), v -> v));
+
+    tasks = unflattened.entrySet().stream()
+        .flatMap(e -> e.getKey().stream()
+            .map(k -> new AbstractMap.SimpleImmutableEntry<CapabilityKey, SearchTaskService>(k, e.getValue())))
+        .collect(Collectors.toMap(v -> v.getKey(), v -> Arrays.asList(v.getValue())));
   }
 
   private static boolean hasAnnotationOnClass(final Class<? extends SearchTaskService> clazz) {
@@ -63,12 +73,15 @@ public class TaskFactory {
     return false;
   }
 
-  private static SearchCapability extractCapabilityFromClass(final Class<? extends SearchTaskService> clazz) {
+  private static List<CapabilityKey> extractCapabilityFromClass(final Class<? extends SearchTaskService> clazz) {
     final ImplementsCapability ann = clazz.getAnnotation(ImplementsCapability.class);
     final SearchCapability value = ann.value();
+    final SearchRegion[] regions = ann.region().length == 0 ? SearchRegion.values() : ann.region();
 
     LOG.info("Initializing task {} for capability {}", clazz.getSimpleName(), value);
 
-    return value;
+    return Stream.of(regions)
+        .map(region -> CapabilityKey.of(value, region))
+        .collect(Collectors.toList());
   }
 }

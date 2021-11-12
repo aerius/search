@@ -13,8 +13,8 @@ import org.springframework.stereotype.Component;
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-import nl.aerius.search.domain.SearchCapability;
 import nl.aerius.search.domain.SearchSuggestion;
+import nl.aerius.search.tasks.CapabilityKey;
 import nl.aerius.search.tasks.SearchTaskService;
 import nl.aerius.search.tasks.TaskFactory;
 import nl.aerius.search.tasks.TaskUtils;
@@ -31,12 +31,12 @@ public class BlockingSearchTaskDelegator {
 
   @Autowired TaskFactory taskFactory;
 
-  public List<SearchSuggestion> retrieveSearchResults(final String query, final Set<SearchCapability> capabilities) {
-    final Map<SearchCapability, SearchTaskService> tasks = TaskUtils.findTaskServices(taskFactory, capabilities, LOG);
+  public List<SearchSuggestion> retrieveSearchResults(final String query, final Set<CapabilityKey> capabilities) {
+    final Map<CapabilityKey, SearchTaskService> tasks = TaskUtils.findTaskServices(taskFactory, capabilities, LOG);
 
     if (LOG.isDebugEnabled()) {
       LOG.debug("Delegating search query [{}] to {} tasks ({})", query, tasks.size(), tasks.keySet()
-          .stream().map(v -> v.name())
+          .stream().map(v -> v.toString())
           .collect(Collectors.joining(",")));
     }
 

@@ -31,16 +31,17 @@ public class SearchViewController {
   }
 
   @GetMapping(value = { "/results" })
-  public String search(final String query, @RequestParam final List<String> capabilities, final Model model) {
+  public String search(final String query, @RequestParam final List<String> capabilities, final String region, final Model model) {
     final long timeStart = System.currentTimeMillis();
 
-    final List<SearchSuggestion> results = delegator.retrieveSearchResults(query, TaskUtils.parseCapabilities(capabilities));
+    final List<SearchSuggestion> results = delegator.retrieveSearchResults(query, TaskUtils.parseCapabilities(capabilities, region));
 
     final long timeEnd = System.currentTimeMillis();
 
     model.addAttribute("duration", timeEnd - timeStart);
 
     model.addAttribute("query", query);
+    model.addAttribute("region", region);
     model.addAttribute("capabilities", capabilities.stream()
         .collect(Collectors.joining(", ")));
 

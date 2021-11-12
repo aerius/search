@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import nl.aerius.search.domain.SearchCapability;
 import nl.aerius.search.domain.SearchSuggestion;
 import nl.aerius.search.tasks.async.AsyncSearchTaskDelegator;
 import nl.aerius.search.tasks.async.SearchResult;
@@ -24,12 +23,12 @@ public class SearchTaskDelegatorImpl implements SearchTaskDelegator {
   @Autowired AsyncSearchTaskDelegator asyncDelegator;
 
   @Override
-  public List<SearchSuggestion> retrieveSearchResults(final String query, final Set<SearchCapability> capabilities) {
+  public List<SearchSuggestion> retrieveSearchResults(final String query, final Set<CapabilityKey> capabilities) {
     return blockingDelegator.retrieveSearchResults(query, capabilities);
   }
 
   @Override
-  public SearchResult retrieveSearchResultsAsync(final String query, final Set<SearchCapability> capabilities) {
+  public SearchResult retrieveSearchResultsAsync(final String query, final Set<CapabilityKey> capabilities) {
     return asyncDelegator.retrieveSearchResultsAsync(query, capabilities);
   }
 
