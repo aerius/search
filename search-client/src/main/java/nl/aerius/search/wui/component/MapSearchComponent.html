@@ -15,6 +15,13 @@
       class="loading">{{ i18n.searchTextLoading() }}</div>
   </horizontal-collapse>
 
+  <vertical-collapse>
+    <div v-if="hasQuery && !searching && !hasResults()"
+      class="noResultsContainer">
+      <div class="title">{{ i18n.searchTextNoResults() }}</div>
+      <div class="txt">{{ i18n.searchTextNoResultsExplainer() }}</div>
+    </div>
+  </vertical-collapse>
   <div class="resultsContainer"
     ref="resultsContainer"
     :style='map("maxHeight", maxHeight)'
@@ -46,11 +53,6 @@
         </vertical-collapse-group>
       </div>
     </vertical-collapse-group>
-  </div>
-  <div v-if="hasQuery && !searching && !hasResults()"
-    class="noResultsContainer">
-    <div class="title">{{ i18n.searchTextNoResults() }}</div>
-    <div class="item">{{ i18n.searchTextNoResultsExplainer() }}</div>
   </div>
 </div>
 
