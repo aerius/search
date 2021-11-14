@@ -8,13 +8,21 @@ public final class SearchSuggestionBuilder {
 
     suggestion.setDescription(txt);
     suggestion.setId(String.valueOf(txt.hashCode()));
+    suggestion.setScore(1);
+    suggestion.setType(SearchSuggestionType.TEXT);
 
     return suggestion;
   }
 
-  public static SearchSuggestion create(final String txt, final String group) {
+  public static SearchSuggestion create(final String txt, final double score) {
     final SearchSuggestion sug = create(txt);
-    sug.setGroup(group);
+    sug.setScore(score);
+    return sug;
+  }
+
+  public static SearchSuggestion create(final String txt, final double score, final SearchSuggestionType type) {
+    final SearchSuggestion sug = create(txt, score);
+    sug.setType(type);
     return sug;
   }
 }

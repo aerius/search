@@ -27,7 +27,7 @@ public abstract class MockSearchTask implements SearchTaskService {
     LOG.debug("Retrieving mock search result for query [{}] at delay of {}ms", query, delay);
 
     return Single.just(SearchResultBuilder
-        .of(SearchSuggestionBuilder.create(String.format(TEXT, query, delay))))
+        .of(SearchSuggestionBuilder.create(String.format(TEXT, query, delay), 1)))
         .delay(delay, TimeUnit.MILLISECONDS)
         .doOnDispose(() -> {
           // Handle cancellation

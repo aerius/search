@@ -10,4 +10,8 @@ public interface SearchMessages extends Messages {
   String searchInputFieldPlaceholder();
 
   String searchTextLoading();
+
+  String searchTextNoResults();
+
+  String searchTextNoResultsExplainer();
 }

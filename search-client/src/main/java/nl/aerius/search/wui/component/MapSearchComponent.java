@@ -1,7 +1,11 @@
 package nl.aerius.search.wui.component;
 
 import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -47,7 +51,7 @@ public class MapSearchComponent implements IsVueComponent, HasCreated, HasMounte
   @Prop boolean auto;
 
   @Prop EventBus eventBus;
-  
+
   @Data SearchMessages i18n = SearchM.messages();
 
   @Data String maxHeight;
@@ -62,9 +66,46 @@ public class MapSearchComponent implements IsVueComponent, HasCreated, HasMounte
 
   private HandlerRegistration resizeHandler;
 
+  @Computed
+  public Map<String, List<SearchSuggestion>> getResults() {
+    final Map<String, List<SearchSuggestion>> res = context.getResults().values().stream()
+        .collect(Collectors.groupingBy(v -> v.type, () -> new LinkedHashMap<>(), Collectors.toList()));
+
+    res.values().forEach(v -> {
+      v.sort((o1, o2) -> Double.compare(o1.score, o2.score));
+    });
+
+    return res;
+  }
+
+  @JsMethod
+  public String highlight(final String plain) {
+    String result = plain;
+    final String[] split = search.split(" ");
+    for (int i = 0; i < split.length; i++) {
+      final String sample = split[i];
+      if (sample.isEmpty()) {
+        continue;
+      }
+
+      result = boldenText(result, sample);
+    }
+    return result;
+  }
+
+  public static native String boldenText(String txt, String query) /*-{
+    var reg = new RegExp('(' + query + ')', 'gi');
+    return txt.replace(reg, '<b>$1</b>');
+  }-*/;
+
   @JsMethod
   public String getAriaLabel(final SearchSuggestion sug, final String group, final int idx) {
     return group + " result " + (idx + 1) + ":" + sug.description;
+  }
+
+  @Computed("hasQuery")
+  public boolean hasQuery() {
+    return search != null && !search.isEmpty();
   }
 
   @PropDefault("auto")

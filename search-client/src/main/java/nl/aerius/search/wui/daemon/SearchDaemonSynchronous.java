@@ -1,23 +1,20 @@
 package nl.aerius.search.wui.daemon;
 
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
-import com.axellience.vuegwt.core.annotations.component.Data;
 import com.google.gwt.core.client.GWT;
 import com.google.web.bindery.event.shared.EventBus;
 import com.google.web.bindery.event.shared.binder.EventBinder;
 import com.google.web.bindery.event.shared.binder.EventHandler;
 
-import nl.aerius.search.domain.SearchCapability;
 import nl.aerius.search.wui.command.SearchTextCommand;
+import nl.aerius.search.wui.config.SearchConfiguration;
 import nl.aerius.search.wui.context.SearchContext;
 import nl.aerius.search.wui.domain.SearchSuggestion;
 import nl.aerius.search.wui.service.SearchServiceAsync;
-import nl.aerius.search.wui.util.SearchUtils;
 import nl.aerius.wui.dev.GWTProd;
 import nl.aerius.wui.event.BasicEventComponent;
 import nl.aerius.wui.future.AppAsyncCallback;
@@ -32,10 +29,8 @@ public class SearchDaemonSynchronous extends BasicEventComponent {
 
   interface SearchDaemonSynchronousEventBinder extends EventBinder<SearchDaemonSynchronous> {}
 
-  private static final Set<SearchCapability> CAPS = SearchUtils.of(SearchCapability.MOCK_0, SearchCapability.MOCK_1,
-      SearchCapability.RECEPTOR, SearchCapability.MOCK_GROUP_0, SearchCapability.MOCK_GROUP_1);
-
-  @Inject @Data SearchContext context;
+  @Inject SearchContext context;
+  @Inject SearchConfiguration config;
 
   @Inject SearchServiceAsync service;
 
@@ -53,7 +48,7 @@ public class SearchDaemonSynchronous extends BasicEventComponent {
     context.beginSearch();
     final int count = counter.incrementAndGet();
 
-    service.retrieveSearchResults(query, CAPS, "nl", AppAsyncCallback.create(v -> {
+    service.retrieveSearchResults(query, config.getSearchCapabilities(), config.getSearchRegion(), AppAsyncCallback.create(v -> {
       if (!countMatches(count)) {
         return;
       }

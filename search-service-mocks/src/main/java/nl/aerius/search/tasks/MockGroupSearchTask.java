@@ -9,6 +9,7 @@ import io.reactivex.rxjava3.core.Single;
 
 import nl.aerius.search.domain.SearchResultBuilder;
 import nl.aerius.search.domain.SearchSuggestionBuilder;
+import nl.aerius.search.domain.SearchSuggestionType;
 import nl.aerius.search.domain.SearchTaskResult;
 
 public abstract class MockGroupSearchTask implements SearchTaskService {
@@ -31,8 +32,8 @@ public abstract class MockGroupSearchTask implements SearchTaskService {
     LOG.debug("Retrieving mock search result for query [{}] at delay of {}ms", query, delay);
 
     return Single.just(SearchResultBuilder
-        .of(SearchSuggestionBuilder.create(String.format(TEXT_FOO, query, delay), FOO),
-            SearchSuggestionBuilder.create(String.format(TEXT_BAR, query, delay), BAR)))
+        .of(SearchSuggestionBuilder.create(String.format(TEXT_FOO, query, delay), 0.1, SearchSuggestionType.ADDRESS),
+            SearchSuggestionBuilder.create(String.format(TEXT_BAR, query, delay), 0.1, SearchSuggestionType.MUNICIPALITY)))
         .delay(delay, TimeUnit.MILLISECONDS)
         .doOnDispose(() -> {
           // Handle cancellation

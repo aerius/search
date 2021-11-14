@@ -22,7 +22,7 @@
     aria-label="search results"
     role="tree">
     <vertical-collapse-group>
-      <div v-for="Entry entry in context.getResults().entrySet()"
+      <div v-for="Entry entry in results.entrySet()"
         :key="getEntryGroup(entry)"
         class="group"
         role="group">
@@ -35,17 +35,22 @@
         <vertical-collapse-group
           class="results">
           <button v-for="(SearchSuggestion result, idx) in (Collection) entry.getValue()"
-            :key="result.description"
+            :key="result.id"
             class="itemContainer"
             role="listitem"
             tabindex="0"
             :aria-label="getAriaLabel(result, getEntryGroup(entry), idx)"
             @click="selectSuggestion(result)">
-            <div class="item">{{ result.description }}</div>
+            <div class="item" v-html="highlight(result.description)"></div>
           </button>
         </vertical-collapse-group>
       </div>
     </vertical-collapse-group>
+  </div>
+  <div v-if="hasQuery && !searching && !hasResults()"
+    class="noResultsContainer">
+    <div class="title">{{ i18n.searchTextNoResults() }}</div>
+    <div class="item">{{ i18n.searchTextNoResultsExplainer() }}</div>
   </div>
 </div>
 
@@ -55,10 +60,10 @@
 
 /** Override styles **/
 .list-enter-active {
-  transition: background 0.1s ease-out, height .25s ease-out .3s;
+  transition: background 0.1s ease-out, height .2s ease-out;
 }
 .list-leave-active {
-  transition: background 0.1s ease-out, height .25s ease-out .1s;
+  transition: background 0.1s ease-out, height .1s ease-out;
 }
 
 .results {
@@ -84,11 +89,25 @@
   padding: 4px 10px;
   width: 100%;
   z-index: 1;
+  height: var(--height);
 }
 
-.resultsContainer {
+.noResultsContainer {
+  .title {
+    background: #f5f5f5;
+    padding: var(--half-spacer) var(--spacer);
+  }
+
+  .txt {
+    line-height: 16px;
+    padding: var(--half-spacer) var(--spacer);
+    font-style: italic;
+  }
+}
+
+.resultsContainer, .noResultsContainer {
   background: white;
-  top: 35px;
+  top: var(--height);
   
   box-sizing: border-box;
   

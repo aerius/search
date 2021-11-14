@@ -21,7 +21,12 @@ public final class TaskUtils {
   /**
    * TODO Create another comparator, based on weight or some other value
    */
-  private static final Comparator<SearchSuggestion> COMPARATOR = (o1, o2) -> o1.getDescription().compareTo(o2.getDescription());
+  private static final Comparator<SearchSuggestion> COMPARATOR = Comparator
+      .<SearchSuggestion>comparingDouble(sug -> sug.getScore())
+      .reversed()
+      .thenComparing((sug) -> sug.getDescription());
+
+  // (o1, o2) -> Double.compare(o1.getScore(), o2.getScore());
 
   private TaskUtils() {}
 
