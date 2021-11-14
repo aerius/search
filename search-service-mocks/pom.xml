@@ -5,16 +5,12 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <!--
-      NOTE: 2.4.6-2.5.0 (at time of writing) breaks ./config/* configurations
-      https://www.gitmemory.com/issue/spring-projects/spring-boot/26627/845829865
-    -->
-    <version>2.4.5</version>
+    <version>2.5.6</version>
     <relativePath /> <!-- lookup parent from repository -->
   </parent>
   <groupId>nl.aerius</groupId>
   <artifactId>search-service-mocks</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.1-SNAPSHOT</version>
   <name>AERIUS Search :: Service Mocks</name>
 
   <dependencies>

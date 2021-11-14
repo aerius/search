@@ -8,6 +8,10 @@ import jsinterop.annotations.JsType;
 public class SearchSuggestion {
   @JsProperty public String id;
 
-  @JsProperty public String group;
+  @JsProperty public String type;
   @JsProperty public String description;
+
+  @JsProperty public String centroid;
+
+  @JsProperty public double score;
 }

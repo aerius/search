@@ -1,26 +1,22 @@
 package nl.aerius.search.wui.daemon;
 
-import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
-import com.axellience.vuegwt.core.annotations.component.Data;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
 import com.google.web.bindery.event.shared.binder.EventBinder;
 import com.google.web.bindery.event.shared.binder.EventHandler;
 
-import nl.aerius.search.domain.SearchCapability;
 import nl.aerius.search.wui.command.SearchTextCommand;
+import nl.aerius.search.wui.config.SearchConfiguration;
 import nl.aerius.search.wui.context.SearchContext;
 import nl.aerius.search.wui.domain.SearchResult;
-import nl.aerius.search.wui.domain.SearchSuggestion;
 import nl.aerius.search.wui.service.SearchServiceAsync;
-import nl.aerius.search.wui.util.SearchUtils;
 import nl.aerius.wui.dev.GWTProd;
 import nl.aerius.wui.event.BasicEventComponent;
 import nl.aerius.wui.future.AppAsyncCallback;
@@ -28,19 +24,37 @@ import nl.aerius.wui.util.GWTAtomicInteger;
 import nl.aerius.wui.util.SchedulerUtil;
 
 /**
- * Asynchronous daemon that takes advantage of the search service's async option
+ * Asynchronous daemon that takes advantage of the search service's async
+ * option.
+ *
+ * Design goals:
+ *
+ * <pre>
+ * - Retrieve search results asynchronously
+ * - Maintain 2 types of results:
+ *   - The most actual results
+ *   - 'old' results (i.e. results that come in when a new search query is already underway) 
+ * - Discard 'old' results only when the most recent search query completes
+ * </pre>
+ *
+ * Usually, it takes at least 2 service calls to complete a search query; the
+ * initial request returns partial results, the second (ideally) the complete
+ * set. Those two calls take a good part of a second (300ms or so) to complete,
+ * so a user, when typing, will likely have struck another stroke within that
+ * time. As such, 'old' results will constantly come in as the user is typing.
+ * In order to provide a good user experience, these old results should not be
+ * discarded, but displayed in the interim of the user starting and finishing
+ * his query.
  */
 public class SearchDaemonAsynchronous extends BasicEventComponent {
   private static final SearchDaemonAsynchronousEventBinder EVENT_BINDER = GWT.create(SearchDaemonAsynchronousEventBinder.class);
 
   interface SearchDaemonAsynchronousEventBinder extends EventBinder<SearchDaemonAsynchronous> {}
 
-  private static final Set<SearchCapability> CAPS = SearchUtils.of(SearchCapability.MOCK_0, SearchCapability.MOCK_1,
-      SearchCapability.RECEPTOR, SearchCapability.MOCK_GROUP_0, SearchCapability.MOCK_GROUP_1);
-
   private static final int DELAY = 250;
 
-  @Inject @Data SearchContext context;
+  @Inject SearchContext context;
+  @Inject SearchConfiguration config;
 
   @Inject SearchServiceAsync service;
 
@@ -48,12 +62,18 @@ public class SearchDaemonAsynchronous extends BasicEventComponent {
 
   private String currentSearchId = null;
 
-  private final Function<Integer, AsyncCallback<SearchResult>> callbackFactory = count -> AppAsyncCallback.create(v -> {
+  private final Function<Integer, AsyncCallback<SearchResult>> callbackFactory = count -> AppAsyncCallback.create(result -> {
     if (!countMatches(count)) {
+      processOldResults(result);
+
+      // And try once more if there are no results
+      if (result.results.length == 0) {
+        fetchOldResults(result.uuid);
+      }
       return;
     }
 
-    processResults(v, count);
+    processResults(result, count);
   }, e -> {
     if (!countMatches(count)) {
       return;
@@ -74,7 +94,20 @@ public class SearchDaemonAsynchronous extends BasicEventComponent {
     context.beginSearch();
     final int count = counter.incrementAndGet();
 
-    service.startSearchQuery(query, CAPS, "nl", currentSearchId, callbackFactory.apply(count));
+    service.startSearchQuery(query, config.getSearchCapabilities(), config.getSearchRegion(), null, callbackFactory.apply(count));
+  }
+
+  /**
+   * Process old results, by actualizing the cache result set (but not the
+   * 'actual' result set).
+   */
+  private void processOldResults(final SearchResult result) {
+    if (result.complete) {
+      context.clearCache();
+    }
+
+    context.setCacheResults(Stream.of(result.results)
+        .collect(Collectors.toList()));
   }
 
   private void processResults(final SearchResult result, final Integer count) {
@@ -85,18 +118,25 @@ public class SearchDaemonAsynchronous extends BasicEventComponent {
     if (result.complete) {
       context.completeSearch();
     } else {
-      fetchSearchResults(count);
+      fetchSearchResults(result.uuid, count);
     }
   }
 
-  private void fetchSearchResults(final Integer count) {
+  private void fetchSearchResults(final String uuid, final Integer count) {
     SchedulerUtil.delay(() -> {
       if (!countMatches(count)) {
+        fetchOldResults(uuid);
         return;
       }
 
       service.retrieveSearchResults(currentSearchId, callbackFactory.apply(count));
     }, DELAY);
+  }
+
+  private void fetchOldResults(final String uuid) {
+    service.retrieveSearchResults(uuid, AppAsyncCallback.create(stales -> {
+      processOldResults(stales);
+    }));
   }
 
   private void clear() {

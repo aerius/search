@@ -28,10 +28,14 @@
     <div class="table">
       <div class="column header idx">#</div>
       <div class="column header">Result</div>
+      <div class="column header">Type</div>
+      <div class="column header">Score</div>
     
       <th:block th:each="result,iter : ${results}">
         <div class="column idx" th:text="${iter.index + 1}" />
         <div class="column name" th:text="${result.description}" />
+        <div class="column name" th:text="${result.type}" />
+        <div class="column name" th:text="${result.score}" />
       </th:block>
     </div>
     

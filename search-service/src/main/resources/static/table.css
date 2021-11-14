@@ -1,6 +1,6 @@
 .table {
   display: grid;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: auto 1fr auto auto;
   grid-auto-rows: auto;
   border: 1px solid #555555;
 }
