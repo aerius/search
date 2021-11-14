@@ -14,4 +14,6 @@ public interface SearchMessages extends Messages {
   String searchTextNoResults();
 
   String searchTextNoResultsExplainer();
+
+  String searchSuggestionTypeName(@Select String type);
 }

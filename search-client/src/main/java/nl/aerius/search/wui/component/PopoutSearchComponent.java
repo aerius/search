@@ -1,6 +1,9 @@
 package nl.aerius.search.wui.component;
 
+import javax.inject.Inject;
+
 import com.axellience.vuegwt.core.annotations.component.Component;
+import com.axellience.vuegwt.core.annotations.component.Computed;
 import com.axellience.vuegwt.core.annotations.component.Data;
 import com.axellience.vuegwt.core.annotations.component.Emit;
 import com.axellience.vuegwt.core.annotations.component.Prop;
@@ -12,6 +15,7 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import jsinterop.annotations.JsMethod;
 
+import nl.aerius.search.wui.context.SearchContext;
 import nl.aerius.search.wui.domain.SearchSuggestion;
 import nl.aerius.search.wui.i18n.SearchM;
 import nl.aerius.search.wui.i18n.SearchMessages;
@@ -34,18 +38,18 @@ public class PopoutSearchComponent implements IsVueComponent {
   @Data SearchMessages i18n = SearchM.messages();
   @Data SearchImageResources img = SearchResources.images();
 
-  @Data boolean searchShowing = false;
+  @Inject @Data SearchContext context;
 
   @Ref MapSearchComponent input;
 
-  @JsMethod
+  @Computed("isSearchShowing")
   public boolean isSearchShowing() {
-    return searchShowing;
+    return context.isSearchShowing();
   }
 
   @JsMethod
   public void toggle() {
-    searchShowing = !searchShowing;
+    context.toggleSearchShowing();
   }
 
   @PropDefault("auto")
@@ -53,7 +57,7 @@ public class PopoutSearchComponent implements IsVueComponent {
     return true;
   }
 
-  @Watch("searchShowing")
+  @Watch("isSearchShowing()")
   public void onSearchShowingChange(final boolean neww) {
     if (neww) {
       input.focus();

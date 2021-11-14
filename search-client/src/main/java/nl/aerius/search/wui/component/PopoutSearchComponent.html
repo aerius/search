@@ -2,7 +2,7 @@
   <slot>
     <button class="searchButton"
       @click="toggle()"
-      :class='map("active", isSearchShowing())'
+      :class='map("active", isSearchShowing)'
       v-vector="img.searchButton()"
       aria-label="i18n.searchButtonTitle()">
     </button>
@@ -11,17 +11,17 @@
   <!-- While this overlay works, it does not always work well due to parent z-indexing
   <!-- Disable for now, and make user deselect search content themselves.
   <div class="overlay"
-    @click.stop="searchShowing = false"
-    :class='map("active", searchShowing)'></div>
+    @click.stop="disable"
+    :class='map("active", isSearchShowing))'></div>
    -->
 
   <horizontal-collapse :seek="(boolean) false">
-    <map-search v-show="searchShowing"
+    <map-search v-show="isSearchShowing"
       ref="input"
       :eventBus="eventBus"
       class="searchPopout"
       :auto="auto"
-      @select-suggestion="selectSuggestion((SearchSuggestion) $event)"></map-search>
+      @select-suggestion="selectSuggestion((SearchSuggestion) $event)" />
   </horizontal-collapse>
 </div>
 

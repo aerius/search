@@ -16,6 +16,7 @@ public class SearchContext {
   private final @JsProperty Map<String, SearchSuggestion> cache = new HashMap<>();
   private final @JsProperty Map<String, SearchSuggestion> results = new HashMap<>();
 
+  private boolean searchShowing = false;
   private boolean searching = false;
 
   public Map<String, SearchSuggestion> getResults() {
@@ -67,5 +68,17 @@ public class SearchContext {
 
   public void clearCache() {
     cache.clear();
+  }
+
+  public boolean isSearchShowing() {
+    return searchShowing;
+  }
+
+  public void setSearchShowing(final boolean searchShowing) {
+    this.searchShowing = searchShowing;
+  }
+
+  public void toggleSearchShowing() {
+    setSearchShowing(!isSearchShowing());
   }
 }

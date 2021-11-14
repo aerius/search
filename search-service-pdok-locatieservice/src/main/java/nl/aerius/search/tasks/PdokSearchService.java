@@ -59,8 +59,11 @@ public class PdokSearchService implements SearchTaskService {
     final String displayText = jsonObject.getString("weergavenaam");
     final double score = jsonObject.getDouble("score");
     final SearchSuggestionType type = determineType(jsonObject.getString("type"));
+    final String wktCentroid = jsonObject.getString("centroide_rd");
 
-    final SearchSuggestion suggestion = SearchSuggestionBuilder.create(displayText, score, type);
+    LOG.info("Centroid: {}", wktCentroid);
+
+    final SearchSuggestion suggestion = SearchSuggestionBuilder.create(displayText, score, type, wktCentroid);
     suggestion.setId(id);
     return suggestion;
   }

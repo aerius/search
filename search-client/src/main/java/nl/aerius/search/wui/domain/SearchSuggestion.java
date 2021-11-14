@@ -11,5 +11,7 @@ public class SearchSuggestion {
   @JsProperty public String type;
   @JsProperty public String description;
 
+  @JsProperty public String centroid;
+
   @JsProperty public double score;
 }

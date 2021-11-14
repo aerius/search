@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -48,6 +49,8 @@ import nl.aerius.wui.vue.transition.VerticalCollapseGroup;
     HorizontalCollapse.class
 })
 public class MapSearchComponent implements IsVueComponent, HasCreated, HasMounted, HasDestroyed {
+  private static final String FALLBACK_SEARCH_TYPE = "TEXT";
+
   @Prop boolean auto;
 
   @Prop EventBus eventBus;
@@ -122,7 +125,9 @@ public class MapSearchComponent implements IsVueComponent, HasCreated, HasMounte
   @JsMethod
   @SuppressWarnings("rawtypes")
   public String getEntryGroup(final Entry entry) {
-    return entry.getKey() == null ? "-" : String.valueOf(entry.getKey());
+    return i18n.searchSuggestionTypeName(Optional.ofNullable(entry.getKey())
+        .map(v -> String.valueOf(v))
+        .orElse(FALLBACK_SEARCH_TYPE));
   }
 
   @Computed

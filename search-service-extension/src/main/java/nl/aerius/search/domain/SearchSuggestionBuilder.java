@@ -25,4 +25,10 @@ public final class SearchSuggestionBuilder {
     sug.setType(type);
     return sug;
   }
+
+  public static SearchSuggestion create(final String txt, final double score, final SearchSuggestionType type, final String wktCentroid) {
+    final SearchSuggestion sug = create(txt, score, type);
+    sug.setCentroid(wktCentroid);
+    return sug;
+  }
 }
