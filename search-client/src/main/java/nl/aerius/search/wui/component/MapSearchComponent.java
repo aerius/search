@@ -91,6 +91,11 @@ public class MapSearchComponent implements IsVueComponent, HasCreated, HasMounte
         continue;
       }
 
+      // Exclude 'b' because it will match <b>
+      if ("b".equals(sample.toLowerCase())) {
+        continue;
+      }
+
       result = boldenText(result, sample);
     }
     return result;
