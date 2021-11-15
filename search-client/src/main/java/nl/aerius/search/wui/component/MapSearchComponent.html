@@ -23,7 +23,7 @@
     </div>
   </vertical-collapse>
   <div class="resultsContainer"
-    v-if="hasQuery"
+    v-show="hasQuery"
     ref="resultsContainer"
     :style='map("maxHeight", maxHeight)'
     :class='map("scrolling", scrolling)'
