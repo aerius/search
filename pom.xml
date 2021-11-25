@@ -1,35 +1,34 @@
 <!--
 
-  Copyright the State of the Netherlands
+    Copyright the State of the Netherlands
 
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU Affero General Public License as published by
-  the Free Software Foundation, either version 3 of the License, or
-  (at your option) any later version.
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU Affero General Public License for more details.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
 
-  You should have received a copy of the GNU Affero General Public License
-  along with this program. If not, see http://www.gnu.org/licenses/.
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see http://www.gnu.org/licenses/.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>nl.aerius</groupId>
   <artifactId>search-parent</artifactId>
   <version>1.1-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>AERIUS Search :: Parent</name>
+  <name>AERIUS Search</name>
   <url>https://www.aerius.nl</url>
 
   <organization>
-    <name>National Institute for Public Health and the Environment of the Netherlands</name>
-    <url>https://rivm.nl</url>
+    <name>State of the Netherlands</name>
+    <url>https://www.government.nl</url>
   </organization>
 
   <licenses>
@@ -38,6 +37,12 @@
       <url>https://www.gnu.org/licenses/agpl-3.0.txt</url>
     </license>
   </licenses>
+
+  <scm>
+    <connection>scm:git:ssh://git@github.com/aerius/search.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/aerius/search.git</developerConnection>
+    <url>https://www.github.com/aerius/search</url>
+  </scm>
 
   <distributionManagement>
     <repository>
@@ -50,10 +55,42 @@
     </snapshotRepository>
   </distributionManagement>
 
-  <scm>
-    <connection>scm:git:ssh://git@github.com:aerius/search.git</connection>
-    <developerConnection>scm:git:ssh://git@github.com:aerius/search.git</developerConnection>
-  </scm>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    <maven.compiler.source>11</maven.compiler.source>
+    <maven.compiler.target>11</maven.compiler.target>
+
+    <aerius.gwt-client-common.version>1.2.0</aerius.gwt-client-common.version>
+    <aerius.gwt-client-common-json.version>1.2.0</aerius.gwt-client-common-json.version>
+    <maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
+
+    <aerius-tools.version>1.1.1</aerius-tools.version>
+    <spotless.version>2.5.0</spotless.version>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>nl.aerius</groupId>
+        <artifactId>gwt-client-vue</artifactId>
+        <version>${aerius.gwt-client-common.version}</version>
+        <type>gwt-lib</type>
+      </dependency>
+      <dependency>
+        <groupId>nl.aerius</groupId>
+        <artifactId>gwt-client-common</artifactId>
+        <version>${aerius.gwt-client-common.version}</version>
+        <type>gwt-lib</type>
+      </dependency>
+      <dependency>
+        <groupId>nl.aerius</groupId>
+        <artifactId>gwt-client-common-json</artifactId>
+        <version>${aerius.gwt-client-common-json.version}</version>
+        <type>gwt-lib</type>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
   <repositories>
     <repository>
@@ -75,45 +112,11 @@
     </pluginRepository>
   </pluginRepositories>
 
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
-    <maven.compiler.source>11</maven.compiler.source>
-    <maven.compiler.target>11</maven.compiler.target>
-
-    <gwt-client-common.version>1.2-SNAPSHOT</gwt-client-common.version>
-    <common-json.version>1.2-SNAPSHOT</common-json.version>
-
-    <maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
-  </properties>
-
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>nl.aerius</groupId>
-        <artifactId>gwt-client-vue</artifactId>
-        <version>${gwt-client-common.version}</version>
-        <type>gwt-lib</type>
-      </dependency>
-      <dependency>
-        <groupId>nl.aerius</groupId>
-        <artifactId>gwt-client-common</artifactId>
-        <version>${gwt-client-common.version}</version>
-        <type>gwt-lib</type>
-      </dependency>
-      <dependency>
-        <groupId>nl.aerius</groupId>
-        <artifactId>gwt-client-common-json</artifactId>
-        <version>${common-json.version}</version>
-        <type>gwt-lib</type>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
 
   <build>
     <pluginManagement>
       <plugins>
-	      <plugin>
+        <plugin>
           <artifactId>maven-source-plugin</artifactId>
           <version>3.2.0</version>
         </plugin>
@@ -144,6 +147,55 @@
               <arg>-generateJsInteropExports</arg>
             </compilerArgs>
           </configuration>
+        </plugin>
+
+        <plugin>
+          <groupId>com.diffplug.spotless</groupId>
+          <artifactId>spotless-maven-plugin</artifactId>
+          <version>${spotless.version}</version>
+          <configuration>
+            <formats>
+              <format>
+                <includes>
+                  <include>pom.xml</include>
+                </includes>
+                <licenseHeader>
+                  <file>pom-xml-header.txt</file>
+                  <delimiter>&lt;project</delimiter>
+                </licenseHeader>
+                <trimTrailingWhitespace />
+                <endWithNewline />
+                <eclipseWtp>
+                  <type>XML</type>
+                  <files>
+                    <file>pom-xml.prefs</file>
+                  </files>
+                </eclipseWtp>
+              </format>
+            </formats>
+            <java>
+              <includes>
+                <include>src/*/java/nl/aerius/**/*.java</include>
+              </includes>
+              <licenseHeader>
+                <file>checkstyle-header.txt</file>
+              </licenseHeader>
+              <eclipse>
+                <file>eclipse_code_formatter_profile.xml</file>
+              </eclipse>
+              <importOrder>
+                <file>eclipse.importorder</file>
+              </importOrder>
+            </java>
+          </configuration>
+
+          <dependencies>
+            <dependency>
+              <groupId>nl.aerius</groupId>
+              <artifactId>tools</artifactId>
+              <version>${aerius-tools.version}</version>
+            </dependency>
+          </dependencies>
         </plugin>
       </plugins>
     </pluginManagement>
