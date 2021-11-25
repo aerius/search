@@ -21,7 +21,7 @@
 
   <groupId>nl.aerius</groupId>
   <artifactId>search-parent</artifactId>
-  <version>1.1.0</version>
+  <version>1.2.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>AERIUS Search</name>
   <url>https://www.aerius.nl</url>
@@ -42,7 +42,7 @@
     <connection>scm:git:ssh://git@github.com/aerius/search.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/aerius/search.git</developerConnection>
     <url>https://www.github.com/aerius/search</url>
-    <tag>1.1.0</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <distributionManagement>
