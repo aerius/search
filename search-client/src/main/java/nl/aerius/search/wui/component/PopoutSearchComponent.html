@@ -75,9 +75,9 @@
 
 .searchPopout {
   z-index: 1;
-  position: fixed;
-  width: 400px;
-  right: 80px;
+  position: absolute;
+  width: var(--search-width);
+  right: calc(var(--search-width) - 340px);
   
   div {
     width: 100%;
