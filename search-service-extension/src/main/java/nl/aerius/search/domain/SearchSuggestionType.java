@@ -18,6 +18,7 @@ package nl.aerius.search.domain;
 
 public enum SearchSuggestionType {
   RECEPTOR,
+  ASSESSMENT_AREA,
   COORDINATE,
 
   STREET,
