@@ -18,6 +18,7 @@ package nl.aerius.search.domain;
 
 public enum SearchCapability {
   RECEPTOR,
+  COORDINATE,
 
   /**
    * Addresses, municipalities, postal codes, etc.
