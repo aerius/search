@@ -68,6 +68,13 @@
 
     <aerius-tools.version>1.1.1</aerius-tools.version>
     <spotless.version>2.5.0</spotless.version>
+
+    <sonar.language>java</sonar.language>
+    <sonar.maven.plugin.version>3.7.0.1746</sonar.maven.plugin.version>
+    <sonar.projectKey>aerius_search</sonar.projectKey>
+    <sonar.moduleKey>${project.artifactId}</sonar.moduleKey>
+    <sonar.organization>aerius</sonar.organization>
+    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
   </properties>
 
   <dependencyManagement>
@@ -223,6 +230,21 @@
       <modules>
         <module>search-shared</module>
         <module>search-client</module>
+      </modules>
+    </profile>
+
+    <!-- Profile to perform SonarQube run and collect coverage reports -->
+    <profile>
+      <id>sonar</id>
+      <modules>
+        <module>search-service</module>
+        <module>search-service-extension</module>
+        <module>search-service-mocks</module>
+        <module>search-service-geo</module>
+        <module>search-service-pdok-locatieservice</module>
+        <module>search-shared</module>
+        <module>search-client</module>
+        <module>search-sonar-report</module>
       </modules>
     </profile>
   </profiles>
