@@ -1,3 +1,19 @@
+/*
+ * Copyright the State of the Netherlands
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see http://www.gnu.org/licenses/.
+ */
 package nl.aerius.search.controller;
 
 import java.util.List;
@@ -20,17 +36,17 @@ import nl.aerius.search.tasks.sync.BlockingSearchTaskDelegator;
 public class SearchViewController {
   @Autowired BlockingSearchTaskDelegator delegator;
 
-  @GetMapping(value = { "/" })
+  @GetMapping(value = {"/"})
   public String searchForm(final Model model) {
     return "synchronous-form";
   }
 
-  @GetMapping(value = { "/async" })
+  @GetMapping(value = {"/async"})
   public String searchFormAsync(final Model model) {
     return "asynchronous-form";
   }
 
-  @GetMapping(value = { "/results" })
+  @GetMapping(value = {"/results"})
   public String search(final String query, @RequestParam final List<String> capabilities, final String region, final Model model) {
     final long timeStart = System.currentTimeMillis();
 
