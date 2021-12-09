@@ -25,6 +25,7 @@
   </parent>
 
   <artifactId>search-service-extension</artifactId>
+
   <name>AERIUS Search :: Service extension</name>
   <packaging>gwt-lib</packaging>
 
@@ -72,6 +73,19 @@
         <configuration>
           <moduleName>nl.aerius.SearchShared</moduleName>
         </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>prepare-agent</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

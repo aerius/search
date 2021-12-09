@@ -31,10 +31,10 @@ import nl.aerius.wui.util.InteropRequestUtil;
 
 public class SearchServiceAsyncImpl implements SearchServiceAsync {
   private static final String QUERY_FORMAT = "search?query=:query&capabilities=:capabilities&region=:region";
-  
+
   private static final String QUERY_ASYNC_FORMAT = "search-async?query=:query&capabilities=:capabilities&region=:region";
   private static final String QUERY_ASYNC_CANCEL_FORMAT = "search-async?query=:query&capabilities=:capabilities&region=:region&cancel=:cancel";
-  
+
   private static final String RESULT_FORMAT = "results/:uuid";
 
   @Inject SearchConfiguration cfg;

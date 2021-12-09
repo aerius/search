@@ -1,7 +1,25 @@
+/*
+ * Copyright the State of the Netherlands
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see http://www.gnu.org/licenses/.
+ */
 package nl.aerius.search.tasks.async;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Set;
@@ -19,36 +37,36 @@ public class AsyncSearchTaskDelegatorTest {
   @Autowired AsyncSearchTaskDelegator delegator;
 
   @Test
-  public void responseDelays() {
+  public void testResponseDelays() {
     final Set<CapabilityKey> caps = Set.of(CapabilityKey.of(SearchCapability.MOCK_0, SearchRegion.NL),
         CapabilityKey.of(SearchCapability.MOCK_01, SearchRegion.NL),
         CapabilityKey.of(SearchCapability.MOCK_05, SearchRegion.NL));
     final SearchResult result1 = delegator.retrieveSearchResultsAsync("test", caps);
 
     assertFalse(result1.isComplete(), "Result should not be complete at this point.");
-    assertTrue(result1.getResults() != null, "Results should not be null at this point.");
+    assertNotNull(result1.getResults(), "Results should not be null at this point.");
 
     try {
       Thread.sleep(50);
     } catch (final InterruptedException e) {}
 
-    assertTrue(result1.getResults().size() == 1, "Should have 1 results at this point.");
+    assertEquals(1, result1.getResults().size(), "Should have 1 results at this point.");
 
     try {
       Thread.sleep(100);
     } catch (final InterruptedException e) {}
 
-    assertTrue(result1.getResults().size() == 2, "Should have 2 results at this point.");
+    assertEquals(2, result1.getResults().size(), "Should have 2 results at this point.");
 
     try {
       Thread.sleep(400);
     } catch (final InterruptedException e) {}
 
-    assertTrue(result1.getResults().size() == 3, "Should have 3 results at this point.");
+    assertEquals(3, result1.getResults().size(), "Should have 3 results at this point.");
   }
 
   @Test
-  public void responseCancellation() {
+  public void testResponseCancellation() {
     final Set<CapabilityKey> caps = Set.of(CapabilityKey.of(SearchCapability.MOCK_01, SearchRegion.NL));
     final SearchResult result1 = delegator.retrieveSearchResultsAsync("test", caps);
 
@@ -62,7 +80,7 @@ public class AsyncSearchTaskDelegatorTest {
 
     final SearchResult result2 = delegator.retrieveSearchTask(result1.getUuid());
 
-    assertTrue(result2 == null, "Result should be disposed after cancellation");
+    assertNull(result2, "Result should be disposed after cancellation");
 
     // Sneakishly keep checking results in result1
     try {

@@ -1,5 +1,7 @@
 # AERIUS Search
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=aerius_search&metric=alert_status)](https://sonarcloud.io/dashboard?id=aerius_search)
+
 This project unifies common AERIUS search capabilities in a single API and accompanying client libraries.
 
 ## Search service
