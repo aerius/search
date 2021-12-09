@@ -27,6 +27,7 @@ import nl.aerius.geo.domain.Point;
 import nl.aerius.geo.domain.ReceptorPoint;
 import nl.aerius.geo.util.ReceptorUtil;
 import nl.aerius.search.domain.SearchCapability;
+import nl.aerius.search.domain.SearchRegion;
 import nl.aerius.search.domain.SearchResultBuilder;
 import nl.aerius.search.domain.SearchSuggestionBuilder;
 import nl.aerius.search.domain.SearchSuggestionType;

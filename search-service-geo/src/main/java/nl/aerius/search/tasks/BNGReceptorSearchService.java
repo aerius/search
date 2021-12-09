@@ -26,6 +26,7 @@ import nl.aerius.geo.epsg.EPSGRDNew;
 import nl.aerius.geo.epsg.RDNewReceptorGridSettings;
 import nl.aerius.geo.util.ReceptorUtil;
 import nl.aerius.search.domain.SearchCapability;
+import nl.aerius.search.domain.SearchRegion;
 import nl.aerius.search.domain.SearchResultBuilder;
 import nl.aerius.search.domain.SearchTaskResult;
 

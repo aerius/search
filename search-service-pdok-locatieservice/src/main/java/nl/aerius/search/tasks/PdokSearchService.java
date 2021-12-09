@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import io.reactivex.rxjava3.core.Single;
 
 import nl.aerius.search.domain.SearchCapability;
+import nl.aerius.search.domain.SearchRegion;
 import nl.aerius.search.domain.SearchSuggestion;
 import nl.aerius.search.domain.SearchSuggestionBuilder;
 import nl.aerius.search.domain.SearchSuggestionType;

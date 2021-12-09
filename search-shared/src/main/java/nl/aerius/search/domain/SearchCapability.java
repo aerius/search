@@ -40,8 +40,8 @@ public enum SearchCapability {
 
   public static SearchCapability safeValueOf(final String name) {
     try {
-      return valueOf(name);
-    } catch (final Exception e) {
+      return name == null ? null : valueOf(name);
+    } catch (final IllegalArgumentException e) {
       return null;
     }
   }
