@@ -19,6 +19,7 @@ package nl.aerius.search.tasks;
 import java.util.Objects;
 
 import nl.aerius.search.domain.SearchCapability;
+import nl.aerius.search.domain.SearchRegion;
 
 public class CapabilityKey {
   private SearchCapability capability;

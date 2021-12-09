@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see http://www.gnu.org/licenses/.
  */
-package nl.aerius.search.tasks;
+package nl.aerius.search.domain;
 
 public enum SearchRegion {
   NL,
@@ -22,8 +22,8 @@ public enum SearchRegion {
 
   public static SearchRegion safeValueOf(final String name) {
     try {
-      return valueOf(name);
-    } catch (final Exception e) {
+      return name == null ? null : valueOf(name);
+    } catch (final IllegalArgumentException e) {
       return null;
     }
   }

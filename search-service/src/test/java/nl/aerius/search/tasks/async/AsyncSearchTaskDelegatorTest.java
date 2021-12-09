@@ -29,8 +29,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import nl.aerius.search.domain.SearchCapability;
+import nl.aerius.search.domain.SearchRegion;
 import nl.aerius.search.tasks.CapabilityKey;
-import nl.aerius.search.tasks.SearchRegion;
 
 @SpringBootTest
 public class AsyncSearchTaskDelegatorTest {
