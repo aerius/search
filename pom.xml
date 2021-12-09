@@ -70,7 +70,6 @@
     <spotless.version>2.5.0</spotless.version>
 
     <sonar.language>java</sonar.language>
-    <sonar.maven.plugin.version>3.7.0.1746</sonar.maven.plugin.version>
     <sonar.projectKey>aerius_search</sonar.projectKey>
     <sonar.moduleKey>${project.artifactId}</sonar.moduleKey>
     <sonar.organization>aerius</sonar.organization>
