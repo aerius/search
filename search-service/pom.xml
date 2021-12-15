@@ -72,6 +72,11 @@
       <artifactId>search-service-pdok-locatieservice</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>nl.aerius</groupId>
+      <artifactId>search-service-n2000-assessment-areas-nl</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
     <dependency>
       <groupId>io.reactivex.rxjava3</groupId>

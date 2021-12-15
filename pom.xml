@@ -220,6 +220,7 @@
         <module>search-service-mocks</module>
         <module>search-service-geo</module>
         <module>search-service-pdok-locatieservice</module>
+        <module>search-service-n2000-assessment-areas-nl</module>
         <module>search-shared</module>
         <module>search-client</module>
       </modules>
@@ -241,6 +242,7 @@
         <module>search-service-mocks</module>
         <module>search-service-geo</module>
         <module>search-service-pdok-locatieservice</module>
+        <module>search-service-n2000-assessment-areas-nl</module>
         <module>search-shared</module>
         <module>search-client</module>
         <module>search-sonar-report</module>
