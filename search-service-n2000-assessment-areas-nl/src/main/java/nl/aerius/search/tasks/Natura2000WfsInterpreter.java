@@ -59,6 +59,7 @@ public class Natura2000WfsInterpreter {
   private String wfsNatura2000Url;
   // @formatter:on
 
+  @SuppressWarnings("unchecked")
   public Map<String, Nature2000Area> retrieveAreas() {
     try {
       final CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:4258");
@@ -92,8 +93,8 @@ public class Natura2000WfsInterpreter {
 
     final Element rootElem = document.getRootElement();
     ((List<DefaultElement>) rootElem.elements()).forEach(elem -> {
-      final Nature2000Area processArea = processArea(elem.element("ProtectedSite"));
-      areas.putIfAbsent(processArea.getNormalizedName(), processArea);
+      final Nature2000Area area = processArea(elem.element("ProtectedSite"));
+      areas.merge(area.getNormalizedName(), area, (a, b) -> a.getArea() > b.getArea() ? a : b);
     });
 
     return areas;
@@ -136,7 +137,7 @@ public class Natura2000WfsInterpreter {
     final String wktGeometry = wktWriter.write(resultGeometry);
     final String wktCentroid = wktWriter.write(resultGeometry.getCentroid());
 
-    return new Nature2000Area(id, name, normalizedName, wktGeometry, wktCentroid);
+    return new Nature2000Area(id, name, normalizedName, wktGeometry, wktCentroid, resultGeometry.getArea());
   }
 
   public String normalize(final String name) {
