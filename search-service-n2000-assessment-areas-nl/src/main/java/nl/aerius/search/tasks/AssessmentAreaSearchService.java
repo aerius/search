@@ -54,10 +54,11 @@ public class AssessmentAreaSearchService implements SearchTaskService {
   }
 
   public SearchSuggestion areaToSuggestion(final String normalizedQuery, final Nature2000Area area) {
-    // Start with a score of 20, increment with 10 for each character in the query, then reduce by size of match
+    // Start with a score of 20, increment with 10 for each character in the query,
+    // then reduce by size of match
     // It's not pretty but it'll do fine in most cases
     final int score = Math.max(20, Math.min(100, normalizedQuery.length() * 10 - Math.min(area.getNormalizedName().length(), 20)));
 
-    return SearchSuggestionBuilder.create(area.getName(), score, SearchSuggestionType.ASSESSMENT_AREA, area.getWktCentroid());
+    return SearchSuggestionBuilder.create(area.getName(), score, SearchSuggestionType.ASSESSMENT_AREA, area.getWktCentroid(), area.getWktGeometry());
   }
 }
