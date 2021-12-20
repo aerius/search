@@ -81,7 +81,7 @@ public class SearchSuggestion {
 
   @Override
   public String toString() {
-    return String.format("SearchSuggestion [id=%s, description=%s, score=%s, type=%s, centroid=%s]", id, description, score, type,
-        centroid);
+    return String.format("SearchSuggestion [id=%s, description=%s, score=%s, type=%s, centroid=%s, geometry=%s]", id, description, score, type,
+        centroid, geometry);
   }
 }
