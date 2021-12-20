@@ -28,6 +28,7 @@ public class SearchSuggestion {
   @JsProperty public String description;
 
   @JsProperty public String centroid;
+  @JsProperty public String geometry;
 
   @JsProperty public double score;
 }
