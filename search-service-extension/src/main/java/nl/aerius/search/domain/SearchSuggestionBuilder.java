@@ -47,4 +47,11 @@ public final class SearchSuggestionBuilder {
     sug.setCentroid(wktCentroid);
     return sug;
   }
+
+  public static SearchSuggestion create(final String txt, final double score, final SearchSuggestionType type, final String wktCentroid,
+      final String wktGeometry) {
+    final SearchSuggestion sug = create(txt, score, type);
+    sug.setCentroid(wktCentroid);
+    return sug;
+  }
 }

@@ -25,7 +25,7 @@ import kong.unirest.json.JSONObject;
 @Component
 @ImplementsCapability(value = SearchCapability.BASIC_INFO, region = SearchRegion.NL)
 public class PdokSearchService implements SearchTaskService {
-  private static final String PDOK_SUGGEST_MODS = "&fl=id,type,weergavenaam,centroide_rd,score";
+  private static final String PDOK_SUGGEST_MODS = "&fl=id,type,weergavenaam,centroide_rd,score,geometrie_rd";
   private static final String PDOK_SUGGEST_ENDPOINT = "https://geodata.nationaalgeoregister.nl/locatieserver/v3/suggest?q=%s" + PDOK_SUGGEST_MODS;
 
   private static final Logger LOG = LoggerFactory.getLogger(PdokSearchService.class);
@@ -61,10 +61,11 @@ public class PdokSearchService implements SearchTaskService {
     final double score = jsonObject.getDouble("score");
     final SearchSuggestionType type = determineType(jsonObject.getString("type"));
     final String wktCentroid = jsonObject.getString("centroide_rd");
+    final String wktGeometry = jsonObject.getString("geometrie_rd");
 
     LOG.info("Centroid: {}", wktCentroid);
 
-    final SearchSuggestion suggestion = SearchSuggestionBuilder.create(displayText, score, type, wktCentroid);
+    final SearchSuggestion suggestion = SearchSuggestionBuilder.create(displayText, score, type, wktCentroid, wktGeometry);
     suggestion.setId(id);
     return suggestion;
   }
