@@ -138,30 +138,47 @@ public class Natura2000WfsInterpreter {
 
     final String normalizedName = normalize(name);
 
-    final String geometry = protectedSite
-        .element("geometry")
-        .element("MultiSurface")
-        .element("surfaceMember")
-        .element("Polygon")
-        .element("exterior")
-        .element("LinearRing")
-        .elementTextTrim("posList");
+    final Geometry resultGeometry = readGeometry(protectedSite);
 
-    final Coordinate[] coords = coordinatesFromString(geometry);
-    final Polygon ring = rdNewGeometryFactory.createPolygon(coords);
-
-    final DouglasPeuckerSimplifier simplifier = new DouglasPeuckerSimplifier(ring);
-    simplifier.setDistanceTolerance(50D);
-
-    final Geometry resultGeometry = simplifier.getResultGeometry();
-
-    LOG.info("Area: {} - {} - {} - {}m2", id, normalizedName, name, ring.getArea());
+    LOG.info("Area: {} - {} - {} - {}m2", id, normalizedName, name, resultGeometry.getArea());
 
     final WKTWriter wktWriter = new WKTWriter();
     final String wktGeometry = wktWriter.write(resultGeometry);
     final String wktCentroid = wktWriter.write(resultGeometry.getCentroid());
 
     return new Nature2000Area(id, name, normalizedName, wktGeometry, wktCentroid, resultGeometry.getArea());
+  }
+
+  private Geometry readGeometry(final Element protectedSite) {
+    final List members = protectedSite
+        .element("geometry")
+        .element("MultiSurface")
+        .elements("surfaceMember");
+    LOG.info("Joining {} members.", members.size());
+
+    Geometry finalGeometry = null;
+    for (int i = 0; i < members.size(); i++) {
+      final Element member = (Element) members.get(i);
+      final String geometry = member
+          .element("Polygon")
+          .element("exterior")
+          .element("LinearRing")
+          .elementTextTrim("posList");
+
+      final Coordinate[] coords = coordinatesFromString(geometry);
+      final Polygon ext = rdNewGeometryFactory.createPolygon(coords);
+
+      if (finalGeometry == null) {
+        finalGeometry = ext;
+      } else {
+        finalGeometry = finalGeometry.union(ext);
+      }
+    }
+
+    final DouglasPeuckerSimplifier simplifier = new DouglasPeuckerSimplifier(finalGeometry);
+    simplifier.setDistanceTolerance(50D);
+
+    return simplifier.getResultGeometry();
   }
 
   public String normalize(final String name) {
