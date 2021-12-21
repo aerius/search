@@ -21,6 +21,8 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.geom.PrecisionModel;
+import org.locationtech.jts.io.ParseException;
+import org.locationtech.jts.io.WKTReader;
 import org.locationtech.jts.io.WKTWriter;
 import org.locationtech.jts.simplify.DouglasPeuckerSimplifier;
 import org.opengis.referencing.FactoryException;
@@ -61,9 +63,10 @@ public class Natura2000WfsInterpreter {
 
   @SuppressWarnings("unchecked")
   public Map<String, Nature2000Area> retrieveAreas() {
+    final CoordinateReferenceSystem targetCRS;
     try {
       final CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:4258");
-      final CoordinateReferenceSystem targetCRS = CRS.decode("EPSG:28992");
+      targetCRS = CRS.decode("EPSG:28992");
 
       wgsToRdNewtransform = CRS.findMathTransform(sourceCRS, targetCRS);
     } catch (final FactoryException e) {
@@ -94,10 +97,31 @@ public class Natura2000WfsInterpreter {
     final Element rootElem = document.getRootElement();
     ((List<DefaultElement>) rootElem.elements()).forEach(elem -> {
       final Nature2000Area area = processArea(elem.element("ProtectedSite"));
-      areas.merge(area.getNormalizedName(), area, (a, b) -> a.getArea() > b.getArea() ? a : b);
+      areas.merge(area.getNormalizedName(), area, (a, b) -> merge(a, b, targetCRS));
     });
 
     return areas;
+  }
+
+  private Nature2000Area merge(final Nature2000Area a, final Nature2000Area b, final CoordinateReferenceSystem crs) {
+    final String geometryAWkt = a.getWktGeometry();
+    final String geometryBWkt = b.getWktGeometry();
+
+    final WKTReader rdr = new WKTReader();
+    try {
+      final Geometry geometryA = rdr.read(geometryAWkt);
+      final Geometry geometryB = rdr.read(geometryBWkt);
+
+      final WKTWriter writer = new WKTWriter();
+
+      final Geometry union = geometryA.union(geometryB);
+      final String unionWkt = writer.write(union);
+      a.setWktGeometry(unionWkt);
+    } catch (final ParseException e) {
+      throw new RuntimeException("Cannot read WKT geometries.", e);
+    }
+
+    return a;
   }
 
   private Nature2000Area processArea(final Element protectedSite) {

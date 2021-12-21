@@ -4,7 +4,7 @@ public class Nature2000Area {
   private final String id;
   private final String name;
   private final String normalizedName;
-  private final String wktGeometry;
+  private String wktGeometry;
   private final String wktCentroid;
   private final double area;
 
@@ -39,5 +39,9 @@ public class Nature2000Area {
 
   public double getArea() {
     return area;
+  }
+
+  public void setWktGeometry(final String wktGeometry) {
+    this.wktGeometry = wktGeometry;
   }
 }
