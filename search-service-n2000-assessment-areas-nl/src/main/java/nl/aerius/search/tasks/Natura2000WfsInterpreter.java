@@ -116,7 +116,12 @@ public class Natura2000WfsInterpreter {
 
       final Geometry union = geometryA.union(geometryB);
       final String unionWkt = writer.write(union);
+
+      final Geometry unionCentroid = union.getCentroid();
+      final String centroidWkt = writer.write(unionCentroid);
       a.setWktGeometry(unionWkt);
+      a.setWktCentroid(centroidWkt);
+
     } catch (final ParseException e) {
       throw new RuntimeException("Cannot read WKT geometries.", e);
     }
