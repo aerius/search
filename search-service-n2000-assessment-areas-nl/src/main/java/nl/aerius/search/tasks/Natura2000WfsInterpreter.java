@@ -44,6 +44,8 @@ import kong.unirest.Unirest;
  */
 @Component
 public class Natura2000WfsInterpreter {
+  private static final double DOUGLAS_PEUCKER_TOLERANCE = 5D;
+
   private static final Logger LOG = LoggerFactory.getLogger(AssessmentAreaSearchService.class);
 
   private static final int SRID_RDNEW = 28992;
@@ -181,7 +183,7 @@ public class Natura2000WfsInterpreter {
     }
 
     final DouglasPeuckerSimplifier simplifier = new DouglasPeuckerSimplifier(finalGeometry);
-    simplifier.setDistanceTolerance(50D);
+    simplifier.setDistanceTolerance(DOUGLAS_PEUCKER_TOLERANCE);
 
     return simplifier.getResultGeometry();
   }
