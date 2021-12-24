@@ -1,6 +1,6 @@
 package nl.aerius.search.tasks.coordinate;
 
-import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import io.reactivex.rxjava3.core.Single;
@@ -21,7 +21,7 @@ public class AbstractCoordinateSearchService implements SearchTaskService {
 
   // Regex used to identify a x:{x} y:{y} string
   private static final Pattern SEARCH_TERM_COORDINATE_REGEX = Pattern
-      .compile("^\\s*(x\\:)?\\s*([1-9]?\\d{5})\\s*[,;\\s]\\s*(y\\:)?\\s*([1-9]\\d{5})\\s*$", Pattern.CASE_INSENSITIVE);
+      .compile("(x:)(\\d{1,6}).(y:)(\\d{1,6})", Pattern.CASE_INSENSITIVE);
 
   // The relevant groups in the above regular expression that identify the X and Y
   // coordinates respectively.
@@ -38,8 +38,8 @@ public class AbstractCoordinateSearchService implements SearchTaskService {
 
   @Override
   public Single<SearchTaskResult> retrieveSearchResults(final String query) {
-    final MatchResult coordinateMatch = SEARCH_TERM_COORDINATE_REGEX.matcher(query);
-    if (coordinateMatch != null) {
+    final Matcher coordinateMatch = SEARCH_TERM_COORDINATE_REGEX.matcher(query);
+    if (coordinateMatch.matches()) {
       final int x = Integer.parseInt(coordinateMatch.group(SEARCH_TERM_COORDINATE_REGEX_GROUP_X));
       final int y = Integer.parseInt(coordinateMatch.group(SEARCH_TERM_COORDINATE_REGEX_GROUP_Y));
 
