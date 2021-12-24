@@ -22,16 +22,13 @@ import nl.aerius.search.domain.SearchCapability;
 import nl.aerius.search.domain.SearchRegion;
 import nl.aerius.search.tasks.ImplementsCapability;
 import nl.aerius.search.tasks.RDNewConstants;
-import nl.aerius.search.tasks.ReceptorUtils;
 import nl.aerius.search.tasks.SearchTaskService;
-import nl.overheid.aerius.geo.shared.RDNew;
 import nl.overheid.aerius.shared.domain.geo.HexagonZoomLevel;
 
 @Component
 @ImplementsCapability(value = SearchCapability.COORDINATE, region = SearchRegion.NL)
 public class RDNewCoordinateSearchService extends AbstractCoordinateSearchService implements SearchTaskService {
   public RDNewCoordinateSearchService() {
-    super(ReceptorUtils.createReceptorUtil(RDNew.SRID, RDNewConstants.MIN_ZL_SURFACE_AREA, RDNewConstants.HEX_HOR),
-        new HexagonZoomLevel(1, RDNewConstants.MIN_ZL_SURFACE_AREA));
+    super(RDNewConstants.create(), new HexagonZoomLevel(1, RDNewConstants.MIN_ZL_SURFACE_AREA));
   }
 }

@@ -17,12 +17,15 @@
 package nl.aerius.search.tasks;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import nl.aerius.search.domain.SearchResultBuilder;
 import nl.aerius.search.domain.SearchSuggestion;
 import nl.aerius.search.domain.SearchSuggestionBuilder;
 import nl.aerius.search.domain.SearchSuggestionType;
 import nl.aerius.search.domain.SearchTaskResult;
+import nl.overheid.aerius.geo.shared.BBox;
 import nl.overheid.aerius.geo.shared.EPSG;
 import nl.overheid.aerius.geo.shared.EPSGProxy;
 import nl.overheid.aerius.shared.domain.geo.HexagonUtil;
@@ -38,13 +41,13 @@ public class ReceptorUtils {
 
   private ReceptorUtils() {}
 
-  public static ReceptorUtil createReceptorUtil(final int srid, final int minSurfaceArea, final int hexHor) {
+  public static ReceptorUtil createReceptorUtil(final int srid, final int minSurfaceArea, final int hexHor, final BBox bounds) {
     final EPSG epsg = EPSGProxy.getEPSG(srid);
     final ArrayList<HexagonZoomLevel> zoomLevels = new ArrayList<HexagonZoomLevel>();
     for (int i = 1; i <= 5; i++) {
       zoomLevels.add(new HexagonZoomLevel(i, minSurfaceArea));
     }
-    return new ReceptorUtil(new ReceptorGridSettings(epsg.getBounds(), epsg, hexHor, zoomLevels));
+    return new ReceptorUtil(new ReceptorGridSettings(bounds, epsg, hexHor, zoomLevels));
   }
 
   public static SearchTaskResult tryParse(final String query, final ReceptorUtil receptorUtil, final HexagonZoomLevel zoomLevel)
@@ -62,8 +65,9 @@ public class ReceptorUtils {
 
     final Polygon createHexagon = HexagonUtil.createHexagon(rec, zoomLevel);
 
-    // TODO Format as WKT
-    final String wktGeometry = "";
+    final String wktGeometry = "POLYGON(" + Stream.of(createHexagon.getCoordinates()[0])
+        .map(v -> v[0] + " " + v[1])
+        .collect(Collectors.joining(",")) + ")";
     return SearchSuggestionBuilder.create(label, 100, SearchSuggestionType.RECEPTOR, wktCentroid, wktGeometry);
   }
 

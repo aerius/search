@@ -47,7 +47,7 @@ public class AbstractCoordinateSearchService implements SearchTaskService {
       final int recId = util.getReceptorIdFromPoint(point);
       final Point rec = util.getPointFromReceptorId(recId);
       return Single.just(SearchResultBuilder.of(
-          SearchSuggestionBuilder.create(String.format(COORDINATE_FORMAT, x, y), 1.0, SearchSuggestionType.COORDINATE,
+          SearchSuggestionBuilder.create(String.format(COORDINATE_FORMAT, x, y), 100, SearchSuggestionType.COORDINATE,
               String.format(WKT_POINT_FORMAT, x, y)),
           ReceptorUtils.getSearchSuggestion(recId, rec, minZoomLevel)));
     }
