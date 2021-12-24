@@ -26,12 +26,11 @@ import nl.aerius.search.tasks.ReceptorUtils;
 import nl.aerius.search.tasks.SearchTaskService;
 import nl.overheid.aerius.geo.shared.BNGrid;
 import nl.overheid.aerius.shared.domain.geo.HexagonZoomLevel;
-import nl.overheid.aerius.shared.geometry.ReceptorUtil;
 
 @Component
 @ImplementsCapability(value = SearchCapability.COORDINATE, region = SearchRegion.UK)
 public class BNGCoordinateSearchService extends AbstractCoordinateSearchService implements SearchTaskService {
-  public BNGCoordinateSearchService(final ReceptorUtil util) {
+  public BNGCoordinateSearchService() {
     super(ReceptorUtils.createReceptorUtil(BNGrid.SRID, BNGConstants.MIN_ZL_SURFACE_AREA, BNGConstants.HEX_HOR),
         new HexagonZoomLevel(1, BNGConstants.MIN_ZL_SURFACE_AREA));
   }

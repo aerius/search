@@ -62,6 +62,7 @@ public class ReceptorUtils {
 
     final Polygon createHexagon = HexagonUtil.createHexagon(rec, zoomLevel);
 
+    // TODO Format as WKT
     final String wktGeometry = "";
     return SearchSuggestionBuilder.create(label, 100, SearchSuggestionType.RECEPTOR, wktCentroid, wktGeometry);
   }

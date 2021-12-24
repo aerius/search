@@ -33,6 +33,7 @@
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
     <imaer.version>4.1-SNAPSHOT</imaer.version>
+    <jacoco.version>0.8.7</jacoco.version>
   </properties>
 
   <repositories>
@@ -77,6 +78,7 @@
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
+        <version>${jacoco.version}</version>
         <executions>
           <execution>
             <id>prepare-agent</id>
