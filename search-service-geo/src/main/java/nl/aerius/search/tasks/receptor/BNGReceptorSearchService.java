@@ -14,38 +14,23 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see http://www.gnu.org/licenses/.
  */
-package nl.aerius.search.tasks;
+package nl.aerius.search.tasks.receptor;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import io.reactivex.rxjava3.core.Single;
-
-import nl.aerius.geo.epsg.EPSGRDNew;
-import nl.aerius.geo.epsg.RDNewReceptorGridSettings;
-import nl.aerius.geo.util.ReceptorUtil;
 import nl.aerius.search.domain.SearchCapability;
 import nl.aerius.search.domain.SearchRegion;
-import nl.aerius.search.domain.SearchResultBuilder;
-import nl.aerius.search.domain.SearchTaskResult;
+import nl.aerius.search.tasks.BNGConstants;
+import nl.aerius.search.tasks.ImplementsCapability;
+import nl.aerius.search.tasks.ReceptorUtils;
+import nl.overheid.aerius.geo.shared.BNGrid;
+import nl.overheid.aerius.shared.domain.geo.HexagonZoomLevel;
 
 @Component
 @ImplementsCapability(value = SearchCapability.RECEPTOR, region = SearchRegion.UK)
-public class BNGReceptorSearchService implements SearchTaskService {
-  private static final Logger LOG = LoggerFactory.getLogger(BNGReceptorSearchService.class);
-
-  private final ReceptorUtil util;
-
+public class BNGReceptorSearchService extends AbstractReceptorSearchService {
   public BNGReceptorSearchService() {
-    // TODO Use BNG grid settings
-    util = new ReceptorUtil(new RDNewReceptorGridSettings(new EPSGRDNew()));
-  }
-
-  @Override
-  public Single<SearchTaskResult> retrieveSearchResults(final String query) {
-    return Single.just(query)
-        .map(v -> ReceptorUtils.tryParse(util, v))
-        .onErrorReturn(e -> SearchResultBuilder.empty());
+    super(ReceptorUtils.createReceptorUtil(BNGrid.SRID, BNGConstants.MIN_ZL_SURFACE_AREA, BNGConstants.HEX_HOR),
+        new HexagonZoomLevel(1, BNGConstants.MIN_ZL_SURFACE_AREA));
   }
 }

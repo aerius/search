@@ -32,7 +32,7 @@
   <properties>
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
-    <gwt-client-common.version>1.2.0</gwt-client-common.version>
+    <imaer.version>4.1-SNAPSHOT</imaer.version>
   </properties>
 
   <repositories>
@@ -61,8 +61,8 @@
 
     <dependency>
       <groupId>nl.aerius</groupId>
-      <artifactId>gwt-client-geo</artifactId>
-      <version>${gwt-client-common.version}</version>
+      <artifactId>imaer-shared</artifactId>
+      <version>${imaer.version}</version>
     </dependency>
 
     <dependency>

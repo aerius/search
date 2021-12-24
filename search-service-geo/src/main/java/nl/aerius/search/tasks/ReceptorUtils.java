@@ -16,31 +16,54 @@
  */
 package nl.aerius.search.tasks;
 
-import nl.aerius.geo.domain.ReceptorPoint;
-import nl.aerius.geo.util.ReceptorUtil;
+import java.util.ArrayList;
+
 import nl.aerius.search.domain.SearchResultBuilder;
 import nl.aerius.search.domain.SearchSuggestion;
 import nl.aerius.search.domain.SearchSuggestionBuilder;
 import nl.aerius.search.domain.SearchSuggestionType;
 import nl.aerius.search.domain.SearchTaskResult;
+import nl.overheid.aerius.geo.shared.EPSG;
+import nl.overheid.aerius.geo.shared.EPSGProxy;
+import nl.overheid.aerius.shared.domain.geo.HexagonUtil;
+import nl.overheid.aerius.shared.domain.geo.HexagonZoomLevel;
+import nl.overheid.aerius.shared.domain.geo.ReceptorGridSettings;
+import nl.overheid.aerius.shared.domain.v2.geojson.Point;
+import nl.overheid.aerius.shared.domain.v2.geojson.Polygon;
+import nl.overheid.aerius.shared.geometry.ReceptorUtil;
 
 public class ReceptorUtils {
   // TODO i18n
   private static final String RECEPTOR_FORMAT = "Receptor %s - x:%s y:%s";
 
-  private ReceptorUtils() {
+  private ReceptorUtils() {}
+
+  public static ReceptorUtil createReceptorUtil(final int srid, final int minSurfaceArea, final int hexHor) {
+    final EPSG epsg = EPSGProxy.getEPSG(srid);
+    final ArrayList<HexagonZoomLevel> zoomLevels = new ArrayList<HexagonZoomLevel>();
+    for (int i = 1; i <= 5; i++) {
+      zoomLevels.add(new HexagonZoomLevel(i, minSurfaceArea));
+    }
+    return new ReceptorUtil(new ReceptorGridSettings(epsg.getBounds(), epsg, hexHor, zoomLevels));
   }
 
-  public static SearchTaskResult tryParse(final ReceptorUtil receptorUtil, final String query) throws NumberFormatException {
+  public static SearchTaskResult tryParse(final String query, final ReceptorUtil receptorUtil, final HexagonZoomLevel zoomLevel)
+      throws NumberFormatException {
     final int id = Integer.parseInt(query);
 
-    final ReceptorPoint rec = receptorUtil.createReceptorPointFromId(id);
-    return SearchResultBuilder.of(getSearchSuggestion(rec));
+    final Point rec = receptorUtil.getPointFromReceptorId(id);
+    return SearchResultBuilder.of(getSearchSuggestion(id, rec, zoomLevel));
   }
 
-  public static SearchSuggestion getSearchSuggestion(final ReceptorPoint rec) {
-    return SearchSuggestionBuilder.create(String.format(RECEPTOR_FORMAT, rec.getId(), (int) rec.getX(), (int) rec.getY()),
-        100, SearchSuggestionType.RECEPTOR);
+  public static SearchSuggestion getSearchSuggestion(final int id, final Point rec, final HexagonZoomLevel zoomLevel) {
+    final String label = String.format(RECEPTOR_FORMAT, id, (int) rec.getX(), (int) rec.getY());
+
+    final String wktCentroid = "POINT(" + rec.getX() + " " + rec.getY() + ")";
+
+    final Polygon createHexagon = HexagonUtil.createHexagon(rec, zoomLevel);
+
+    final String wktGeometry = "";
+    return SearchSuggestionBuilder.create(label, 100, SearchSuggestionType.RECEPTOR, wktCentroid, wktGeometry);
   }
 
 }
