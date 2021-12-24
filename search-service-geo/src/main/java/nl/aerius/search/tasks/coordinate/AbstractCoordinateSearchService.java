@@ -19,10 +19,9 @@ public class AbstractCoordinateSearchService implements SearchTaskService {
   private static final String COORDINATE_FORMAT = "x:%d y:%d";
   private static final String WKT_POINT_FORMAT = "POINT(%d %d)";
 
-  // Regex used to identify whether an Rijksdriehoekstelsel XY coordinate was
-  // entered as search term.
+  // Regex used to identify a x:{x} y:{y} string
   private static final Pattern SEARCH_TERM_COORDINATE_REGEX = Pattern
-      .compile("^\\s*(x\\:)?\\s*([1-2]?\\d{5})\\s*[,;\\s]\\s*(y\\:)?\\s*([3-6]\\d{5})\\s*$", Pattern.CASE_INSENSITIVE);
+      .compile("^\\s*(x\\:)?\\s*([1-9]?\\d{5})\\s*[,;\\s]\\s*(y\\:)?\\s*([1-9]\\d{5})\\s*$", Pattern.CASE_INSENSITIVE);
 
   // The relevant groups in the above regular expression that identify the X and Y
   // coordinates respectively.
