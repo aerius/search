@@ -65,9 +65,9 @@ public class ReceptorUtils {
 
     final Polygon createHexagon = HexagonUtil.createHexagon(rec, zoomLevel);
 
-    final String wktGeometry = "POLYGON(" + Stream.of(createHexagon.getCoordinates()[0])
+    final String wktGeometry = "POLYGON((" + Stream.of(createHexagon.getCoordinates()[0])
         .map(v -> v[0] + " " + v[1])
-        .collect(Collectors.joining(",")) + ")";
+        .collect(Collectors.joining(",")) + "))";
     return SearchSuggestionBuilder.create(label, 100, SearchSuggestionType.RECEPTOR, wktCentroid, wktGeometry);
   }
 
