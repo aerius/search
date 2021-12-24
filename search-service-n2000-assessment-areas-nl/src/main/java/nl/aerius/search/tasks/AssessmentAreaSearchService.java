@@ -1,5 +1,6 @@
 package nl.aerius.search.tasks;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -32,11 +33,29 @@ public class AssessmentAreaSearchService implements SearchTaskService {
 
   @PostConstruct
   public void init() {
-    areas = interpreter.retrieveAreas();
+    // Just do this in another thread so it doesn't delay startup
+    // We don't really care if this takes an age
+    final Thread n2000Init = new Thread(() -> areas = interpreter.retrieveAreas());
+    n2000Init.setUncaughtExceptionHandler((t, ex) -> {
+      LOG.error("Could not initialize areas: {}", ex);
+      // Crash hard
+      System.exit(0);
+    });
+    n2000Init.start();
   }
 
   @Override
   public Single<SearchTaskResult> retrieveSearchResults(final String query) {
+    final SearchTaskResult result = new SearchTaskResult();
+    if (areas == null) {
+      // Warn if areas is null - it is expected to happen shortly after startup (see
+      // init()) but not during normal operation
+      LOG.warn(
+          "Queries made while assessment area search service was not yet initialized, this is an issue if it happens well after startup has succeeded.");
+      result.setSuggestions(new ArrayList<>());
+      return Single.just(result);
+    }
+
     final String normalizedQuery = interpreter.normalize(query);
 
     final String[] normalizedQueryParts = normalizedQuery.split(" ");
@@ -48,7 +67,6 @@ public class AssessmentAreaSearchService implements SearchTaskService {
         .map(v -> areaToSuggestion(normalizedQuery, v))
         .collect(Collectors.toList());
 
-    final SearchTaskResult result = new SearchTaskResult();
     result.setSuggestions(sugs);
     return Single.just(result);
   }
@@ -57,7 +75,7 @@ public class AssessmentAreaSearchService implements SearchTaskService {
     // Start with a score of 20, increment with 10 for each character in the query,
     // then reduce by size of match
     // It's not pretty but it'll do fine in most cases
-    final int score = Math.max(20, Math.min(100, normalizedQuery.length() * 10 - Math.min(area.getNormalizedName().length(), 20)));
+    final int score = Math.max(20, Math.min(100, normalizedQuery.length() * 10) - Math.min(area.getNormalizedName().length(), 20));
 
     return SearchSuggestionBuilder.create(area.getName(), score, SearchSuggestionType.ASSESSMENT_AREA, area.getWktCentroid(), area.getWktGeometry());
   }
