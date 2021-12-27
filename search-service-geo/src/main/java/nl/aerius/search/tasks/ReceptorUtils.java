@@ -41,24 +41,25 @@ public class ReceptorUtils {
 
   private ReceptorUtils() {}
 
-  public static ReceptorUtil createReceptorUtil(final int srid, final int minSurfaceArea, final int hexHor, final BBox bounds) {
+  public static ReceptorGridSettings createReceptorUtil(final int srid, final int minSurfaceArea, final int hexHor, final BBox bounds) {
     final EPSG epsg = EPSGProxy.getEPSG(srid);
     final ArrayList<HexagonZoomLevel> zoomLevels = new ArrayList<HexagonZoomLevel>();
     for (int i = 1; i <= 5; i++) {
       zoomLevels.add(new HexagonZoomLevel(i, minSurfaceArea));
     }
-    return new ReceptorUtil(new ReceptorGridSettings(bounds, epsg, hexHor, zoomLevels));
+    return new ReceptorGridSettings(bounds, epsg, hexHor, zoomLevels);
   }
 
   public static SearchTaskResult tryParse(final String query, final ReceptorUtil receptorUtil, final HexagonZoomLevel zoomLevel)
       throws NumberFormatException {
     final int id = Integer.parseInt(query);
 
-    final Point rec = receptorUtil.getPointFromReceptorId(id);
-    return SearchResultBuilder.of(getSearchSuggestion(id, rec, zoomLevel));
+    return SearchResultBuilder.of(getReceptorSuggestion(id, receptorUtil, zoomLevel));
   }
 
-  public static SearchSuggestion getSearchSuggestion(final int id, final Point rec, final HexagonZoomLevel zoomLevel) {
+  public static SearchSuggestion getReceptorSuggestion(final int id, final ReceptorUtil receptorUtil, final HexagonZoomLevel zoomLevel) {
+    final Point rec = receptorUtil.getPointFromReceptorId(id);
+
     final String label = String.format(RECEPTOR_FORMAT, id, (int) rec.getX(), (int) rec.getY());
 
     final String wktCentroid = "POINT(" + rec.getX() + " " + rec.getY() + ")";

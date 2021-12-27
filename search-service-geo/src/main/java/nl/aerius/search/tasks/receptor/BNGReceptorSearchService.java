@@ -22,12 +22,11 @@ import nl.aerius.search.domain.SearchCapability;
 import nl.aerius.search.domain.SearchRegion;
 import nl.aerius.search.tasks.BNGConstants;
 import nl.aerius.search.tasks.ImplementsCapability;
-import nl.overheid.aerius.shared.domain.geo.HexagonZoomLevel;
 
 @Component
 @ImplementsCapability(value = SearchCapability.RECEPTOR, region = SearchRegion.UK)
 public class BNGReceptorSearchService extends AbstractReceptorSearchService {
   public BNGReceptorSearchService() {
-    super(BNGConstants.create(), new HexagonZoomLevel(1, BNGConstants.MIN_ZL_SURFACE_AREA));
+    super(BNGConstants.create());
   }
 }

@@ -12,6 +12,7 @@ import nl.aerius.search.domain.SearchTaskResult;
 import nl.aerius.search.tasks.ReceptorUtils;
 import nl.aerius.search.tasks.SearchTaskService;
 import nl.overheid.aerius.shared.domain.geo.HexagonZoomLevel;
+import nl.overheid.aerius.shared.domain.geo.ReceptorGridSettings;
 import nl.overheid.aerius.shared.domain.v2.geojson.Point;
 import nl.overheid.aerius.shared.geometry.ReceptorUtil;
 
@@ -29,11 +30,11 @@ public class AbstractCoordinateSearchService implements SearchTaskService {
   private static final int SEARCH_TERM_COORDINATE_REGEX_GROUP_Y = 4;
 
   private final ReceptorUtil util;
-  private final HexagonZoomLevel minZoomLevel;
+  private final HexagonZoomLevel zoomLevel1;
 
-  public AbstractCoordinateSearchService(final ReceptorUtil util, final HexagonZoomLevel minZoomLevel) {
-    this.util = util;
-    this.minZoomLevel = minZoomLevel;
+  public AbstractCoordinateSearchService(final ReceptorGridSettings settings) {
+    this.util = new ReceptorUtil(settings);
+    this.zoomLevel1 = settings.getZoomLevel1();
   }
 
   @Override
@@ -45,11 +46,10 @@ public class AbstractCoordinateSearchService implements SearchTaskService {
 
       final Point point = new Point(x, y);
       final int recId = util.getReceptorIdFromPoint(point);
-      final Point rec = util.getPointFromReceptorId(recId);
       return Single.just(SearchResultBuilder.of(
           SearchSuggestionBuilder.create(String.format(COORDINATE_FORMAT, x, y), 100, SearchSuggestionType.COORDINATE,
               String.format(WKT_POINT_FORMAT, x, y)),
-          ReceptorUtils.getSearchSuggestion(recId, rec, minZoomLevel)));
+          ReceptorUtils.getReceptorSuggestion(recId, util, zoomLevel1)));
     }
 
     return Single.just(SearchResultBuilder.empty());

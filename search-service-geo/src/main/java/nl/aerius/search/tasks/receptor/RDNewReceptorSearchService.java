@@ -22,12 +22,11 @@ import nl.aerius.search.domain.SearchCapability;
 import nl.aerius.search.domain.SearchRegion;
 import nl.aerius.search.tasks.ImplementsCapability;
 import nl.aerius.search.tasks.RDNewConstants;
-import nl.overheid.aerius.shared.domain.geo.HexagonZoomLevel;
 
 @Component
 @ImplementsCapability(value = SearchCapability.RECEPTOR, region = SearchRegion.NL)
 public class RDNewReceptorSearchService extends AbstractReceptorSearchService {
   public RDNewReceptorSearchService() {
-    super(RDNewConstants.create(), new HexagonZoomLevel(1, RDNewConstants.MIN_ZL_SURFACE_AREA));
+    super(RDNewConstants.create());
   }
 }
