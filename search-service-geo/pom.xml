@@ -26,7 +26,7 @@
   </parent>
   <groupId>nl.aerius</groupId>
   <artifactId>search-service-geo</artifactId>
-  <version>1.2.0-SNAPSHOT</version>
+  <version>1.2.0</version>
   <name>AERIUS Search :: Service Geo Capabilities</name>
 
   <properties>
