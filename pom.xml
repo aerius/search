@@ -117,7 +117,6 @@
       <name>AERIUS Nexus repository</name>
       <url>https://nexus.aerius.nl/repository/maven-public/</url>
       <snapshots>
-        <enabled>true</enabled>
         <updatePolicy>always</updatePolicy>
       </snapshots>
     </repository>

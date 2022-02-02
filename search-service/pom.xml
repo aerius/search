@@ -84,11 +84,8 @@
 
     <!-- Test dependencies for JUnit 5 -->
     <dependency>
-      <groupId>nl.overheid.aerius.bom</groupId>
-      <artifactId>bom.source.test</artifactId>
-      <version>3.0-SNAPSHOT</version>
-      <type>pom</type>
-      <scope>test</scope>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
     </dependency>
   </dependencies>
 
