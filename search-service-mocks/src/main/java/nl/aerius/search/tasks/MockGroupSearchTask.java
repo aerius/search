@@ -39,7 +39,7 @@ public abstract class MockGroupSearchTask implements SearchTaskService {
 
   private final long delay;
 
-  public MockGroupSearchTask(final long delay) {
+  protected MockGroupSearchTask(final long delay) {
     this.delay = delay;
   }
 
@@ -51,17 +51,11 @@ public abstract class MockGroupSearchTask implements SearchTaskService {
         .of(SearchSuggestionBuilder.create(String.format(TEXT_FOO, query, delay), 0.1, SearchSuggestionType.ADDRESS),
             SearchSuggestionBuilder.create(String.format(TEXT_BAR, query, delay), 0.1, SearchSuggestionType.MUNICIPALITY)))
         .delay(delay, TimeUnit.MILLISECONDS)
-        .doOnDispose(() -> {
-          // Handle cancellation
-          LOG.info("Cancelled mock [{}] with delay {}", query, delay);
-        })
-        .doAfterTerminate(() -> {
-          // Handle termination cleanup
-          LOG.info("Terminated mock [{}] with delay {}", query, delay);
-        })
+        .doOnDispose(() -> LOG.info("Cancelled mock [{}] with delay {}", query, delay))
+        .doAfterTerminate(() -> LOG.info("Terminated mock [{}] with delay {}", query, delay))
         .doOnError(e -> {
           // Handle error
-          LOG.error("Thrown mock [{}] with delay {}\", query, delay", e);
+          LOG.error("Thrown mock [{}] with delay {}", query, delay, e);
           throw e;
         });
   }

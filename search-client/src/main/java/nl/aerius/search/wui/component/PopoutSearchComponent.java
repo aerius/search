@@ -82,5 +82,7 @@ public class PopoutSearchComponent implements IsVueComponent {
 
   @JsMethod
   @Emit
-  public void selectSuggestion(final SearchSuggestion value) {}
+  public void selectSuggestion(final SearchSuggestion value) {
+    // Emits
+  }
 }

@@ -65,6 +65,8 @@ import nl.aerius.wui.vue.transition.VerticalCollapseGroup;
     HorizontalCollapse.class
 })
 public class MapSearchComponent implements IsVueComponent, HasCreated, HasMounted, HasDestroyed {
+  private static final String BOLD_CHARACTER = "b";
+
   private static final String FALLBACK_SEARCH_TYPE = "TEXT";
 
   @Prop boolean auto;
@@ -90,9 +92,7 @@ public class MapSearchComponent implements IsVueComponent, HasCreated, HasMounte
     final Map<String, List<SearchSuggestion>> res = context.getResults().values().stream()
         .collect(Collectors.groupingBy(v -> v.type, () -> new LinkedHashMap<>(), Collectors.toList()));
 
-    res.values().forEach(v -> {
-      v.sort((o1, o2) -> Double.compare(o1.score, o2.score));
-    });
+    res.values().forEach(v -> v.sort((o1, o2) -> Double.compare(o1.score, o2.score)));
 
     return res;
   }
@@ -103,12 +103,8 @@ public class MapSearchComponent implements IsVueComponent, HasCreated, HasMounte
     final String[] split = search.split(" ");
     for (int i = 0; i < split.length; i++) {
       final String sample = split[i];
-      if (sample.isEmpty()) {
-        continue;
-      }
-
-      // Exclude 'b' because it will match <b>
-      if ("b".equals(sample.toLowerCase())) {
+      if (sample.isEmpty()
+          || BOLD_CHARACTER.equals(sample.toLowerCase())) {
         continue;
       }
 
@@ -179,9 +175,7 @@ public class MapSearchComponent implements IsVueComponent, HasCreated, HasMounte
   public void created() {
     DomGlobal.window.addEventListener("resize", null);
 
-    resizeHandler = Window.addResizeHandler(r -> {
-      resize();
-    });
+    resizeHandler = Window.addResizeHandler(r -> resize());
   }
 
   @Override

@@ -78,7 +78,18 @@ public class SearchDaemonAsynchronous extends BasicEventComponent {
 
   private String currentSearchId = null;
 
-  private final Function<Integer, AsyncCallback<SearchResult>> callbackFactory = count -> AppAsyncCallback.create(result -> {
+  private final Function<Integer, AsyncCallback<SearchResult>> callbackFactory = count -> AppAsyncCallback
+      .create(result -> processResult(count, result), e -> processFailure(count, e));
+
+  private void processFailure(final Integer count, final Throwable e) {
+    if (!countMatches(count)) {
+      return;
+    }
+
+    searchFailure(e);
+  }
+
+  private void processResult(final Integer count, final SearchResult result) {
     if (!countMatches(count)) {
       processOldResults(result);
 
@@ -90,13 +101,7 @@ public class SearchDaemonAsynchronous extends BasicEventComponent {
     }
 
     processResults(result, count);
-  }, e -> {
-    if (!countMatches(count)) {
-      return;
-    }
-
-    searchFailure(e);
-  });
+  }
 
   @EventHandler
   public void onSearchTextCommand(final SearchTextCommand c) {
@@ -150,9 +155,7 @@ public class SearchDaemonAsynchronous extends BasicEventComponent {
   }
 
   private void fetchOldResults(final String uuid) {
-    service.retrieveSearchResults(uuid, AppAsyncCallback.create(stales -> {
-      processOldResults(stales);
-    }));
+    service.retrieveSearchResults(uuid, AppAsyncCallback.create(stales -> processOldResults(stales)));
   }
 
   private void clear() {

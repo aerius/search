@@ -8,13 +8,6 @@
     </button>
   </slot>
 
-  <!-- While this overlay works, it does not always work well due to parent z-indexing
-  <!-- Disable for now, and make user deselect search content themselves.
-  <div class="overlay"
-    @click.stop="disable"
-    :class='map("active", isSearchShowing))'></div>
-   -->
-
   <horizontal-collapse :seek="(boolean) false">
     <map-search v-show="isSearchShowing"
       ref="input"
@@ -27,24 +20,6 @@
 
 <style scoped lang="scss">
 @import "horizontal-collapse.scss";
-
-/*
-.overlay {
-  position: fixed;
-  width: 100vw;
-  height: 100vh;
-  background: #ffffff00;
-  z-index: 0;
-  inset: 0;
-  pointer-events: none;
-  transition: background 0.15s ease-out;
-
-  &.active {
-    pointer-events: all;
-    background: #ffffff88;
-  }
-}
-*/
 
 .searchContainer {
   --search-width: 400px;

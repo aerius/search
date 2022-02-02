@@ -18,8 +18,10 @@ package nl.aerius.search.wui.resources;
 
 import com.google.gwt.core.client.GWT;
 
-public class SearchResources {
+public final class SearchResources {
   private static final SearchImageResources RESOURCES = GWT.create(SearchImageResources.class);
+
+  private SearchResources() {}
 
   /**
    * Access to image resources.

@@ -70,9 +70,10 @@ public class Natura2000WfsInterpreter {
 
   private static final Logger LOG = LoggerFactory.getLogger(Natura2000WfsInterpreter.class);
 
-
-  @Resource private final GeometryFactory rdNewGeometryFactory = new GeometryFactory(new PrecisionModel(), SRID_RDNEW);
-  @Resource private MathTransform wgsToRdNewtransform;
+  @Resource
+  private final GeometryFactory rdNewGeometryFactory = new GeometryFactory(new PrecisionModel(), SRID_RDNEW);
+  @Resource
+  private MathTransform wgsToRdNewtransform;
 
   // @formatter:off
   /**
@@ -96,10 +97,9 @@ public class Natura2000WfsInterpreter {
       throw new InterpretationRuntimeException(e);
     }
 
-    LOG.info("Retrieving from {}", wfsNatura2000Url.split("\\?")[0]);
-    final byte[] body = Unirest.get(wfsNatura2000Url)
-        .asBytes()
-        .getBody();
+    if (LOG.isInfoEnabled()) {
+      LOG.info("Retrieving from {}", wfsNatura2000Url.split("\\?")[0]);
+    }
 
     LOG.info("Got WFS response.");
 
@@ -112,6 +112,9 @@ public class Natura2000WfsInterpreter {
       throw new InterpretationRuntimeException("Could not set feature disallow-doctype-decl", e1);
     }
 
+    final byte[] body = Unirest.get(wfsNatura2000Url)
+        .asBytes()
+        .getBody();
     Document document;
     try (InputStream wfsStream = new ByteArrayInputStream(body)) {
       document = reader.read(wfsStream);

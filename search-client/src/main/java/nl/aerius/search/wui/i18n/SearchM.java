@@ -18,8 +18,10 @@ package nl.aerius.search.wui.i18n;
 
 import com.google.gwt.core.client.GWT;
 
-public class SearchM {
+public final class SearchM {
   private static final SearchMessages SEARCH_MESSAGES = GWT.create(SearchMessages.class);
+
+  private SearchM() {}
 
   public static SearchMessages messages() {
     return SEARCH_MESSAGES;

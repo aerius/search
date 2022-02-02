@@ -35,7 +35,7 @@ import nl.overheid.aerius.shared.domain.v2.geojson.Point;
 import nl.overheid.aerius.shared.domain.v2.geojson.Polygon;
 import nl.overheid.aerius.shared.geometry.ReceptorUtil;
 
-public class ReceptorUtils {
+public final class ReceptorUtils {
   // TODO i18n
   private static final String RECEPTOR_FORMAT = "Receptor %s - x:%s y:%s";
 

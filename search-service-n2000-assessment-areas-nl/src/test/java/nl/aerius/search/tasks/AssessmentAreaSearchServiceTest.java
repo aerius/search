@@ -28,7 +28,7 @@ public class AssessmentAreaSearchServiceTest {
   @Autowired AssessmentAreaSearchService delegator;
 
   @Test
-  public void testWorksAtALl() {
-    Assertions.assertTrue(true);
+  public void testWorksAtAll() {
+    Assertions.assertTrue(true, "The test works!");
   }
 }
