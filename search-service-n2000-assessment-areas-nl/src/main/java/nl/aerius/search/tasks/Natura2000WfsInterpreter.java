@@ -66,13 +66,12 @@ import kong.unirest.Unirest;
 @Component
 public class Natura2000WfsInterpreter {
   private static final double DOUGLAS_PEUCKER_TOLERANCE = 5D;
+  private static final int SRID_RDNEW = 28992;
 
   private static final Logger LOG = LoggerFactory.getLogger(Natura2000WfsInterpreter.class);
 
-  private static final int SRID_RDNEW = 28992;
 
   @Resource private final GeometryFactory rdNewGeometryFactory = new GeometryFactory(new PrecisionModel(), SRID_RDNEW);
-
   @Resource private MathTransform wgsToRdNewtransform;
 
   // @formatter:off
@@ -85,7 +84,6 @@ public class Natura2000WfsInterpreter {
   private String wfsNatura2000Url;
   // @formatter:on
 
-  @SuppressWarnings("unchecked")
   public Map<String, Nature2000Area> retrieveAreas() {
     final CoordinateReferenceSystem targetCRS;
     try {
@@ -245,9 +243,9 @@ public class Natura2000WfsInterpreter {
     return coordinates;
   }
 
-  private Envelope extractEnvelope(final Coordinate coord, final MathTransform wgsToRdNewtransform2) {
+  private Envelope extractEnvelope(final Coordinate coord, final MathTransform transform) {
     try {
-      return JTS.transform(new Envelope(coord), wgsToRdNewtransform);
+      return JTS.transform(new Envelope(coord), transform);
     } catch (final TransformException e) {
       throw new InterpretationRuntimeException("Failed transform", e);
     }
