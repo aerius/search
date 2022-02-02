@@ -26,8 +26,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -70,8 +68,8 @@ public class Natura2000WfsInterpreter {
 
   private static final Logger LOG = LoggerFactory.getLogger(Natura2000WfsInterpreter.class);
 
-  @Resource private final GeometryFactory rdNewGeometryFactory = new GeometryFactory(new PrecisionModel(), SRID_RDNEW);
-  @Resource private MathTransform wgsToRdNewtransform;
+  private final GeometryFactory rdNewGeometryFactory = new GeometryFactory(new PrecisionModel(), SRID_RDNEW);
+  private MathTransform wgsToRdNewtransform;
 
   // @formatter:off
   /**

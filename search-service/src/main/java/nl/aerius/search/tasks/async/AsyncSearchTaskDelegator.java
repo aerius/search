@@ -22,8 +22,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import javax.annotation.Resource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,11 +58,16 @@ public class AsyncSearchTaskDelegator {
   private static final int INTERVAL = 30; // 30 seconds
   private static final int TIME_TO_LIVE = 5 * 60; // 5 minutes
 
-  @Autowired TaskFactory taskFactory;
+  private final CacheMap<String, SearchResult> tasks = new CacheMap<>(TIME_TO_LIVE, INTERVAL, LOG);
 
-  @Resource private final CacheMap<String, SearchResult> tasks = new CacheMap<>(TIME_TO_LIVE, INTERVAL, LOG);
+  private final CacheMap<String, Disposable> disposables = new CacheMap<>(TIME_TO_LIVE, INTERVAL, LOG);
 
-  @Resource private final CacheMap<String, Disposable> disposables = new CacheMap<>(TIME_TO_LIVE, INTERVAL, LOG);
+  private final TaskFactory taskFactory;
+
+  @Autowired
+  public AsyncSearchTaskDelegator(final TaskFactory taskFactory) {
+    this.taskFactory = taskFactory;
+  }
 
   public SearchResult retrieveSearchResultsAsync(final String query, final Set<CapabilityKey> capabilities) {
     final Map<CapabilityKey, SearchTaskService> services = TaskUtils.findTaskServices(taskFactory, capabilities, LOG);

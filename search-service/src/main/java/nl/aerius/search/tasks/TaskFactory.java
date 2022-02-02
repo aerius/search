@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,9 +52,14 @@ import nl.aerius.search.domain.SearchRegion;
 public class TaskFactory {
   private static final Logger LOG = LoggerFactory.getLogger(TaskFactory.class);
 
-  @Autowired private Set<SearchTaskService> scannedTasks;
+  private Map<CapabilityKey, List<SearchTaskService>> tasks;
 
-  @Resource private Map<CapabilityKey, List<SearchTaskService>> tasks;
+  private final Set<SearchTaskService> scannedTasks;
+
+  @Autowired
+  public TaskFactory(final Set<SearchTaskService> scannedTasks) {
+    this.scannedTasks = scannedTasks;
+  }
 
   public List<SearchTaskService> getTask(final CapabilityKey capability) {
     return Optional.ofNullable(tasks.get(capability))
@@ -68,6 +72,7 @@ public class TaskFactory {
 
   @PostConstruct
   public void onFactoryConstructed() {
+    LOG.info("onFactoryConstructed");
     // Map all scanned task services by each respective capability it fulfills.
     // TODO Make this map support multiple services for the same CapabilityKey
     final Map<List<CapabilityKey>, SearchTaskService> unflattened = scannedTasks.stream()

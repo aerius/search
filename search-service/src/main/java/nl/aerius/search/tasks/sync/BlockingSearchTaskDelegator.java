@@ -45,7 +45,12 @@ import nl.aerius.search.tasks.TaskUtils;
 public class BlockingSearchTaskDelegator {
   private static final Logger LOG = LoggerFactory.getLogger(BlockingSearchTaskDelegator.class);
 
-  @Autowired TaskFactory taskFactory;
+  private final TaskFactory taskFactory;
+
+  @Autowired
+  public BlockingSearchTaskDelegator(final TaskFactory taskFactory) {
+    this.taskFactory = taskFactory;
+  }
 
   public List<SearchSuggestion> retrieveSearchResults(final String query, final Set<CapabilityKey> capabilities) {
     final Map<CapabilityKey, SearchTaskService> tasks = TaskUtils.findTaskServices(taskFactory, capabilities, LOG);

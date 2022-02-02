@@ -24,48 +24,73 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Duration;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.awaitility.Awaitility;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import nl.aerius.search.domain.SearchCapability;
 import nl.aerius.search.domain.SearchRegion;
 import nl.aerius.search.tasks.CapabilityKey;
+import nl.aerius.search.tasks.Mock0SecondTask;
+import nl.aerius.search.tasks.MockHalfSecondTask;
+import nl.aerius.search.tasks.MockTenthSecondTask;
+import nl.aerius.search.tasks.SearchTaskService;
+import nl.aerius.search.tasks.TaskFactory;
 
-@SpringBootTest
 public class AsyncSearchTaskDelegatorTest {
-  @Autowired AsyncSearchTaskDelegator delegator;
+  AsyncSearchTaskDelegator delegator;
+
+  @BeforeEach
+  void beforeEach() {
+    final SearchTaskService mock0Task = new Mock0SecondTask();
+    final SearchTaskService mock01Task = new MockTenthSecondTask();
+    final SearchTaskService mock05Task = new MockHalfSecondTask();
+
+    final Set<SearchTaskService> tasks = Set.of(mock0Task, mock01Task, mock05Task);
+
+    final TaskFactory factory = new TaskFactory(tasks);
+    factory.onFactoryConstructed();
+    delegator = new AsyncSearchTaskDelegator(factory);
+  }
 
   @Test
-  public void testResponseDelays() {
+  public void testResponseDelays() throws InterruptedException {
     final Set<CapabilityKey> caps = Set.of(CapabilityKey.of(SearchCapability.MOCK_0, SearchRegion.NL),
         CapabilityKey.of(SearchCapability.MOCK_01, SearchRegion.NL),
         CapabilityKey.of(SearchCapability.MOCK_05, SearchRegion.NL));
     final SearchResult result1 = delegator.retrieveSearchResultsAsync("test", caps);
+    final String uuid = result1.getUuid();
 
-    assertFalse(result1.isComplete(), "Result should not be complete at this point.");
-    assertNotNull(result1.getResults(), "Results should not be null at this point.");
+    final SearchResult result2 = delegator.retrieveSearchTask(uuid);
 
-    Awaitility.await().atMost(Duration.ofMillis(50));
-    assertEquals(1, result1.getResults().size(), "Should have 1 results at this point.");
+    assertFalse(result2.isComplete(), "Result should not be complete at this point.");
+    assertNotNull(result2.getResults(), "Results should not be null at this point.");
 
-    Awaitility.await().atMost(Duration.ofMillis(100));
-    assertEquals(2, result1.getResults().size(), "Should have 2 results at this point.");
+    TimeUnit.MILLISECONDS.sleep(50);
+    final SearchResult result3 = delegator.retrieveSearchTask(uuid);
+    assertEquals(1, result3.getResults().size(), "Should have 1 results at this point.");
 
-    Awaitility.await().atMost(Duration.ofMillis(400));
-    assertEquals(3, result1.getResults().size(), "Should have 3 results at this point.");
+    System.out.println("Before: " + System.currentTimeMillis());
+    TimeUnit.MILLISECONDS.sleep(100);
+    System.out.println("After: " + System.currentTimeMillis());
+    final SearchResult result4 = delegator.retrieveSearchTask(uuid);
+    assertEquals(2, result4.getResults().size(), "Should have 2 results at this point.");
+
+    TimeUnit.MILLISECONDS.sleep(400);
+    final SearchResult result5 = delegator.retrieveSearchTask(uuid);
+    assertEquals(3, result5.getResults().size(), "Should have 3 results at this point.");
   }
 
   @Test
-  public void testResponseCancellation() {
+  public void testResponseCancellation() throws InterruptedException {
     final Set<CapabilityKey> caps = Set.of(CapabilityKey.of(SearchCapability.MOCK_01, SearchRegion.NL));
     final SearchResult result1 = delegator.retrieveSearchResultsAsync("test", caps);
 
     assertFalse(result1.isComplete(), "Result should not be complete at this point.");
 
-    Awaitility.await().atMost(Duration.ofMillis(50));
+    TimeUnit.MILLISECONDS.sleep(50);
     delegator.cancelSearchTask(result1.getUuid());
 
     final SearchResult result2 = delegator.retrieveSearchTask(result1.getUuid());
@@ -76,28 +101,5 @@ public class AsyncSearchTaskDelegatorTest {
     assertFalse(result1.isComplete(), "Result should not be complete, because the query should be cancelled - the reactor was not cancelled");
     assertTrue(result1.getResults().isEmpty(),
         "Results should still be empty after the task completes (>100ms) - the individual task was not cancelled");
-  }
-
-  @Test
-  public void testReceptorNonNull() {
-    final Set<CapabilityKey> caps = Set.of(CapabilityKey.of(SearchCapability.RECEPTOR, SearchRegion.NL));
-    final SearchResult result1 = delegator.retrieveSearchResultsAsync("123123", caps);
-
-    Awaitility.await().atMost(Duration.ofMillis(50));
-    assertTrue(result1.isComplete(), "Result should be complete at this point.");
-    assertEquals(1, result1.getResults().size(), "Result number should be 1");
-  }
-
-  @Test
-  public void testReceptorNull() {
-    final Set<CapabilityKey> caps = Set.of(CapabilityKey.of(SearchCapability.RECEPTOR, SearchRegion.NL));
-
-    final SearchResult res = delegator.retrieveSearchResultsAsync("nothing", caps);
-
-    Awaitility.await().atMost(Duration.ofMillis(50));
-    final SearchResult result = delegator.retrieveSearchTask(res.getUuid());
-
-    assertTrue(result.isComplete(), "Result should be complete at this point.");
-    assertEquals(0, result.getResults().size(), "Result number should be 0");
   }
 }

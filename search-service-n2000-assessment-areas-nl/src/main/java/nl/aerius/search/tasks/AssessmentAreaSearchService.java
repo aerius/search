@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +45,7 @@ import nl.aerius.search.domain.SearchTaskResult;
 public class AssessmentAreaSearchService implements SearchTaskService {
   private static final Logger LOG = LoggerFactory.getLogger(AssessmentAreaSearchService.class);
 
-  @Resource private final Map<String, Nature2000Area> areas = new HashMap<>();
+  private final Map<String, Nature2000Area> areas = new HashMap<>();
 
   @Autowired Natura2000WfsInterpreter interpreter;
 
