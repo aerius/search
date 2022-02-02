@@ -17,12 +17,16 @@
 package nl.aerius.search.tasks;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.text.Normalizer;
 import java.text.Normalizer.Form;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -63,20 +67,21 @@ import kong.unirest.Unirest;
 public class Natura2000WfsInterpreter {
   private static final double DOUGLAS_PEUCKER_TOLERANCE = 5D;
 
-  private static final Logger LOG = LoggerFactory.getLogger(AssessmentAreaSearchService.class);
+  private static final Logger LOG = LoggerFactory.getLogger(Natura2000WfsInterpreter.class);
 
   private static final int SRID_RDNEW = 28992;
 
-  private final GeometryFactory rdNewGeometryFactory = new GeometryFactory(new PrecisionModel(), SRID_RDNEW);
+  @Resource private final GeometryFactory rdNewGeometryFactory = new GeometryFactory(new PrecisionModel(), SRID_RDNEW);
 
-  private MathTransform wgsToRdNewtransform;
+  @Resource private MathTransform wgsToRdNewtransform;
 
   // @formatter:off
   /**
    * @see <a href="https://www.nationaalgeoregister.nl/geonetwork/srv/api/records/280ed37a-b8d2-4ac5-8567-04d84fad3a41">Resource URL</a>
    * @see <a href="https://nationaalgeoregister.nl/geonetwork/srv/dut/catalog.search#/metadata/280ed37a-b8d2-4ac5-8567-04d84fad3a41">Catalog URL</a>
    */
-  @Value("${nl.aerius.wfs.n2000:http://geodata.nationaalgeoregister.nl/inspire/ps-natura2000/wfs?request=GetFeature&service=WFS&version=2.0.0&typeName=ps-natura2000:ProtectedSite&outputFormat=application%2Fgml%2Bxml%3B%20version%3D3.2}")
+  @Value("${nl.aerius.wfs.n2000:http://geodata.nationaalgeoregister.nl/inspire/ps-natura2000/wfs?"
+      + "request=GetFeature&service=WFS&version=2.0.0&typeName=ps-natura2000:ProtectedSite&outputFormat=application%2Fgml%2Bxml%3B%20version%3D3.2}")
   private String wfsNatura2000Url;
   // @formatter:on
 
@@ -90,7 +95,7 @@ public class Natura2000WfsInterpreter {
       wgsToRdNewtransform = CRS.findMathTransform(sourceCRS, targetCRS);
     } catch (final FactoryException e) {
       LOG.error("Could not initialize coordinate reference system");
-      throw new RuntimeException(e);
+      throw new InterpretationRuntimeException(e);
     }
 
     LOG.info("Retrieving from {}", wfsNatura2000Url.split("\\?")[0]);
@@ -100,37 +105,40 @@ public class Natura2000WfsInterpreter {
 
     LOG.info("Got WFS response.");
 
-    final InputStream wfsStream = new ByteArrayInputStream(body);
-
     final SAXReader reader = new SAXReader();
     try {
       // https://sonarcloud.io/organizations/aerius/rules?open=java%3AS2755&rule_key=java%3AS2755
       reader.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
     } catch (final SAXException e1) {
       // Crash hard
-      throw new RuntimeException("Could not set feature disallow-doctype-decl", e1);
+      throw new InterpretationRuntimeException("Could not set feature disallow-doctype-decl", e1);
     }
 
     Document document;
-    try {
+    try (InputStream wfsStream = new ByteArrayInputStream(body)) {
       document = reader.read(wfsStream);
-    } catch (final DocumentException e) {
+    } catch (final DocumentException e1) {
       LOG.error("Could not interpret WFS response; assessment areas will not be searchable as a result.");
-      throw new RuntimeException(e);
+      throw new InterpretationRuntimeException("Could not interpret WFS document", e1);
+    } catch (final IOException e2) {
+      throw new InterpretationRuntimeException(e2);
     }
 
     final Map<String, Nature2000Area> areas = new HashMap<>();
 
     final Element rootElem = document.getRootElement();
-    ((List<DefaultElement>) rootElem.elements()).forEach(elem -> {
-      final Nature2000Area area = processArea(elem.element("ProtectedSite"));
-      areas.merge(area.getNormalizedName(), area, (a, b) -> merge(a, b, targetCRS));
+    final List<?> elements = rootElem.elements();
+    elements.forEach(elem -> {
+      if (elem instanceof DefaultElement) {
+        final Nature2000Area area = processArea(((DefaultElement) elem).element("ProtectedSite"));
+        areas.merge(area.getNormalizedName(), area, (a, b) -> merge(a, b));
+      }
     });
 
     return areas;
   }
 
-  private Nature2000Area merge(final Nature2000Area a, final Nature2000Area b, final CoordinateReferenceSystem crs) {
+  private static Nature2000Area merge(final Nature2000Area a, final Nature2000Area b) {
     final String geometryAWkt = a.getWktGeometry();
     final String geometryBWkt = b.getWktGeometry();
 
@@ -150,7 +158,7 @@ public class Natura2000WfsInterpreter {
       a.setWktCentroid(centroidWkt);
 
     } catch (final ParseException e) {
-      throw new RuntimeException("Cannot read WKT geometries.", e);
+      throw new InterpretationRuntimeException("Cannot read WKT geometries.", e);
     }
 
     return a;
@@ -182,7 +190,7 @@ public class Natura2000WfsInterpreter {
   }
 
   private Geometry readGeometry(final Element protectedSite) {
-    final List members = protectedSite
+    final List<?> members = protectedSite
         .element("geometry")
         .element("MultiSurface")
         .elements("surfaceMember");
@@ -215,7 +223,7 @@ public class Natura2000WfsInterpreter {
 
   public String normalize(final String name) {
     return Normalizer.normalize(name, Form.NFC)
-        .toLowerCase();
+        .toLowerCase(Locale.ROOT);
   }
 
   private Coordinate[] coordinatesFromString(final String feature) {
@@ -227,20 +235,21 @@ public class Natura2000WfsInterpreter {
       try {
         final Coordinate coord = new Coordinate(Double.parseDouble(parts[i]), Double.parseDouble(parts[i + 1]));
 
-        Envelope result;
-        try {
-          result = JTS.transform(new Envelope(coord), wgsToRdNewtransform);
-        } catch (final TransformException e) {
-          throw new RuntimeException("Failed transform", e);
-        }
-
-        coordinates[i / 2] = result.centre();
+        final Envelope env = extractEnvelope(coord, wgsToRdNewtransform);
+        coordinates[i / 2] = env.centre();
       } catch (final NumberFormatException e) {
         LOG.info("Parsing: {} > {}", parts[i], parts[i + 1]);
-        continue;
       }
     }
 
     return coordinates;
+  }
+
+  private Envelope extractEnvelope(final Coordinate coord, final MathTransform wgsToRdNewtransform2) {
+    try {
+      return JTS.transform(new Envelope(coord), wgsToRdNewtransform);
+    } catch (final TransformException e) {
+      throw new InterpretationRuntimeException("Failed transform", e);
+    }
   }
 }

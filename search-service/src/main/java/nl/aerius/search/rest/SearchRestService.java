@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -45,14 +46,19 @@ public class SearchRestService {
    *
    * Accept both GET and POST requests
    */
-  @RequestMapping(value = "/api/search")
+  @RequestMapping(value = "/api/search", method = { RequestMethod.GET, RequestMethod.POST })
   public List<SearchSuggestion> retrieveSearchResults(final String query,
       @RequestParam(defaultValue = DEFAULT_CAPABILITIES) final List<String> capabilities,
       @RequestParam(defaultValue = DEFAULT_REGION) final String region) {
     return taskDelegator.retrieveSearchResults(scrub(query), TaskUtils.parseCapabilities(capabilities, region));
   }
 
-  @RequestMapping(value = "/api/search-async")
+  /**
+   * Retrieve search results based on the given query and capabilities asynchronously
+   *
+   * Accept both GET and POST requests
+   */
+  @RequestMapping(value = "/api/search-async", method = { RequestMethod.GET, RequestMethod.POST })
   public SearchResult retrieveSearchResultsAsync(final String query,
       @RequestParam(defaultValue = DEFAULT_CAPABILITIES) final List<String> capabilities,
       @RequestParam(defaultValue = DEFAULT_REGION) final String region, final Optional<String> cancel) {
