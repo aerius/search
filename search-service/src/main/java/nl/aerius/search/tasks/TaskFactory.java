@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +55,7 @@ public class TaskFactory {
 
   @Autowired private Set<SearchTaskService> scannedTasks;
 
+  @Resource
   private Map<CapabilityKey, List<SearchTaskService>> tasks;
 
   public List<SearchTaskService> getTask(final CapabilityKey capability) {
