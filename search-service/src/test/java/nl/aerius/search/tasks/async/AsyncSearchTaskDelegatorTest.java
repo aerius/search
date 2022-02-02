@@ -22,11 +22,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.time.Duration;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -57,6 +55,8 @@ public class AsyncSearchTaskDelegatorTest {
 
   @Test
   public void testResponseDelays() throws InterruptedException {
+    beforeEach();
+    
     final Set<CapabilityKey> caps = Set.of(CapabilityKey.of(SearchCapability.MOCK_0, SearchRegion.NL),
         CapabilityKey.of(SearchCapability.MOCK_01, SearchRegion.NL),
         CapabilityKey.of(SearchCapability.MOCK_05, SearchRegion.NL));
@@ -85,6 +85,8 @@ public class AsyncSearchTaskDelegatorTest {
 
   @Test
   public void testResponseCancellation() throws InterruptedException {
+    beforeEach();
+    
     final Set<CapabilityKey> caps = Set.of(CapabilityKey.of(SearchCapability.MOCK_01, SearchRegion.NL));
     final SearchResult result1 = delegator.retrieveSearchResultsAsync("test", caps);
 
@@ -97,7 +99,7 @@ public class AsyncSearchTaskDelegatorTest {
 
     assertNull(result2, "Result should be disposed after cancellation");
 
-    Awaitility.await().atMost(Duration.ofMillis(60));
+    TimeUnit.MILLISECONDS.sleep(60);
     assertFalse(result1.isComplete(), "Result should not be complete, because the query should be cancelled - the reactor was not cancelled");
     assertTrue(result1.getResults().isEmpty(),
         "Results should still be empty after the task completes (>100ms) - the individual task was not cancelled");

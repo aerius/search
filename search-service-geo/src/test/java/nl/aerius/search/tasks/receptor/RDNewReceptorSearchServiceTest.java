@@ -26,7 +26,7 @@ import io.reactivex.rxjava3.core.Single;
 import nl.aerius.search.domain.SearchTaskResult;
 
 public class RDNewReceptorSearchServiceTest {
-  RDNewReceptorSearchService service;
+  private RDNewReceptorSearchService service;
 
   @BeforeEach
   void beforeEach() {
@@ -35,6 +35,7 @@ public class RDNewReceptorSearchServiceTest {
 
   @Test
   public void testReceptorNonNull() {
+    service = new RDNewReceptorSearchService();
     final Single<SearchTaskResult> single = service.retrieveSearchResults("123123");
     final SearchTaskResult result = single.blockingGet();
 
@@ -43,6 +44,7 @@ public class RDNewReceptorSearchServiceTest {
 
   @Test
   public void testReceptorNull() {
+    service = new RDNewReceptorSearchService();
     final Single<SearchTaskResult> single = service.retrieveSearchResults("nothing");
     final SearchTaskResult result = single.blockingGet();
 

@@ -53,6 +53,8 @@ public class BlockingSearchTaskDelegatorTest {
 
   @Test
   public void testResponseDelays() {
+    beforeEach();
+
     final Set<CapabilityKey> caps = Set.of(CapabilityKey.of(SearchCapability.MOCK_0, SearchRegion.NL),
         CapabilityKey.of(SearchCapability.MOCK_01, SearchRegion.NL),
         CapabilityKey.of(SearchCapability.MOCK_05, SearchRegion.NL));
