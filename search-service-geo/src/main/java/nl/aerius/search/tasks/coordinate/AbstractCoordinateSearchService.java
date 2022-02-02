@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
 import io.reactivex.rxjava3.core.Single;
 
 import nl.aerius.search.domain.SearchResultBuilder;
+import nl.aerius.search.domain.SearchSuggestion;
 import nl.aerius.search.domain.SearchSuggestionBuilder;
 import nl.aerius.search.domain.SearchSuggestionType;
 import nl.aerius.search.domain.SearchTaskResult;
@@ -63,7 +64,7 @@ public abstract class AbstractCoordinateSearchService implements SearchTaskServi
       final Point point = new Point(x, y);
       final int recId = util.getReceptorIdFromPoint(point);
       return Single.just(SearchResultBuilder.of(
-          SearchSuggestionBuilder.create(String.format(COORDINATE_FORMAT, x, y), SearchSuggestionBuilder.MAX_SCORE, SearchSuggestionType.COORDINATE,
+          SearchSuggestionBuilder.create(String.format(COORDINATE_FORMAT, x, y), SearchSuggestion.MAX_SCORE, SearchSuggestionType.COORDINATE,
               String.format(WKT_POINT_FORMAT, x, y)),
           ReceptorUtils.getReceptorSuggestion(recId, util, zoomLevel1)));
     }

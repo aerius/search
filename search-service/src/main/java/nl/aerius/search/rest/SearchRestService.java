@@ -54,7 +54,8 @@ public class SearchRestService {
   }
 
   /**
-   * Retrieve search results based on the given query and capabilities asynchronously
+   * Retrieve search results based on the given query and capabilities
+   * asynchronously
    *
    * Accept both GET and POST requests
    */

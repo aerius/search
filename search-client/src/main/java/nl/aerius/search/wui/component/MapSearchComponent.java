@@ -90,7 +90,7 @@ public class MapSearchComponent implements IsVueComponent, HasCreated, HasMounte
   @Computed
   public Map<String, List<SearchSuggestion>> getResults() {
     final Map<String, List<SearchSuggestion>> res = context.getResults().values().stream()
-        .collect(Collectors.groupingBy(v -> v.type, () -> new LinkedHashMap<>(), Collectors.toList()));
+        .collect(Collectors.groupingBy(v -> v.type, LinkedHashMap::new, Collectors.toList()));
 
     res.values().forEach(v -> v.sort((o1, o2) -> Double.compare(o1.score, o2.score)));
 
@@ -143,7 +143,7 @@ public class MapSearchComponent implements IsVueComponent, HasCreated, HasMounte
   @SuppressWarnings("rawtypes")
   public String getEntryGroup(final Entry entry) {
     return i18n.searchSuggestionTypeName(Optional.ofNullable(entry.getKey())
-        .map(v -> String.valueOf(v))
+        .map(String::valueOf)
         .orElse(FALLBACK_SEARCH_TYPE));
   }
 

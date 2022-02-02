@@ -17,8 +17,6 @@
 package nl.aerius.search.domain;
 
 public final class SearchSuggestionBuilder {
-  public static final double MAX_SCORE = 100;
-
   private SearchSuggestionBuilder() {}
 
   public static SearchSuggestion create(final String txt) {

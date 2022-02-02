@@ -44,7 +44,7 @@ public class SearchServiceAsyncImpl implements SearchServiceAsync {
       final AsyncCallback<SearchSuggestion[]> callback) {
     final String url = InteropRequestUtil.prepareUrl(cfg.getSearchEndpoint(), QUERY_FORMAT,
         ":query", query,
-        ":capabilities", capabilities.stream().map(v -> v.name()).collect(Collectors.joining(",")),
+        ":capabilities", capabilities.stream().map(SearchCapability::name).collect(Collectors.joining(",")),
         ":region", region);
 
     InteropRequestUtil.doGet(url, callback);
@@ -57,7 +57,7 @@ public class SearchServiceAsyncImpl implements SearchServiceAsync {
 
     final String url = InteropRequestUtil.prepareUrl(cfg.getSearchEndpoint(), method,
         ":query", query,
-        ":capabilities", capabilities.stream().map(v -> v.name()).collect(Collectors.joining(",")),
+        ":capabilities", capabilities.stream().map(SearchCapability::name).collect(Collectors.joining(",")),
         ":region", region,
         ":cancel", cancel);
 

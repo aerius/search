@@ -17,6 +17,8 @@
 package nl.aerius.search.domain;
 
 public class SearchSuggestion {
+  public static final double MAX_SCORE = 100;
+
   private String id;
   private String description;
 
@@ -48,7 +50,7 @@ public class SearchSuggestion {
    * @param score a score, the value will be clamped to between 0 and 100
    */
   public void setScore(final double score) {
-    this.score = Math.max(0, Math.min(score, 100));
+    this.score = Math.max(0, Math.min(score, MAX_SCORE));
   }
 
   public double getScore() {

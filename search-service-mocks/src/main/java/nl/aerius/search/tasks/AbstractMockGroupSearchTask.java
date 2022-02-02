@@ -29,6 +29,8 @@ import nl.aerius.search.domain.SearchSuggestionType;
 import nl.aerius.search.domain.SearchTaskResult;
 
 public abstract class AbstractMockGroupSearchTask implements SearchTaskService {
+  private static final double MIN_SCORE = 0.1;
+
   private static final Logger LOG = LoggerFactory.getLogger(AbstractMockGroupSearchTask.class);
 
   private static final String FOO = "foo";
@@ -48,8 +50,8 @@ public abstract class AbstractMockGroupSearchTask implements SearchTaskService {
     LOG.debug("Retrieving mock search result for query [{}] at delay of {}ms", query, delay);
 
     return Single.just(SearchResultBuilder
-        .of(SearchSuggestionBuilder.create(String.format(TEXT_FOO, query, delay), 0.1, SearchSuggestionType.ADDRESS),
-            SearchSuggestionBuilder.create(String.format(TEXT_BAR, query, delay), 0.1, SearchSuggestionType.MUNICIPALITY)))
+        .of(SearchSuggestionBuilder.create(String.format(TEXT_FOO, query, delay), MIN_SCORE, SearchSuggestionType.ADDRESS),
+            SearchSuggestionBuilder.create(String.format(TEXT_BAR, query, delay), MIN_SCORE, SearchSuggestionType.MUNICIPALITY)))
         .delay(delay, TimeUnit.MILLISECONDS)
         .doOnDispose(() -> LOG.info("Cancelled mock [{}] with delay {}", query, delay))
         .doAfterTerminate(() -> LOG.info("Terminated mock [{}] with delay {}", query, delay))

@@ -70,7 +70,7 @@ public final class ReceptorUtils {
     final String wktGeometry = "POLYGON((" + Stream.of(createHexagon.getCoordinates()[0])
         .map(v -> v[0] + " " + v[1])
         .collect(Collectors.joining(",")) + "))";
-    return SearchSuggestionBuilder.create(label, SearchSuggestionBuilder.MAX_SCORE, SearchSuggestionType.RECEPTOR, wktCentroid, wktGeometry);
+    return SearchSuggestionBuilder.create(label, SearchSuggestion.MAX_SCORE, SearchSuggestionType.RECEPTOR, wktCentroid, wktGeometry);
   }
 
 }

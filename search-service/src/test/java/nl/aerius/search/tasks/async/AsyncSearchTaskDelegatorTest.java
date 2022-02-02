@@ -51,10 +51,8 @@ public class AsyncSearchTaskDelegatorTest {
     Awaitility.await().atMost(Duration.ofMillis(50));
     assertEquals(1, result1.getResults().size(), "Should have 1 results at this point.");
 
-
     Awaitility.await().atMost(Duration.ofMillis(100));
     assertEquals(2, result1.getResults().size(), "Should have 2 results at this point.");
-
 
     Awaitility.await().atMost(Duration.ofMillis(400));
     assertEquals(3, result1.getResults().size(), "Should have 3 results at this point.");
@@ -67,15 +65,12 @@ public class AsyncSearchTaskDelegatorTest {
 
     assertFalse(result1.isComplete(), "Result should not be complete at this point.");
 
-
-
     Awaitility.await().atMost(Duration.ofMillis(50));
     delegator.cancelSearchTask(result1.getUuid());
 
     final SearchResult result2 = delegator.retrieveSearchTask(result1.getUuid());
 
     assertNull(result2, "Result should be disposed after cancellation");
-
 
     Awaitility.await().atMost(Duration.ofMillis(60));
     assertFalse(result1.isComplete(), "Result should not be complete, because the query should be cancelled - the reactor was not cancelled");
@@ -88,7 +83,6 @@ public class AsyncSearchTaskDelegatorTest {
     final Set<CapabilityKey> caps = Set.of(CapabilityKey.of(SearchCapability.RECEPTOR, SearchRegion.NL));
     final SearchResult result1 = delegator.retrieveSearchResultsAsync("123123", caps);
 
-
     Awaitility.await().atMost(Duration.ofMillis(50));
     assertTrue(result1.isComplete(), "Result should be complete at this point.");
     assertEquals(1, result1.getResults().size(), "Result number should be 1");
@@ -99,7 +93,6 @@ public class AsyncSearchTaskDelegatorTest {
     final Set<CapabilityKey> caps = Set.of(CapabilityKey.of(SearchCapability.RECEPTOR, SearchRegion.NL));
 
     final SearchResult res = delegator.retrieveSearchResultsAsync("nothing", caps);
-
 
     Awaitility.await().atMost(Duration.ofMillis(50));
     final SearchResult result = delegator.retrieveSearchTask(res.getUuid());

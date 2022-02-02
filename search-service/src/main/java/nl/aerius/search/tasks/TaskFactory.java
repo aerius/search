@@ -17,6 +17,7 @@
 package nl.aerius.search.tasks;
 
 import java.util.AbstractMap;
+import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -54,8 +55,7 @@ public class TaskFactory {
 
   @Autowired private Set<SearchTaskService> scannedTasks;
 
-  @Resource
-  private Map<CapabilityKey, List<SearchTaskService>> tasks;
+  @Resource private Map<CapabilityKey, List<SearchTaskService>> tasks;
 
   public List<SearchTaskService> getTask(final CapabilityKey capability) {
     return Optional.ofNullable(tasks.get(capability))
@@ -77,7 +77,7 @@ public class TaskFactory {
     tasks = unflattened.entrySet().stream()
         .flatMap(e -> e.getKey().stream()
             .map(k -> new AbstractMap.SimpleImmutableEntry<CapabilityKey, SearchTaskService>(k, e.getValue())))
-        .collect(Collectors.toMap(v -> v.getKey(), v -> Arrays.asList(v.getValue())));
+        .collect(Collectors.toMap(SimpleImmutableEntry::getKey, v -> Arrays.asList(v.getValue())));
   }
 
   private static boolean hasAnnotationOnClass(final Class<? extends SearchTaskService> clazz) {

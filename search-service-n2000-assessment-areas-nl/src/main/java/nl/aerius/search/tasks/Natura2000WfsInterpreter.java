@@ -130,7 +130,7 @@ public class Natura2000WfsInterpreter {
     elements.forEach(elem -> {
       if (elem instanceof DefaultElement) {
         final Nature2000Area area = processArea(((DefaultElement) elem).element("ProtectedSite"));
-        areas.merge(area.getNormalizedName(), area, (a, b) -> merge(a, b));
+        areas.merge(area.getNormalizedName(), area, Natura2000WfsInterpreter::merge);
       }
     });
 

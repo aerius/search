@@ -17,6 +17,7 @@
 package nl.aerius.search.tasks;
 
 import java.util.AbstractMap;
+import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Map;
@@ -35,13 +36,11 @@ import nl.aerius.search.domain.SearchSuggestion;
  */
 public final class TaskUtils {
   private static final Logger LOG = LoggerFactory.getLogger(TaskUtils.class);
-  /**
-   * TODO Create another comparator, based on weight or some other value
-   */
+
   private static final Comparator<SearchSuggestion> COMPARATOR = Comparator
-      .<SearchSuggestion>comparingDouble(sug -> sug.getScore())
+      .<SearchSuggestion>comparingDouble(SearchSuggestion::getScore)
       .reversed()
-      .thenComparing(sug -> sug.getDescription());
+      .thenComparing(SearchSuggestion::getDescription);
 
   // (o1, o2) -> Double.compare(o1.getScore(), o2.getScore());
 
@@ -65,7 +64,7 @@ public final class TaskUtils {
         .entrySet().stream()
         .flatMap(e -> e.getValue().stream()
             .map(v -> new AbstractMap.SimpleImmutableEntry<CapabilityKey, SearchTaskService>(e.getKey(), v)))
-        .collect(Collectors.toMap(v -> v.getKey(), v -> v.getValue()));
+        .collect(Collectors.toMap(SimpleImmutableEntry::getKey, SimpleImmutableEntry::getValue));
 
   }
 

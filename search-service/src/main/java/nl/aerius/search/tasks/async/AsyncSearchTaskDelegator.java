@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
@@ -70,7 +71,7 @@ public class AsyncSearchTaskDelegator {
 
     if (LOG.isDebugEnabled()) {
       LOG.debug("Delegating search query [{}] to {} tasks ({})", query, services.size(), services.keySet()
-          .stream().map(v -> v.toString())
+          .stream().map(CapabilityKey::toString)
           .collect(Collectors.joining(",")));
     }
 
@@ -83,7 +84,7 @@ public class AsyncSearchTaskDelegator {
         .doOnError(e -> {
           LOG.error("Error while executing search task:", e);
         })
-        .flatMap(v -> v.toFlowable())
+        .flatMap(Single::toFlowable)
         .doAfterNext(r -> task.complete(r))
         .sequential()
         .doOnComplete(() -> task.complete())

@@ -155,7 +155,7 @@ public class SearchDaemonAsynchronous extends BasicEventComponent {
   }
 
   private void fetchOldResults(final String uuid) {
-    service.retrieveSearchResults(uuid, AppAsyncCallback.create(stales -> processOldResults(stales)));
+    service.retrieveSearchResults(uuid, AppAsyncCallback.create(this::processOldResults));
   }
 
   private void clear() {

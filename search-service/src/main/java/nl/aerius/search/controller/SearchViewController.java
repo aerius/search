@@ -36,17 +36,17 @@ import nl.aerius.search.tasks.sync.BlockingSearchTaskDelegator;
 public class SearchViewController {
   @Autowired BlockingSearchTaskDelegator delegator;
 
-  @GetMapping(value = {"/"})
+  @GetMapping(value = { "/" })
   public String searchForm(final Model model) {
     return "synchronous-form";
   }
 
-  @GetMapping(value = {"/async"})
+  @GetMapping(value = { "/async" })
   public String searchFormAsync(final Model model) {
     return "asynchronous-form";
   }
 
-  @GetMapping(value = {"/results"})
+  @GetMapping(value = { "/results" })
   public String search(final String query, @RequestParam final List<String> capabilities, final String region, final Model model) {
     final long timeStart = System.currentTimeMillis();
 
