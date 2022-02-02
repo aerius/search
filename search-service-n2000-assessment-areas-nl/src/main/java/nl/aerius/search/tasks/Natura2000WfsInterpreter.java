@@ -49,6 +49,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.xml.sax.SAXException;
 
 import kong.unirest.Unirest;
 
@@ -102,6 +103,14 @@ public class Natura2000WfsInterpreter {
     final InputStream wfsStream = new ByteArrayInputStream(body);
 
     final SAXReader reader = new SAXReader();
+    try {
+      // https://sonarcloud.io/organizations/aerius/rules?open=java%3AS2755&rule_key=java%3AS2755
+      reader.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+    } catch (final SAXException e1) {
+      // Crash hard
+      throw new RuntimeException("Could not set feature disallow-doctype-decl", e1);
+    }
+
     Document document;
     try {
       document = reader.read(wfsStream);
