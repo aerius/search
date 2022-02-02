@@ -67,7 +67,7 @@ public class AsyncSearchTaskDelegatorTest {
 
     assertFalse(result1.isComplete(), "Result should not be complete at this point.");
 
-    
+
 
     Awaitility.await().atMost(Duration.ofMillis(50));
     delegator.cancelSearchTask(result1.getUuid());
