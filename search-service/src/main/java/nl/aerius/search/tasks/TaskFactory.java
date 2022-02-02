@@ -52,22 +52,13 @@ import nl.aerius.search.domain.SearchRegion;
 public class TaskFactory {
   private static final Logger LOG = LoggerFactory.getLogger(TaskFactory.class);
 
-  private Map<CapabilityKey, List<SearchTaskService>> tasks;
-
   private final Set<SearchTaskService> scannedTasks;
+
+  private Map<CapabilityKey, List<SearchTaskService>> tasks;
 
   @Autowired
   public TaskFactory(final Set<SearchTaskService> scannedTasks) {
     this.scannedTasks = scannedTasks;
-  }
-
-  public List<SearchTaskService> getTask(final CapabilityKey capability) {
-    return Optional.ofNullable(tasks.get(capability))
-        .orElseThrow(() -> new RuntimeException("No task for capability: " + capability));
-  }
-
-  public boolean hasCapability(final CapabilityKey capability) {
-    return tasks.containsKey(capability);
   }
 
   @PostConstruct
@@ -83,6 +74,15 @@ public class TaskFactory {
         .flatMap(e -> e.getKey().stream()
             .map(k -> new AbstractMap.SimpleImmutableEntry<CapabilityKey, SearchTaskService>(k, e.getValue())))
         .collect(Collectors.toMap(SimpleImmutableEntry::getKey, v -> Arrays.asList(v.getValue())));
+  }
+
+  public List<SearchTaskService> getTask(final CapabilityKey capability) {
+    return Optional.ofNullable(tasks.get(capability))
+        .orElseThrow(() -> new RuntimeException("No task for capability: " + capability));
+  }
+
+  public boolean hasCapability(final CapabilityKey capability) {
+    return tasks.containsKey(capability);
   }
 
   private static boolean hasAnnotationOnClass(final Class<? extends SearchTaskService> clazz) {

@@ -130,7 +130,6 @@
     </pluginRepository>
   </pluginRepositories>
 
-
   <build>
     <pluginManagement>
       <plugins>

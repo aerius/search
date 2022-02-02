@@ -59,7 +59,6 @@ public class AsyncSearchTaskDelegator {
   private static final int TIME_TO_LIVE = 5 * 60; // 5 minutes
 
   private final CacheMap<String, SearchResult> tasks = new CacheMap<>(TIME_TO_LIVE, INTERVAL, LOG);
-
   private final CacheMap<String, Disposable> disposables = new CacheMap<>(TIME_TO_LIVE, INTERVAL, LOG);
 
   private final TaskFactory taskFactory;
