@@ -69,7 +69,8 @@ public class AssessmentAreaSearchService implements SearchTaskService {
       // Warn if areas is null - it is expected to happen shortly after startup (see
       // init()) but not during normal operation
       LOG.warn(
-          "Queries made while assessment area search service was not yet initialized, this is an issue if it happens well after startup has succeeded.");
+          "Queries made while assessment area search service was not yet initialized,"
+              + " this is an issue if it happens well after startup has succeeded.");
       result.setSuggestions(new ArrayList<>());
       return Single.just(result);
     }

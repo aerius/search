@@ -26,8 +26,8 @@ import nl.aerius.search.domain.SearchCapability;
  */
 @Component
 @ImplementsCapability(SearchCapability.MOCK_GROUP_1)
-public class Mock1SecondGroupedTask extends MockGroupSearchTask {
+public class Mock1SecondGroupedTask extends AbstractMockGroupSearchTask {
   public Mock1SecondGroupedTask() {
-    super(1000);
+    super(AbstractMockSearchTask.SECOND);
   }
 }

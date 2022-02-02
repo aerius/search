@@ -22,11 +22,10 @@ import nl.aerius.search.domain.SearchCapability;
 import nl.aerius.search.domain.SearchRegion;
 import nl.aerius.search.tasks.BNGConstants;
 import nl.aerius.search.tasks.ImplementsCapability;
-import nl.aerius.search.tasks.SearchTaskService;
 
 @Component
 @ImplementsCapability(value = SearchCapability.COORDINATE, region = SearchRegion.UK)
-public class BNGCoordinateSearchService extends AbstractCoordinateSearchService implements SearchTaskService {
+public class BNGCoordinateSearchService extends AbstractCoordinateSearchService {
   public BNGCoordinateSearchService() {
     super(BNGConstants.create());
   }

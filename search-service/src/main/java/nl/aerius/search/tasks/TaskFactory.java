@@ -35,7 +35,6 @@ import org.springframework.stereotype.Component;
 
 import nl.aerius.search.domain.SearchCapability;
 import nl.aerius.search.domain.SearchRegion;
-import nl.aerius.search.tasks.sync.BlockingSearchTaskDelegator;
 
 /**
  * Scan all components implementing {@link SearchTaskService}, then index them
@@ -51,7 +50,7 @@ import nl.aerius.search.tasks.sync.BlockingSearchTaskDelegator;
  */
 @Component
 public class TaskFactory {
-  private static final Logger LOG = LoggerFactory.getLogger(BlockingSearchTaskDelegator.class);
+  private static final Logger LOG = LoggerFactory.getLogger(TaskFactory.class);
 
   @Autowired private Set<SearchTaskService> scannedTasks;
 

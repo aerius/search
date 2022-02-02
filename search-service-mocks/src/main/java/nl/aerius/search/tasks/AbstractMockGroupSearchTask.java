@@ -25,16 +25,21 @@ import io.reactivex.rxjava3.core.Single;
 
 import nl.aerius.search.domain.SearchResultBuilder;
 import nl.aerius.search.domain.SearchSuggestionBuilder;
+import nl.aerius.search.domain.SearchSuggestionType;
 import nl.aerius.search.domain.SearchTaskResult;
 
-public abstract class MockSearchTask implements SearchTaskService {
-  private static final Logger LOG = LoggerFactory.getLogger(MockSearchTask.class);
+public abstract class AbstractMockGroupSearchTask implements SearchTaskService {
+  private static final Logger LOG = LoggerFactory.getLogger(AbstractMockGroupSearchTask.class);
 
-  private static final String TEXT = "Mock for query [%s] produced after %sms";
+  private static final String FOO = "foo";
+  private static final String BAR = "bar";
+
+  private static final String TEXT_FOO = "Mock for query [%s] (" + FOO + ") produced after %sms";
+  private static final String TEXT_BAR = "Mock for query [%s] (" + BAR + ") produced after %sms";
 
   private final long delay;
 
-  protected MockSearchTask(final long delay) {
+  protected AbstractMockGroupSearchTask(final long delay) {
     this.delay = delay;
   }
 
@@ -43,7 +48,8 @@ public abstract class MockSearchTask implements SearchTaskService {
     LOG.debug("Retrieving mock search result for query [{}] at delay of {}ms", query, delay);
 
     return Single.just(SearchResultBuilder
-        .of(SearchSuggestionBuilder.create(String.format(TEXT, query, delay), 1)))
+        .of(SearchSuggestionBuilder.create(String.format(TEXT_FOO, query, delay), 0.1, SearchSuggestionType.ADDRESS),
+            SearchSuggestionBuilder.create(String.format(TEXT_BAR, query, delay), 0.1, SearchSuggestionType.MUNICIPALITY)))
         .delay(delay, TimeUnit.MILLISECONDS)
         .doOnDispose(() -> LOG.info("Cancelled mock [{}] with delay {}", query, delay))
         .doAfterTerminate(() -> LOG.info("Terminated mock [{}] with delay {}", query, delay))

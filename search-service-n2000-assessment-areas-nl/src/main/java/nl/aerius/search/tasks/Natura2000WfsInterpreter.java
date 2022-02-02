@@ -70,10 +70,8 @@ public class Natura2000WfsInterpreter {
 
   private static final Logger LOG = LoggerFactory.getLogger(Natura2000WfsInterpreter.class);
 
-  @Resource
-  private final GeometryFactory rdNewGeometryFactory = new GeometryFactory(new PrecisionModel(), SRID_RDNEW);
-  @Resource
-  private MathTransform wgsToRdNewtransform;
+  @Resource private final GeometryFactory rdNewGeometryFactory = new GeometryFactory(new PrecisionModel(), SRID_RDNEW);
+  @Resource private MathTransform wgsToRdNewtransform;
 
   // @formatter:off
   /**
@@ -246,7 +244,7 @@ public class Natura2000WfsInterpreter {
     return coordinates;
   }
 
-  private Envelope extractEnvelope(final Coordinate coord, final MathTransform transform) {
+  private static Envelope extractEnvelope(final Coordinate coord, final MathTransform transform) {
     try {
       return JTS.transform(new Envelope(coord), transform);
     } catch (final TransformException e) {

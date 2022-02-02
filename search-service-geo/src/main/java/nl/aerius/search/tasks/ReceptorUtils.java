@@ -36,6 +36,7 @@ import nl.overheid.aerius.shared.domain.v2.geojson.Polygon;
 import nl.overheid.aerius.shared.geometry.ReceptorUtil;
 
 public final class ReceptorUtils {
+  private static final int ZOOM_LEVEL_NUM = 5;
   // TODO i18n
   private static final String RECEPTOR_FORMAT = "Receptor %s - x:%s y:%s";
 
@@ -43,8 +44,8 @@ public final class ReceptorUtils {
 
   public static ReceptorGridSettings createReceptorUtil(final int srid, final int minSurfaceArea, final int hexHor, final BBox bounds) {
     final EPSG epsg = EPSGProxy.getEPSG(srid);
-    final ArrayList<HexagonZoomLevel> zoomLevels = new ArrayList<HexagonZoomLevel>();
-    for (int i = 1; i <= 5; i++) {
+    final ArrayList<HexagonZoomLevel> zoomLevels = new ArrayList<>();
+    for (int i = 1; i <= ZOOM_LEVEL_NUM; i++) {
       zoomLevels.add(new HexagonZoomLevel(i, minSurfaceArea));
     }
     return new ReceptorGridSettings(bounds, epsg, hexHor, zoomLevels);
@@ -69,7 +70,7 @@ public final class ReceptorUtils {
     final String wktGeometry = "POLYGON((" + Stream.of(createHexagon.getCoordinates()[0])
         .map(v -> v[0] + " " + v[1])
         .collect(Collectors.joining(",")) + "))";
-    return SearchSuggestionBuilder.create(label, 100, SearchSuggestionType.RECEPTOR, wktCentroid, wktGeometry);
+    return SearchSuggestionBuilder.create(label, SearchSuggestionBuilder.MAX_SCORE, SearchSuggestionType.RECEPTOR, wktCentroid, wktGeometry);
   }
 
 }

@@ -67,7 +67,7 @@ public class PdokSearchService implements SearchTaskService {
     return Single.just(result);
   }
 
-  private SearchSuggestion createSuggestion(final JSONObject jsonObject) {
+  private static SearchSuggestion createSuggestion(final JSONObject jsonObject) {
     final String id = jsonObject.getString("id");
     final String displayText = jsonObject.getString("weergavenaam");
     final double score = jsonObject.getDouble("score");
@@ -80,7 +80,7 @@ public class PdokSearchService implements SearchTaskService {
     return suggestion;
   }
 
-  private SearchSuggestionType determineType(final String type) {
+  private static SearchSuggestionType determineType(final String type) {
     SearchSuggestionType suggestionType;
 
     switch (type) {

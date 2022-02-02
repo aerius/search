@@ -22,8 +22,8 @@ import nl.aerius.search.domain.SearchCapability;
 
 @Component
 @ImplementsCapability(SearchCapability.MOCK_5)
-public class Mock5SecondTask extends MockSearchTask {
+public class Mock5SecondTask extends AbstractMockSearchTask {
   public Mock5SecondTask() {
-    super(5000);
+    super(AbstractMockSearchTask.FIVE_SECOND);
   }
 }

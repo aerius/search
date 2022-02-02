@@ -25,21 +25,21 @@ import io.reactivex.rxjava3.core.Single;
 
 import nl.aerius.search.domain.SearchResultBuilder;
 import nl.aerius.search.domain.SearchSuggestionBuilder;
-import nl.aerius.search.domain.SearchSuggestionType;
 import nl.aerius.search.domain.SearchTaskResult;
 
-public abstract class MockGroupSearchTask implements SearchTaskService {
-  private static final Logger LOG = LoggerFactory.getLogger(MockGroupSearchTask.class);
+public abstract class AbstractMockSearchTask implements SearchTaskService {
+  private static final Logger LOG = LoggerFactory.getLogger(AbstractMockSearchTask.class);
 
-  private static final String FOO = "foo";
-  private static final String BAR = "bar";
+  public static final int FIVE_SECOND = 5_000;
+  public static final int SECOND = 1_000;
+  public static final int HALF_SECOND = 500;
+  public static final int TENTH_SECOND = 100;
 
-  private static final String TEXT_FOO = "Mock for query [%s] (" + FOO + ") produced after %sms";
-  private static final String TEXT_BAR = "Mock for query [%s] (" + BAR + ") produced after %sms";
+  private static final String TEXT = "Mock for query [%s] produced after %sms";
 
   private final long delay;
 
-  protected MockGroupSearchTask(final long delay) {
+  protected AbstractMockSearchTask(final long delay) {
     this.delay = delay;
   }
 
@@ -48,8 +48,7 @@ public abstract class MockGroupSearchTask implements SearchTaskService {
     LOG.debug("Retrieving mock search result for query [{}] at delay of {}ms", query, delay);
 
     return Single.just(SearchResultBuilder
-        .of(SearchSuggestionBuilder.create(String.format(TEXT_FOO, query, delay), 0.1, SearchSuggestionType.ADDRESS),
-            SearchSuggestionBuilder.create(String.format(TEXT_BAR, query, delay), 0.1, SearchSuggestionType.MUNICIPALITY)))
+        .of(SearchSuggestionBuilder.create(String.format(TEXT, query, delay), 1)))
         .delay(delay, TimeUnit.MILLISECONDS)
         .doOnDispose(() -> LOG.info("Cancelled mock [{}] with delay {}", query, delay))
         .doAfterTerminate(() -> LOG.info("Terminated mock [{}] with delay {}", query, delay))

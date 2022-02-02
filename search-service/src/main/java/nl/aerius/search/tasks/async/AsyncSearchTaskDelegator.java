@@ -56,16 +56,14 @@ import nl.aerius.search.tasks.TaskUtils;
 public class AsyncSearchTaskDelegator {
   private static final Logger LOG = LoggerFactory.getLogger(AsyncSearchTaskDelegator.class);
 
-  @Autowired TaskFactory taskFactory;
-
   private static final int INTERVAL = 30; // 30 seconds
   private static final int TIME_TO_LIVE = 5 * 60; // 5 minutes
 
-  @Resource
-  private final CacheMap<String, SearchResult> tasks = new CacheMap<>(TIME_TO_LIVE, INTERVAL, LOG);
+  @Autowired TaskFactory taskFactory;
 
-  @Resource
-  private final CacheMap<String, Disposable> disposables = new CacheMap<>(TIME_TO_LIVE, INTERVAL, LOG);
+  @Resource private final CacheMap<String, SearchResult> tasks = new CacheMap<>(TIME_TO_LIVE, INTERVAL, LOG);
+
+  @Resource private final CacheMap<String, Disposable> disposables = new CacheMap<>(TIME_TO_LIVE, INTERVAL, LOG);
 
   public SearchResult retrieveSearchResultsAsync(final String query, final Set<CapabilityKey> capabilities) {
     final Map<CapabilityKey, SearchTaskService> services = TaskUtils.findTaskServices(taskFactory, capabilities, LOG);

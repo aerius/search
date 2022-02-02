@@ -32,7 +32,7 @@ import nl.overheid.aerius.shared.domain.geo.ReceptorGridSettings;
 import nl.overheid.aerius.shared.domain.v2.geojson.Point;
 import nl.overheid.aerius.shared.geometry.ReceptorUtil;
 
-public class AbstractCoordinateSearchService implements SearchTaskService {
+public abstract class AbstractCoordinateSearchService implements SearchTaskService {
   private static final String COORDINATE_FORMAT = "x:%d y:%d";
   private static final String WKT_POINT_FORMAT = "POINT(%d %d)";
 
@@ -48,7 +48,7 @@ public class AbstractCoordinateSearchService implements SearchTaskService {
   private final ReceptorUtil util;
   private final HexagonZoomLevel zoomLevel1;
 
-  public AbstractCoordinateSearchService(final ReceptorGridSettings settings) {
+  protected AbstractCoordinateSearchService(final ReceptorGridSettings settings) {
     this.util = new ReceptorUtil(settings);
     this.zoomLevel1 = settings.getZoomLevel1();
   }
@@ -63,7 +63,7 @@ public class AbstractCoordinateSearchService implements SearchTaskService {
       final Point point = new Point(x, y);
       final int recId = util.getReceptorIdFromPoint(point);
       return Single.just(SearchResultBuilder.of(
-          SearchSuggestionBuilder.create(String.format(COORDINATE_FORMAT, x, y), 100, SearchSuggestionType.COORDINATE,
+          SearchSuggestionBuilder.create(String.format(COORDINATE_FORMAT, x, y), SearchSuggestionBuilder.MAX_SCORE, SearchSuggestionType.COORDINATE,
               String.format(WKT_POINT_FORMAT, x, y)),
           ReceptorUtils.getReceptorSuggestion(recId, util, zoomLevel1)));
     }

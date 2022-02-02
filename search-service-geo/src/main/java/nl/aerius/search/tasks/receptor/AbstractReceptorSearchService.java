@@ -26,11 +26,11 @@ import nl.overheid.aerius.shared.domain.geo.HexagonZoomLevel;
 import nl.overheid.aerius.shared.domain.geo.ReceptorGridSettings;
 import nl.overheid.aerius.shared.geometry.ReceptorUtil;
 
-public class AbstractReceptorSearchService implements SearchTaskService {
+public abstract class AbstractReceptorSearchService implements SearchTaskService {
   private final ReceptorUtil util;
   private final HexagonZoomLevel minimumZoomLevel;
 
-  public AbstractReceptorSearchService(final ReceptorGridSettings settings) {
+  protected AbstractReceptorSearchService(final ReceptorGridSettings settings) {
     this.util = new ReceptorUtil(settings);
     this.minimumZoomLevel = settings.getZoomLevel1();
   }

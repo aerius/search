@@ -17,8 +17,8 @@
 package nl.aerius.search.tasks;
 
 import java.util.AbstractMap;
+import java.util.Collection;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -39,9 +39,9 @@ public final class TaskUtils {
    * TODO Create another comparator, based on weight or some other value
    */
   private static final Comparator<SearchSuggestion> COMPARATOR = Comparator
-      .<SearchSuggestion> comparingDouble(sug -> sug.getScore())
+      .<SearchSuggestion>comparingDouble(sug -> sug.getScore())
       .reversed()
-      .thenComparing((sug) -> sug.getDescription());
+      .thenComparing(sug -> sug.getDescription());
 
   // (o1, o2) -> Double.compare(o1.getScore(), o2.getScore());
 
@@ -50,7 +50,7 @@ public final class TaskUtils {
   /**
    * Find all task services that satisfy the given set of capabilities
    */
-  public static Map<CapabilityKey, SearchTaskService> findTaskServices(final TaskFactory taskFactory, final Set<CapabilityKey> capabilities,
+  public static Map<CapabilityKey, SearchTaskService> findTaskServices(final TaskFactory taskFactory, final Collection<CapabilityKey> capabilities,
       final Logger log) {
     return capabilities.stream()
         .filter(v -> {
@@ -73,7 +73,7 @@ public final class TaskUtils {
     return COMPARATOR;
   }
 
-  public static Set<CapabilityKey> parseCapabilities(final List<String> capabilities, final String region) {
+  public static Set<CapabilityKey> parseCapabilities(final Collection<String> capabilities, final String region) {
     final SearchRegion reg = SearchRegion.safeValueOf(region);
     if (reg == null) {
       LOG.warn("Requested region that does not exist: {}", region.replaceAll("[\n\r\t]", "_"));

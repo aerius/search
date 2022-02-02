@@ -16,7 +16,7 @@
  */
 package nl.aerius.search.wui.daemon;
 
-import java.util.function.Function;
+import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -76,9 +76,9 @@ public class SearchDaemonAsynchronous extends BasicEventComponent {
 
   private final GWTAtomicInteger counter = new GWTAtomicInteger();
 
-  private String currentSearchId = null;
+  private String currentSearchId;
 
-  private final Function<Integer, AsyncCallback<SearchResult>> callbackFactory = count -> AppAsyncCallback
+  private final IntFunction<AsyncCallback<SearchResult>> callbackFactory = count -> AppAsyncCallback
       .create(result -> processResult(count, result), e -> processFailure(count, e));
 
   private void processFailure(final Integer count, final Throwable e) {

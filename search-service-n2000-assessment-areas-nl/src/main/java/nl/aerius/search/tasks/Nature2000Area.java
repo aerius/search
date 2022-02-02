@@ -24,7 +24,8 @@ public class Nature2000Area {
   private String wktCentroid;
   private final double area;
 
-  public Nature2000Area(final String id, final String name, final String normalizedName, final String wktGeometry, final String wktCentroid, final double area) {
+  public Nature2000Area(final String id, final String name, final String normalizedName, final String wktGeometry, final String wktCentroid,
+      final double area) {
     this.id = id;
     this.name = name;
     this.normalizedName = normalizedName;

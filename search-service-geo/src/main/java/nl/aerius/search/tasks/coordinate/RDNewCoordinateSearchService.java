@@ -22,11 +22,10 @@ import nl.aerius.search.domain.SearchCapability;
 import nl.aerius.search.domain.SearchRegion;
 import nl.aerius.search.tasks.ImplementsCapability;
 import nl.aerius.search.tasks.RDNewConstants;
-import nl.aerius.search.tasks.SearchTaskService;
 
 @Component
 @ImplementsCapability(value = SearchCapability.COORDINATE, region = SearchRegion.NL)
-public class RDNewCoordinateSearchService extends AbstractCoordinateSearchService implements SearchTaskService {
+public class RDNewCoordinateSearchService extends AbstractCoordinateSearchService {
   public RDNewCoordinateSearchService() {
     super(RDNewConstants.create());
   }
