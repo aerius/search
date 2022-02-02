@@ -39,14 +39,14 @@ import nl.aerius.search.tasks.TaskUtils;
 
 /**
  * Simple task delegator that does not block.
- * 
+ *
  * Delegate a single search task to multiple specialized search services based
  * on the requested capabilities.
- * 
+ *
  * Each search task is put in a cache that is wiped out after 5 minutes. When a
  * search task is retrieved, and it is a completed task, it is also removed from
  * the cache under the assumption that he user will not need the result again.
- * 
+ *
  * NOTE: While this delegator works, it has not been sufficiently stress tested
  * or its approach reviewed
  */

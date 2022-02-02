@@ -1,36 +1,36 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
-<head> 
+<head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <title>AERIUS Search Results</title>
-  
+
   <link rel="stylesheet" href="/style.css">
   <link rel="stylesheet" href="/table.css">
 </head>
 <body>
   <div class="container">
     <h1>Search results</h1>
-    
+
     <div class="info">
       <div>Query:</div>
       <div th:text="${query}"></div>
-      
+
       <div>Duration:</div>
       <div th:text="${duration} + ms"></div>
 
       <div>Region:</div>
       <div th:text="${region}"></div>
-      
+
       <div>Capabilities:</div>
       <div th:text="${capabilities}"></div>
     </div>
-    
+
     <div class="table">
       <div class="column header idx">#</div>
       <div class="column header">Result</div>
       <div class="column header">Type</div>
       <div class="column header">Score</div>
-    
+
       <th:block th:each="result,iter : ${results}">
         <div class="column idx" th:text="${iter.index + 1}" />
         <div class="column name" th:text="${result.description}" />
@@ -38,7 +38,7 @@
         <div class="column name" th:text="${result.score}" />
       </th:block>
     </div>
-    
+
     <a class="back" href="/">back</a>
   </div>
 </body>

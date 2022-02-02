@@ -49,7 +49,7 @@ import nl.aerius.wui.util.SchedulerUtil;
  * - Retrieve search results asynchronously
  * - Maintain 2 types of results:
  *   - The most actual results
- *   - 'old' results (i.e. results that come in when a new search query is already underway) 
+ *   - 'old' results (i.e. results that come in when a new search query is already underway)
  * - Discard 'old' results only when the most recent search query completes
  * </pre>
  *

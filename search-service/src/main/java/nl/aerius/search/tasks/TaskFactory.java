@@ -40,10 +40,10 @@ import nl.aerius.search.tasks.sync.BlockingSearchTaskDelegator;
  * Scan all components implementing {@link SearchTaskService}, then index them
  * based on the {@link SearchCapability} they fulfill, as described by the
  * {@link ImplementsCapability} annotation.
- * 
+ *
  * TODO If multiple components implement the same {@link SearchCapability}, then
  * the indexing mechanism will crash. Add a priority, filter out duplicates?
- * 
+ *
  * TODO Perhaps index on flag bit # rather than enum? that way a capability need
  * not necessarily be defined yet and tasks can simply advertise they implement
  * a certain flag bit.

@@ -39,7 +39,7 @@ import kong.unirest.Unirest;
 /**
  * Rinky dink wfs interpreter that fetches natura 2000 areas and geometries from
  * an open data resource.
- * 
+ *
  * Should be replaced over the medium term.
  */
 @Component

@@ -1,39 +1,39 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
-<head> 
+<head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <title>AERIUS Search Results</title>
-  
+
   <link rel="stylesheet" href="/style.css">
-  
+
   <style>
     .area {
       flex-grow: 1;
-      
+
       width: 100%;
       height: 100px;
     }
   </style>
-  
+
   <script>
     function init() {
       let txt = document.getElementById("txt");
       let endpoint = window.location.href.substring(0, window.location.href.indexOf("/", 7));
       let curl = `curl ${endpoint}/api/search-async -F query=test -F capabilities=MOCK_0,MOCK_1,MOCK_5,RECEPTOR | jq -r '.uuid' | xargs -I '{}' watch 'curl ${endpoint}/api/results/'{}' | json_pp -json_opt pretty,canonical'`;
-      
-      txt.innerHTML = curl; 
+
+      txt.innerHTML = curl;
     }
   </script>
 </head>
 <body onload="init()">
   <div class="container">
     <h1>ASYNCHRONOUS Search form</h1>
-    
+
     <p>Copy and paste into console:</p>
     <textarea id="txt" onclick="this.select()" class="area"></textarea>
-    
+
     <p>It creates a search task using the mock(0|1|5) second search tasks, then polls it every 2 seconds. The result should be complete after the third poll, and disappear after the fourth.</p>
-    
+
     <a href="/">Back to synchronous search form</a>
   </div>
 </body>

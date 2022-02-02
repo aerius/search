@@ -27,8 +27,8 @@ public final class SearchUtils {
 
   /**
    * Return the given capabilities as a Set.
-   * 
-   * Set.of() is not emulated in GWT. 
+   *
+   * Set.of() is not emulated in GWT.
    */
   public static Set<SearchCapability> of(final SearchCapability... capabilities) {
     return Stream.of(capabilities)

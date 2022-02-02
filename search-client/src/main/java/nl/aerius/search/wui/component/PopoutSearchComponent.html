@@ -7,7 +7,7 @@
       aria-label="i18n.searchButtonTitle()">
     </button>
   </slot>
-  
+
   <!-- While this overlay works, it does not always work well due to parent z-indexing
   <!-- Disable for now, and make user deselect search content themselves.
   <div class="overlay"
@@ -38,7 +38,7 @@
   inset: 0;
   pointer-events: none;
   transition: background 0.15s ease-out;
-  
+
   &.active {
     pointer-events: all;
     background: #ffffff88;
@@ -56,17 +56,17 @@
   height: 48px;
   border: 2px solid #cacaca;
   transition: all 0.15s ease-out;
-  
+
   border-radius: 50%;
-  
+
   svg {
     fill: #575757;
     transition: fill 0.15s ease-out;
   }
-  
+
   &.active, &:hover {
     background: var(--theme-color);
-    
+
     svg {
       fill: white;
     }
@@ -79,7 +79,7 @@
   top: 0px;
   width: var(--search-width);
   right: calc(60px);
-  
+
   div {
     width: 100%;
   }

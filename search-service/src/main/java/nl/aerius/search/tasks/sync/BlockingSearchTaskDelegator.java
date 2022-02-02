@@ -37,7 +37,7 @@ import nl.aerius.search.tasks.TaskUtils;
 
 /**
  * Simple task delegator that blocks until all sub-tasks have completed.
- * 
+ *
  * Delegate a single search task to multiple specialized search services based
  * on the requested capabilities
  */

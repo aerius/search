@@ -42,7 +42,7 @@ public class SearchRestService {
 
   /**
    * Retrieve search results based on the given query and capabilities
-   * 
+   *
    * Accept both GET and POST requests
    */
   @RequestMapping(value = "/api/search")
