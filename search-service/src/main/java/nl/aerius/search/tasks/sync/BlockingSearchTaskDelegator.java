@@ -19,7 +19,6 @@ package nl.aerius.search.tasks.sync;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,12 +48,6 @@ public class BlockingSearchTaskDelegator {
 
   public List<SearchSuggestion> retrieveSearchResults(final String query, final Set<CapabilityKey> capabilities) {
     final Map<CapabilityKey, SearchTaskService> tasks = TaskUtils.findTaskServices(taskFactory, capabilities, LOG);
-
-    if (LOG.isDebugEnabled()) {
-      LOG.debug("Delegating search query [{}] to {} tasks ({})", query, tasks.size(), tasks.keySet()
-          .stream().map(v -> v.toString())
-          .collect(Collectors.joining(",")));
-    }
 
     /**
      * Create a Flowable from the given search services, retrieve search results for

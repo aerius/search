@@ -76,7 +76,7 @@ public final class TaskUtils {
   public static Set<CapabilityKey> parseCapabilities(final List<String> capabilities, final String region) {
     final SearchRegion reg = SearchRegion.safeValueOf(region);
     if (reg == null) {
-      LOG.warn("Requested region that does not exist: {}", region);
+      LOG.warn("Requested region that does not exist: {}", region.replaceAll("[\n\r\t]", "_"));
       return Set.of();
     }
 

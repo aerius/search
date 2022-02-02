@@ -49,7 +49,7 @@ public class SearchRestService {
   public List<SearchSuggestion> retrieveSearchResults(final String query,
       @RequestParam(defaultValue = DEFAULT_CAPABILITIES) final List<String> capabilities,
       @RequestParam(defaultValue = DEFAULT_REGION) final String region) {
-    return taskDelegator.retrieveSearchResults(query, TaskUtils.parseCapabilities(capabilities, region));
+    return taskDelegator.retrieveSearchResults(scrub(query), TaskUtils.parseCapabilities(capabilities, region));
   }
 
   @RequestMapping(value = "/api/search-async")
@@ -58,7 +58,14 @@ public class SearchRestService {
       @RequestParam(defaultValue = DEFAULT_REGION) final String region, final Optional<String> cancel) {
     cancel.ifPresent(uuid -> taskDelegator.cancelSearchTask(uuid));
 
-    return taskDelegator.retrieveSearchResultsAsync(query, TaskUtils.parseCapabilities(capabilities, region));
+    return taskDelegator.retrieveSearchResultsAsync(scrub(query), TaskUtils.parseCapabilities(capabilities, region));
+  }
+
+  /**
+   * Remove newlines, carriage returns, and tabs
+   */
+  private static String scrub(final String query) {
+    return query.replaceAll("[\n\r\t]", "");
   }
 
   @GetMapping(value = "/api/results/{uuid}")
