@@ -45,8 +45,7 @@ import nl.aerius.search.domain.SearchTaskResult;
 public class AssessmentAreaSearchService implements SearchTaskService {
   private static final Logger LOG = LoggerFactory.getLogger(AssessmentAreaSearchService.class);
 
-  @Resource
-  private final Map<String, Nature2000Area> areas = new HashMap<>();
+  @Resource private final Map<String, Nature2000Area> areas = new HashMap<>();
 
   @Autowired Natura2000WfsInterpreter interpreter;
 
@@ -66,7 +65,7 @@ public class AssessmentAreaSearchService implements SearchTaskService {
   @Override
   public Single<SearchTaskResult> retrieveSearchResults(final String query) {
     final SearchTaskResult result = new SearchTaskResult();
-    if (areas == null) {
+    if (areas.isEmpty()) {
       // Warn if areas is null - it is expected to happen shortly after startup (see
       // init()) but not during normal operation
       LOG.warn(
