@@ -69,7 +69,7 @@ public class Natura2000WfsInterpreter {
   private static final Logger LOG = LoggerFactory.getLogger(Natura2000WfsInterpreter.class);
 
   private final GeometryFactory rdNewGeometryFactory;
-  private MathTransform wgsToRdNewtransform;
+  private final MathTransform wgsToRdNewtransform;
 
   // @formatter:off
   /**
@@ -83,20 +83,10 @@ public class Natura2000WfsInterpreter {
 
   public Natura2000WfsInterpreter() {
     this.rdNewGeometryFactory = new GeometryFactory(new PrecisionModel(), SRID_RDNEW);
+    this.wgsToRdNewtransform = createCRSTransform();
   }
 
   public Map<String, Nature2000Area> retrieveAreas() {
-    final CoordinateReferenceSystem targetCRS;
-    try {
-      final CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:4258");
-      targetCRS = CRS.decode("EPSG:28992");
-
-      wgsToRdNewtransform = CRS.findMathTransform(sourceCRS, targetCRS);
-    } catch (final FactoryException e) {
-      LOG.error("Could not initialize coordinate reference system");
-      throw new InterpretationRuntimeException(e);
-    }
-
     if (LOG.isInfoEnabled()) {
       LOG.info("Retrieving from {}", wfsNatura2000Url.split("\\?")[0]);
     }
@@ -251,6 +241,19 @@ public class Natura2000WfsInterpreter {
       return JTS.transform(new Envelope(coord), transform);
     } catch (final TransformException e) {
       throw new InterpretationRuntimeException("Failed transform", e);
+    }
+  }
+
+  private static MathTransform createCRSTransform() {
+    final CoordinateReferenceSystem targetCRS;
+    try {
+      final CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:4258");
+      targetCRS = CRS.decode("EPSG:28992");
+
+      return CRS.findMathTransform(sourceCRS, targetCRS);
+    } catch (final FactoryException e) {
+      LOG.error("Could not initialize coordinate reference system");
+      throw new InterpretationRuntimeException(e);
     }
   }
 }

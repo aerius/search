@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see http://www.gnu.org/licenses/.
  */
-package nl.aerius.search.tasks.async;
+package nl.aerius.search.tasks.sync;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -33,7 +33,6 @@ import nl.aerius.search.tasks.MockHalfSecondTask;
 import nl.aerius.search.tasks.MockTenthSecondTask;
 import nl.aerius.search.tasks.SearchTaskService;
 import nl.aerius.search.tasks.TaskFactory;
-import nl.aerius.search.tasks.sync.BlockingSearchTaskDelegator;
 
 class BlockingSearchTaskDelegatorTest {
   BlockingSearchTaskDelegator delegator;
