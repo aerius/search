@@ -49,6 +49,7 @@ public class AsyncSearchTaskDelegatorTest {
     final Set<SearchTaskService> tasks = Set.of(mock0Task, mock01Task, mock05Task);
 
     final TaskFactory factory = new TaskFactory(tasks);
+    factory.onFactoryConstructed();
     delegator = new AsyncSearchTaskDelegator(factory);
   }
 
