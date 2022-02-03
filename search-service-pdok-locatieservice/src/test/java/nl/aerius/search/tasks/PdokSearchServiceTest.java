@@ -27,15 +27,15 @@ import io.reactivex.rxjava3.core.Single;
 import nl.aerius.search.domain.SearchTaskResult;
 
 @SpringBootTest
-class AssessmentAreaSearchServiceTest {
-  @Autowired AssessmentAreaSearchService delegator;
+class PdokSearchServiceTest {
+  @Autowired PdokSearchService delegator;
 
   @Test
   void testWorksAtAll() {
-    final Single<SearchTaskResult> result = delegator.retrieveSearchResults("veluwe");
+    final Single<SearchTaskResult> result = delegator.retrieveSearchResults("utrecht");
 
     final SearchTaskResult suggestions = result.blockingGet();
 
-    assertEquals(2, suggestions.getSuggestions().size(), "Expected 2 results for 'veluwe'");
+    assertEquals(suggestions.getSuggestions().size(), 10, "Expected 10 results for 'utrecht'");
   }
 }

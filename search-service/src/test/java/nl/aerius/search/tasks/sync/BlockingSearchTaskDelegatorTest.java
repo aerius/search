@@ -23,7 +23,6 @@ import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import nl.aerius.search.domain.SearchCapability;
 import nl.aerius.search.domain.SearchRegion;
@@ -35,7 +34,6 @@ import nl.aerius.search.tasks.MockTenthSecondTask;
 import nl.aerius.search.tasks.SearchTaskService;
 import nl.aerius.search.tasks.TaskFactory;
 
-@SpringBootTest
 class BlockingSearchTaskDelegatorTest {
   BlockingSearchTaskDelegator delegator;
 

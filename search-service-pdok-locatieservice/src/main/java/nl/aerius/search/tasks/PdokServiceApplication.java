@@ -16,26 +16,12 @@
  */
 package nl.aerius.search.tasks;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-
-import io.reactivex.rxjava3.core.Single;
-
-import nl.aerius.search.domain.SearchTaskResult;
-
-@SpringBootTest
-class AssessmentAreaSearchServiceTest {
-  @Autowired AssessmentAreaSearchService delegator;
-
-  @Test
-  void testWorksAtAll() {
-    final Single<SearchTaskResult> result = delegator.retrieveSearchResults("veluwe");
-
-    final SearchTaskResult suggestions = result.blockingGet();
-
-    assertEquals(2, suggestions.getSuggestions().size(), "Expected 2 results for 'veluwe'");
+@SpringBootApplication
+public class PdokServiceApplication {
+  public static void main(final String[] args) {
+    SpringApplication.run(PdokServiceApplication.class, args);
   }
 }

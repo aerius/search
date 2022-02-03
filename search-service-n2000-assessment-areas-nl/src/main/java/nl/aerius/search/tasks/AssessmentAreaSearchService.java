@@ -17,7 +17,6 @@
 package nl.aerius.search.tasks;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -46,24 +45,18 @@ public class AssessmentAreaSearchService implements SearchTaskService {
   private static final Logger LOG = LoggerFactory.getLogger(AssessmentAreaSearchService.class);
 
   private final Map<String, Nature2000Area> areas;
+  private final Natura2000WfsInterpreter interpreter;
 
-  @Autowired Natura2000WfsInterpreter interpreter;
-
-  public AssessmentAreaSearchService() {
-    areas = new HashMap<>();
+  @Autowired
+  public AssessmentAreaSearchService(final Natura2000WfsInterpreter interpreter) {
+    this.interpreter = interpreter;
+    this.areas = interpreter.retrieveAreas();
   }
 
   @PostConstruct
   public void init() {
-    // Just do this in another thread so it doesn't delay startup
-    // We don't really care if this takes an age
-    final Thread n2000Init = new Thread(() -> areas.putAll(interpreter.retrieveAreas()));
-    n2000Init.setUncaughtExceptionHandler((t, ex) -> {
-      LOG.error("Could not initialize areas.", ex);
-      // Crash hard
-      System.exit(0);
-    });
-    n2000Init.start();
+    areas.clear();
+    areas.putAll(interpreter.retrieveAreas());
   }
 
   @Override
