@@ -58,14 +58,16 @@ public class AsyncSearchTaskDelegator {
   private static final int INTERVAL = 30; // 30 seconds
   private static final int TIME_TO_LIVE = 5 * 60; // 5 minutes
 
-  private final CacheMap<String, SearchResult> tasks = new CacheMap<>(TIME_TO_LIVE, INTERVAL, LOG);
-  private final CacheMap<String, Disposable> disposables = new CacheMap<>(TIME_TO_LIVE, INTERVAL, LOG);
+  private final CacheMap<String, SearchResult> tasks;
+  private final CacheMap<String, Disposable> disposables;
 
   private final TaskFactory taskFactory;
 
   @Autowired
   public AsyncSearchTaskDelegator(final TaskFactory taskFactory) {
     this.taskFactory = taskFactory;
+    this.tasks = new CacheMap<>(TIME_TO_LIVE, INTERVAL, LOG);
+    this.disposables = new CacheMap<>(TIME_TO_LIVE, INTERVAL, LOG);
   }
 
   public SearchResult retrieveSearchResultsAsync(final String query, final Set<CapabilityKey> capabilities) {

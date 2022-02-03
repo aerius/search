@@ -19,6 +19,7 @@ package nl.aerius.search.tasks;
 import java.util.AbstractMap;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -31,6 +32,7 @@ import javax.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 import nl.aerius.search.domain.SearchCapability;
@@ -49,16 +51,17 @@ import nl.aerius.search.domain.SearchRegion;
  * a certain flag bit.
  */
 @Component
+@ConfigurationProperties
 public class TaskFactory {
   private static final Logger LOG = LoggerFactory.getLogger(TaskFactory.class);
 
   private final Set<SearchTaskService> scannedTasks;
-
-  private Map<CapabilityKey, List<SearchTaskService>> tasks;
+  private final Map<CapabilityKey, List<SearchTaskService>> tasks;
 
   @Autowired
   public TaskFactory(final Set<SearchTaskService> scannedTasks) {
     this.scannedTasks = scannedTasks;
+    this.tasks = new HashMap<>();
   }
 
   @PostConstruct
@@ -70,10 +73,10 @@ public class TaskFactory {
         .filter(v -> hasAnnotationOnClass(v.getClass()))
         .collect(Collectors.toMap(v -> extractCapabilityFromClass(v.getClass()), v -> v));
 
-    tasks = unflattened.entrySet().stream()
+    tasks.putAll(unflattened.entrySet().stream()
         .flatMap(e -> e.getKey().stream()
             .map(k -> new AbstractMap.SimpleImmutableEntry<CapabilityKey, SearchTaskService>(k, e.getValue())))
-        .collect(Collectors.toMap(SimpleImmutableEntry::getKey, v -> Arrays.asList(v.getValue())));
+        .collect(Collectors.toMap(SimpleImmutableEntry::getKey, v -> Arrays.asList(v.getValue()))));
   }
 
   public List<SearchTaskService> getTask(final CapabilityKey capability) {

@@ -68,7 +68,7 @@ public class Natura2000WfsInterpreter {
 
   private static final Logger LOG = LoggerFactory.getLogger(Natura2000WfsInterpreter.class);
 
-  private final GeometryFactory rdNewGeometryFactory = new GeometryFactory(new PrecisionModel(), SRID_RDNEW);
+  private final GeometryFactory rdNewGeometryFactory;
   private MathTransform wgsToRdNewtransform;
 
   // @formatter:off
@@ -80,6 +80,10 @@ public class Natura2000WfsInterpreter {
       + "request=GetFeature&service=WFS&version=2.0.0&typeName=ps-natura2000:ProtectedSite&outputFormat=application%2Fgml%2Bxml%3B%20version%3D3.2}")
   private String wfsNatura2000Url;
   // @formatter:on
+
+  public Natura2000WfsInterpreter() {
+    this.rdNewGeometryFactory = new GeometryFactory(new PrecisionModel(), SRID_RDNEW);
+  }
 
   public Map<String, Nature2000Area> retrieveAreas() {
     final CoordinateReferenceSystem targetCRS;

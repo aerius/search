@@ -45,9 +45,13 @@ import nl.aerius.search.domain.SearchTaskResult;
 public class AssessmentAreaSearchService implements SearchTaskService {
   private static final Logger LOG = LoggerFactory.getLogger(AssessmentAreaSearchService.class);
 
-  private final Map<String, Nature2000Area> areas = new HashMap<>();
+  private final Map<String, Nature2000Area> areas;
 
   @Autowired Natura2000WfsInterpreter interpreter;
+
+  public AssessmentAreaSearchService() {
+    areas = new HashMap<>();
+  }
 
   @PostConstruct
   public void init() {

@@ -35,7 +35,7 @@ import nl.aerius.search.tasks.SearchTaskService;
 import nl.aerius.search.tasks.TaskFactory;
 import nl.aerius.search.tasks.sync.BlockingSearchTaskDelegator;
 
-public class BlockingSearchTaskDelegatorTest {
+class BlockingSearchTaskDelegatorTest {
   BlockingSearchTaskDelegator delegator;
 
   @BeforeEach
@@ -52,7 +52,7 @@ public class BlockingSearchTaskDelegatorTest {
   }
 
   @Test
-  public void testResponseDelays() {
+  void testResponseDelays() {
     beforeEach();
 
     final Set<CapabilityKey> caps = Set.of(CapabilityKey.of(SearchCapability.MOCK_0, SearchRegion.NL),

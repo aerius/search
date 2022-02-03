@@ -37,7 +37,7 @@ import nl.aerius.search.tasks.MockTenthSecondTask;
 import nl.aerius.search.tasks.SearchTaskService;
 import nl.aerius.search.tasks.TaskFactory;
 
-public class AsyncSearchTaskDelegatorTest {
+class AsyncSearchTaskDelegatorTest {
   AsyncSearchTaskDelegator delegator;
 
   @BeforeEach
@@ -54,7 +54,7 @@ public class AsyncSearchTaskDelegatorTest {
   }
 
   @Test
-  public void testResponseDelays() throws InterruptedException {
+  void testResponseDelays() throws InterruptedException {
     beforeEach();
 
     final Set<CapabilityKey> caps = Set.of(CapabilityKey.of(SearchCapability.MOCK_0, SearchRegion.NL),
@@ -84,7 +84,7 @@ public class AsyncSearchTaskDelegatorTest {
   }
 
   @Test
-  public void testResponseCancellation() throws InterruptedException {
+  void testResponseCancellation() throws InterruptedException {
     beforeEach();
 
     final Set<CapabilityKey> caps = Set.of(CapabilityKey.of(SearchCapability.MOCK_01, SearchRegion.NL));
