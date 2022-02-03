@@ -75,10 +75,14 @@
     <spring.boot.version>2.5.6</spring.boot.version>
 
     <sonar.language>java</sonar.language>
+    <sonar.maven.plugin.version>3.7.0.1746</sonar.maven.plugin.version>
     <sonar.projectKey>aerius_search</sonar.projectKey>
     <sonar.moduleKey>${project.artifactId}</sonar.moduleKey>
     <sonar.organization>aerius</sonar.organization>
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+
+    <aggregate.report.dir>search-sonar-report/target/site/jacoco-aggregate/jacoco.xml</aggregate.report.dir>
+    <sonar.coverage.jacoco.xmlReportPaths>${basedir}/../${aggregate.report.dir}</sonar.coverage.jacoco.xmlReportPaths>
   </properties>
 
   <dependencyManagement>
@@ -254,6 +258,15 @@
               <version>${aerius.tools.version}</version>
             </dependency>
           </dependencies>
+        </plugin>
+
+        <plugin>
+          <groupId>org.sonarsource.scanner.maven</groupId>
+          <artifactId>sonar-maven-plugin</artifactId>
+          <version>${sonar.maven.plugin.version}</version>
+          <configuration>
+            <reuse>true</reuse>
+          </configuration>
         </plugin>
 
         <plugin>
