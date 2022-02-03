@@ -62,7 +62,7 @@
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
 
-    <imaer.version>4.1-SNAPSHOT</imaer.version>
+    <imaer.version>v4.0.2-2</imaer.version>
     <maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
 
     <aerius.gwt-client-common.version>1.2.1</aerius.gwt-client-common.version>
