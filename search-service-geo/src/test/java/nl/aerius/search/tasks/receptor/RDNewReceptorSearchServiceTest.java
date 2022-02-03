@@ -35,7 +35,6 @@ class RDNewReceptorSearchServiceTest {
 
   @Test
   void testReceptorNonNull() {
-    service = new RDNewReceptorSearchService();
     final Single<SearchTaskResult> single = service.retrieveSearchResults("123123");
     final SearchTaskResult result = single.blockingGet();
 
@@ -44,7 +43,6 @@ class RDNewReceptorSearchServiceTest {
 
   @Test
   void testReceptorNull() {
-    service = new RDNewReceptorSearchService();
     final Single<SearchTaskResult> single = service.retrieveSearchResults("nothing");
     final SearchTaskResult result = single.blockingGet();
 

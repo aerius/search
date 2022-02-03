@@ -23,6 +23,7 @@ import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import nl.aerius.search.domain.SearchCapability;
 import nl.aerius.search.domain.SearchRegion;
@@ -34,6 +35,7 @@ import nl.aerius.search.tasks.MockTenthSecondTask;
 import nl.aerius.search.tasks.SearchTaskService;
 import nl.aerius.search.tasks.TaskFactory;
 
+@SpringBootTest
 class BlockingSearchTaskDelegatorTest {
   BlockingSearchTaskDelegator delegator;
 
@@ -52,8 +54,6 @@ class BlockingSearchTaskDelegatorTest {
 
   @Test
   void testResponseDelays() {
-    beforeEach();
-
     final Set<CapabilityKey> caps = Set.of(CapabilityKey.of(SearchCapability.MOCK_0, SearchRegion.NL),
         CapabilityKey.of(SearchCapability.MOCK_01, SearchRegion.NL),
         CapabilityKey.of(SearchCapability.MOCK_05, SearchRegion.NL));

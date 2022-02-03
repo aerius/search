@@ -55,8 +55,6 @@ class AsyncSearchTaskDelegatorTest {
 
   @Test
   void testResponseDelays() throws InterruptedException {
-    beforeEach();
-
     final Set<CapabilityKey> caps = Set.of(CapabilityKey.of(SearchCapability.MOCK_0, SearchRegion.NL),
         CapabilityKey.of(SearchCapability.MOCK_01, SearchRegion.NL),
         CapabilityKey.of(SearchCapability.MOCK_05, SearchRegion.NL));
@@ -72,9 +70,7 @@ class AsyncSearchTaskDelegatorTest {
     final SearchResult result3 = delegator.retrieveSearchTask(uuid);
     assertEquals(1, result3.getResults().size(), "Should have 1 results at this point.");
 
-    System.out.println("Before: " + System.currentTimeMillis());
     TimeUnit.MILLISECONDS.sleep(100);
-    System.out.println("After: " + System.currentTimeMillis());
     final SearchResult result4 = delegator.retrieveSearchTask(uuid);
     assertEquals(2, result4.getResults().size(), "Should have 2 results at this point.");
 
@@ -85,8 +81,6 @@ class AsyncSearchTaskDelegatorTest {
 
   @Test
   void testResponseCancellation() throws InterruptedException {
-    beforeEach();
-
     final Set<CapabilityKey> caps = Set.of(CapabilityKey.of(SearchCapability.MOCK_01, SearchRegion.NL));
     final SearchResult result1 = delegator.retrieveSearchResultsAsync("test", caps);
 
