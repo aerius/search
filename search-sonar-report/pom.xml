@@ -32,11 +32,6 @@
   <dependencies>
     <dependency>
       <groupId>nl.aerius</groupId>
-      <artifactId>search-client</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>nl.aerius</groupId>
       <artifactId>search-service</artifactId>
       <version>${project.version}</version>
     </dependency>
