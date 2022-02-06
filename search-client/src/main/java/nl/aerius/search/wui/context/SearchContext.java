@@ -38,7 +38,9 @@ public class SearchContext {
   public Map<String, SearchSuggestion> getResults() {
     final Map<String, SearchSuggestion> ret = new HashMap<>();
 
-    ret.putAll(cache);
+    if (searching) {
+      ret.putAll(cache);
+    }
     ret.putAll(results);
 
     return ret;
@@ -50,6 +52,10 @@ public class SearchContext {
   }
 
   public void setCacheResults(final Collection<SearchSuggestion> results) {
+    if (!isSearching()) {
+      return;
+    }
+
     this.cache.putAll(results.stream()
         .collect(Collectors.toMap(v -> v.id, v -> v)));
   }

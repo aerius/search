@@ -74,6 +74,7 @@ public class SearchDaemonAsynchronous extends BasicEventComponent {
 
   @Inject SearchServiceAsync service;
 
+  private final GWTAtomicInteger cacheCounter = new GWTAtomicInteger();
   private final GWTAtomicInteger counter = new GWTAtomicInteger();
 
   private String currentSearchId;
@@ -91,11 +92,11 @@ public class SearchDaemonAsynchronous extends BasicEventComponent {
 
   private void processResult(final Integer count, final SearchResult result) {
     if (!countMatches(count)) {
-      processOldResults(result);
+      processOldResults(count, result);
 
       // And try once more if there are no results
       if (result.results.length == 0) {
-        fetchOldResults(result.uuid);
+        fetchOldResults(count, result.uuid);
       }
       return;
     }
@@ -121,11 +122,20 @@ public class SearchDaemonAsynchronous extends BasicEventComponent {
   /**
    * Process old results, by actualizing the cache result set (but not the
    * 'actual' result set).
+   * 
+   * @param count
    */
-  private void processOldResults(final SearchResult result) {
+  private void processOldResults(final Integer count, final SearchResult result) {
     if (result.complete) {
       context.clearCache();
     }
+
+    // Increment cache counter so we only process results that are newer than the
+    // oldest we know
+    if (cacheCounter.get() > count) {
+      return;
+    }
+    cacheCounter.set(count);
 
     context.setCacheResults(Stream.of(result.results)
         .collect(Collectors.toList()));
@@ -143,10 +153,10 @@ public class SearchDaemonAsynchronous extends BasicEventComponent {
     }
   }
 
-  private void fetchSearchResults(final String uuid, final Integer count) {
+  private void fetchSearchResults(final String uuid, final int count) {
     SchedulerUtil.delay(() -> {
       if (!countMatches(count)) {
-        fetchOldResults(uuid);
+        fetchOldResults(count, uuid);
         return;
       }
 
@@ -154,8 +164,8 @@ public class SearchDaemonAsynchronous extends BasicEventComponent {
     }, DELAY);
   }
 
-  private void fetchOldResults(final String uuid) {
-    service.retrieveSearchResults(uuid, AppAsyncCallback.create(this::processOldResults));
+  private void fetchOldResults(final int count, final String uuid) {
+    service.retrieveSearchResults(uuid, AppAsyncCallback.create(v -> processOldResults(count, v)));
   }
 
   private void clear() {
