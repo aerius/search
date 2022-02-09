@@ -76,7 +76,6 @@ public class MapSearchComponent implements IsVueComponent, HasCreated, HasMounte
   @Data SearchMessages i18n = SearchM.messages();
 
   @Data String maxHeight;
-  @Data boolean scrolling;
 
   @Ref HTMLElement resultsContainer;
   @Ref HTMLElement input;
@@ -92,7 +91,7 @@ public class MapSearchComponent implements IsVueComponent, HasCreated, HasMounte
     final Map<String, List<SearchSuggestion>> res = context.getResults().values().stream()
         .collect(Collectors.groupingBy(v -> v.type, LinkedHashMap::new, Collectors.toList()));
 
-    res.values().forEach(v -> v.sort((o1, o2) -> Double.compare(o1.score, o2.score)));
+    res.values().forEach(v -> v.sort((o1, o2) -> -Double.compare(o1.score, o2.score)));
 
     return res;
   }
@@ -165,10 +164,15 @@ public class MapSearchComponent implements IsVueComponent, HasCreated, HasMounte
     }
   }
 
-  @Computed
+  @Computed("isShowing")
   public boolean isShowing() {
     return context.isSearching()
         || hasResults();
+  }
+
+  @Watch("isShowing()")
+  public void onShowingChange() {
+    resize();
   }
 
   @Override
@@ -186,7 +190,6 @@ public class MapSearchComponent implements IsVueComponent, HasCreated, HasMounte
   private void resize() {
     final ClientRect rect = resultsContainer.getBoundingClientRect();
     maxHeight = "calc(100vh - " + rect.top + "px - 10px)";
-    scrolling = Window.getClientHeight() - rect.top - rect.height - 20 < 0;
   }
 
   @Override

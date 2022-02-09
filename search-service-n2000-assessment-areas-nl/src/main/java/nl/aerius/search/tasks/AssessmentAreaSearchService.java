@@ -17,6 +17,7 @@
 package nl.aerius.search.tasks;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -43,6 +44,8 @@ import nl.aerius.search.domain.SearchTaskResult;
 @ImplementsCapability(value = SearchCapability.ASSESSMENT_AREA, region = SearchRegion.NL)
 public class AssessmentAreaSearchService implements SearchTaskService {
   private static final Logger LOG = LoggerFactory.getLogger(AssessmentAreaSearchService.class);
+
+  private static final long MAX_RESULTS = 20;
 
   private final Map<String, Nature2000Area> areas;
   private final Natura2000WfsInterpreter interpreter;
@@ -81,6 +84,8 @@ public class AssessmentAreaSearchService implements SearchTaskService {
             .anyMatch(part -> area.getKey().contains(part)))
         .map(Entry::getValue)
         .map(v -> areaToSuggestion(normalizedQuery, v))
+        .sorted(Comparator.comparingDouble(SearchSuggestion::getScore).reversed())
+        .limit(MAX_RESULTS)
         .collect(Collectors.toList());
 
     result.setSuggestions(sugs);
