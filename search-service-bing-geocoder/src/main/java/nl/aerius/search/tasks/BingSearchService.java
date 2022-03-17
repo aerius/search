@@ -17,7 +17,8 @@
 package nl.aerius.search.tasks;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,17 +63,17 @@ public class BingSearchService implements SearchTaskService {
   @Override
   public Single<SearchTaskResult> retrieveSearchResults(final String query) {
     final SearchTaskResult result = new SearchTaskResult();
-    final List<SearchSuggestion> sugs = new ArrayList<>();
+    final Map<String, SearchSuggestion> sugs = new HashMap<>();
     if (apiKey != null) {
       retrieveSuggestions(query, sugs);
     }
 
-    result.setSuggestions(sugs);
+    result.setSuggestions(new ArrayList<>(sugs.values()));
 
     return Single.just(result);
   }
 
-  private void retrieveSuggestions(final String query, final List<SearchSuggestion> sugs) {
+  private void retrieveSuggestions(final String query, final Map<String, SearchSuggestion> sugs) {
     final String url = String.format(PDOK_SUGGEST_ENDPOINT, query, apiKey);
 
     final HttpResponse<JsonNode> json = Unirest.get(url).asJson();
@@ -88,7 +89,7 @@ public class BingSearchService implements SearchTaskService {
       }
 
       final SearchSuggestion sug = createSuggestion(query, i, jsonObject);
-      sugs.add(sug);
+      sugs.merge(sug.getDescription(), sug, (a, b) -> a.getScore() > b.getScore() ? a : b);
     }
   }
 
