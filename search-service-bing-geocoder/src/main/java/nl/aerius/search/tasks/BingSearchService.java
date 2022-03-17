@@ -59,16 +59,22 @@ public class BingSearchService implements SearchTaskService {
   @Override
   public Single<SearchTaskResult> retrieveSearchResults(final String query) {
     final SearchTaskResult result = new SearchTaskResult();
-    if (apiKey == null) {
-      return Single.just(result);
+    final List<SearchSuggestion> sugs = new ArrayList<>();
+    if (apiKey != null) {
+      retrieveSuggestions(query, sugs);
     }
 
+    result.setSuggestions(sugs);
+
+    return Single.just(result);
+  }
+
+  private void retrieveSuggestions(final String query, final List<SearchSuggestion> sugs) {
     final String url = String.format(PDOK_SUGGEST_ENDPOINT, query, apiKey);
 
     final HttpResponse<JsonNode> json = Unirest.get(url).asJson();
     final JSONObject body = json.getBody().getObject();
 
-    final List<SearchSuggestion> sugs = new ArrayList<>();
     final JSONArray arr = body.getJSONArray("resourceSets").getJSONObject(0).getJSONArray("resources");
     for (int i = 0; i < arr.length(); i++) {
       final JSONObject jsonObject = arr.getJSONObject(i);
@@ -81,10 +87,6 @@ public class BingSearchService implements SearchTaskService {
       final SearchSuggestion sug = createSuggestion(jsonObject);
       sugs.add(sug);
     }
-
-    result.setSuggestions(sugs);
-
-    return Single.just(result);
   }
 
   private static SearchSuggestion createSuggestion(final JSONObject jsonObject) {
