@@ -14,22 +14,16 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see http://www.gnu.org/licenses/.
  */
-package nl.aerius.search.wui.domain;
+package nl.aerius.search.tasks;
 
-import jsinterop.annotations.JsPackage;
-import jsinterop.annotations.JsProperty;
-import jsinterop.annotations.JsType;
+public class InterpretationRuntimeException extends RuntimeException {
+  private static final long serialVersionUID = 1L;
 
-@JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "Object")
-public class SearchSuggestion {
-  @JsProperty public String id;
+  public InterpretationRuntimeException(final Exception e) {
+    super(e);
+  }
 
-  @JsProperty public String type;
-  @JsProperty public String description;
-
-  @JsProperty public String centroid;
-  @JsProperty public String geometry;
-  @JsProperty public String bbox;
-
-  @JsProperty public double score;
+  public InterpretationRuntimeException(final String message, final Exception e) {
+    super(message, e);
+  }
 }

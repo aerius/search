@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -49,6 +50,8 @@ public class BingSearchService implements SearchTaskService {
       + "&key=%s&include=ciso2&userRegion=" + REGION + "&c=" + CULTURE + "&userMapView=" + BNG_BOUNDS;
 
   private static final Logger LOG = LoggerFactory.getLogger(BingSearchService.class);
+
+  @Autowired SimpleBNGGeometryTransformer transformer;
 
   /**
    * TODO: Use session key s rather than the maps key
@@ -89,15 +92,25 @@ public class BingSearchService implements SearchTaskService {
     }
   }
 
-  private static SearchSuggestion createSuggestion(final JSONObject jsonObject) {
+  private SearchSuggestion createSuggestion(final JSONObject jsonObject) {
     final String id = jsonObject.getString("name").replace(" ", "-").toLowerCase();
     final String displayText = jsonObject.getString("name");
     final double score = getScoreFromConfidence(jsonObject.getString("confidence"));
     final SearchSuggestionType type = determineType(jsonObject.getString("entityType"));
-    final String wktCentroid = "POLYGON((" + jsonObject.getJSONArray("bbox").join(" ") + "))";
-    final String wktGeometry = "POINT((" + jsonObject.getJSONObject("point").getJSONArray("coordinates").join(" ") + "))";
+    final JSONArray bbox = jsonObject.getJSONArray("bbox");
+    final String wktBbox = "POLYGON(("
+        + bbox.getDouble(0) + " " + bbox.getDouble(1) + ", "
+        + bbox.getDouble(2) + " " + bbox.getDouble(3) + ", "
+        + bbox.getDouble(2) + " " + bbox.getDouble(1) + ", "
+        + bbox.getDouble(0) + " " + bbox.getDouble(3) + ", "
+        + bbox.getDouble(0) + " " + bbox.getDouble(1)
+        + "))";
+    final String wktCentroid = "POINT(" + jsonObject.getJSONObject("point").getJSONArray("coordinates").join(" ") + ")";
 
-    final SearchSuggestion suggestion = SearchSuggestionBuilder.create(displayText, score, type, wktCentroid, wktGeometry);
+    final String wktBboxBng = transformer.toBNGWKT(wktBbox);
+    final String wktCentroidBng = transformer.toBNGWKT(wktCentroid);
+
+    final SearchSuggestion suggestion = SearchSuggestionBuilder.create(displayText, score, type, wktCentroidBng, null, wktBboxBng);
     suggestion.setId(id);
     return suggestion;
   }

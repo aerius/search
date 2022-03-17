@@ -54,4 +54,11 @@ public final class SearchSuggestionBuilder {
     sug.setGeometry(wktGeometry);
     return sug;
   }
+
+  public static SearchSuggestion create(final String txt, final double score, final SearchSuggestionType type, final String wktCentroid,
+      final String wktGeometry, final String wktBbox) {
+    final SearchSuggestion sug = create(txt, score, type, wktCentroid, wktGeometry);
+    sug.setBbox(wktBbox);
+    return sug;
+  }
 }
