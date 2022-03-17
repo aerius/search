@@ -87,13 +87,13 @@ public class BingSearchService implements SearchTaskService {
         continue;
       }
 
-      final SearchSuggestion sug = createSuggestion(jsonObject);
+      final SearchSuggestion sug = createSuggestion(query, i, jsonObject);
       sugs.add(sug);
     }
   }
 
-  private SearchSuggestion createSuggestion(final JSONObject jsonObject) {
-    final String id = jsonObject.getString("name").replace(" ", "-").toLowerCase();
+  private SearchSuggestion createSuggestion(final String query, final int idx, final JSONObject jsonObject) {
+    final String id = "id-" + query + "-" + idx;
     final String displayText = jsonObject.getString("name");
     final double score = getScoreFromConfidence(jsonObject.getString("confidence"));
     final SearchSuggestionType type = determineType(jsonObject.getString("entityType"));
