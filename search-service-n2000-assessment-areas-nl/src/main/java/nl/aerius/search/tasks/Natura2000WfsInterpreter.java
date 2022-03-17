@@ -91,8 +91,6 @@ public class Natura2000WfsInterpreter {
       LOG.info("Retrieving from {}", wfsNatura2000Url.split("\\?")[0]);
     }
 
-    LOG.info("Got WFS response.");
-
     final SAXReader reader = new SAXReader();
     try {
       // https://sonarcloud.io/organizations/aerius/rules?open=java%3AS2755&rule_key=java%3AS2755
@@ -171,7 +169,7 @@ public class Natura2000WfsInterpreter {
 
     final Geometry resultGeometry = readGeometry(protectedSite);
 
-    LOG.info("Area: {} - {} - {} - {}m2", id, normalizedName, name, resultGeometry.getArea());
+    LOG.debug("Area: {} - {} - {} - {}m2", id, normalizedName, name, resultGeometry.getArea());
 
     final WKTWriter wktWriter = new WKTWriter();
     final String wktGeometry = wktWriter.write(resultGeometry);
@@ -185,8 +183,6 @@ public class Natura2000WfsInterpreter {
         .element("geometry")
         .element("MultiSurface")
         .elements("surfaceMember");
-    LOG.info("Joining {} members.", members.size());
-
     Geometry finalGeometry = null;
     for (int i = 0; i < members.size(); i++) {
       final Element member = (Element) members.get(i);

@@ -18,6 +18,7 @@ package nl.aerius.search.tasks;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -53,13 +54,16 @@ public class AssessmentAreaSearchService implements SearchTaskService {
   @Autowired
   public AssessmentAreaSearchService(final Natura2000WfsInterpreter interpreter) {
     this.interpreter = interpreter;
-    this.areas = interpreter.retrieveAreas();
+    this.areas = new HashMap<>();
   }
 
   @PostConstruct
   public void init() {
-    areas.clear();
-    areas.putAll(interpreter.retrieveAreas());
+    new Thread(() -> {
+      areas.clear();
+      areas.putAll(interpreter.retrieveAreas());
+      LOG.info("AssessmentAreaSearchService initialized");
+    }).start();
   }
 
   @Override

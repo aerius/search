@@ -27,6 +27,7 @@ public class SearchSuggestion {
   private SearchSuggestionType type;
   private String centroid;
   private String geometry;
+  private String bbox;
 
   public void setDescription(final String description) {
     this.description = description;
@@ -79,6 +80,14 @@ public class SearchSuggestion {
 
   public String getGeometry() {
     return geometry;
+  }
+
+  public void setBbox(final String bbox) {
+    this.bbox = bbox;
+  }
+
+  public String getBbox() {
+    return bbox;
   }
 
   @Override
