@@ -66,6 +66,8 @@ public class BingSearchService implements SearchTaskService {
     final Map<String, SearchSuggestion> sugs = new HashMap<>();
     if (apiKey != null) {
       retrieveSuggestions(query, sugs);
+    } else {
+      LOG.warn("BingSearchService will be no-op because there is no api key (env nl.aerius.bing.apiKey)");
     }
 
     result.setSuggestions(new ArrayList<>(sugs.values()));
