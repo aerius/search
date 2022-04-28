@@ -59,11 +59,9 @@ public class AssessmentAreaSearchService implements SearchTaskService {
 
   @PostConstruct
   public void init() {
-    new Thread(() -> {
-      areas.clear();
-      areas.putAll(interpreter.retrieveAreas());
-      LOG.info("AssessmentAreaSearchService initialized");
-    }).start();
+    areas.clear();
+    areas.putAll(interpreter.retrieveAreas());
+    LOG.info("AssessmentAreaSearchService initialized");
   }
 
   @Override

@@ -20,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import io.reactivex.rxjava3.core.Single;
@@ -30,8 +31,15 @@ import nl.aerius.search.domain.SearchTaskResult;
 class PdokSearchServiceTest {
   @Autowired BingSearchService delegator;
 
+  @Value("${nl.aerius.bing.apiKey:#{null}}") private String apiKey;
+
   @Test
   void testWorksAtAll() {
+    // Don't do anything if there is no apiKey
+    if (apiKey == null) {
+      return;
+    }
+
     final Single<SearchTaskResult> result = delegator.retrieveSearchResults("utrecht");
 
     final SearchTaskResult suggestions = result.blockingGet();
