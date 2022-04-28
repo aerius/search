@@ -9,14 +9,12 @@ $ docker swarm init
 $ docker network create -d overlay web
 
 ### Full flow when starting from scratch
-# build applications
-$ mvn clean install
 # Go to Docker directory
 $ cd docker
-# Prepare docker environment (will copy dependencies build and more)
+# Prepare docker environment (at the moment does nothing - so yeah you can skip this step)
 $ ./prepare.sh
 # Build the containers
-$ docker-compose build
+$ ./build.sh
 # Process docker compose config to remove variables in it
 $ docker-compose config > docker-compose.expanded.yaml
 # Deploy environment e.g.

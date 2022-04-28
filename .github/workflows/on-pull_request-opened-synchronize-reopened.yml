@@ -14,9 +14,15 @@ jobs:
         with:
           repository: aerius/github-actions
           path: aerius-github-actions
-          ref: v1
+          ref: main
 
-      - uses: aerius/github-actions/events/pull_request-event-action@v1
+      - uses: aerius/github-actions/events/pull_request-event-action@main
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: aerius/github-actions/extras/docker-build-action@main
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DOCKER_IMAGE_NAME: ${{ github.event.repository.name }}
+          DOCKERFILE_LOCATION: docker/service/Dockerfile
 

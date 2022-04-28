@@ -20,7 +20,9 @@ version: "3"
 services:
 
   service:
-    build: service
+    build:
+      context: .
+      dockerfile: docker/service/Dockerfile
     image: ${REGISTRY_URL}service:${IMAGE_TAG}
     restart: unless-stopped
     environment:

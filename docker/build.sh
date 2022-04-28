@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-SOURCE_DIR='..'
-
 # Exit on error
 set -e
 
@@ -10,6 +8,5 @@ SCRIPT_PATH=$(readlink -f "${0}")
 SCRIPT_DIR=$(dirname "${SCRIPT_PATH}")
 cd "${SCRIPT_DIR}"
 
-# service
-cp -auv "${SOURCE_DIR}"/search-service/target/search-service-*.jar \
-        service/app.jar
+# Build like we are in the root directory
+docker-compose --project-directory ../ --env-file docker/.env build

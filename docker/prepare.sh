@@ -8,5 +8,4 @@ SCRIPT_PATH=$(readlink -f "${0}")
 SCRIPT_DIR=$(dirname "${SCRIPT_PATH}")
 cd "${SCRIPT_DIR}"
 
-# Copy dependencies
-./copy_dependencies.sh
+# For now does nothing - placeholder
