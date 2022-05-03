@@ -28,7 +28,7 @@ import io.reactivex.rxjava3.core.Single;
 import nl.aerius.search.domain.SearchTaskResult;
 
 @SpringBootTest
-class PdokSearchServiceTest {
+class BingSearchServiceTest {
   @Autowired BingSearchService delegator;
 
   @Value("${nl.aerius.bing.apiKey:#{null}}") private String apiKey;
@@ -44,6 +44,6 @@ class PdokSearchServiceTest {
 
     final SearchTaskResult suggestions = result.blockingGet();
 
-    assertEquals(suggestions.getSuggestions().size(), 10, "Expected 10 results for 'utrecht'");
+    assertEquals(10, suggestions.getSuggestions().size(), "Expected 10 results for 'utrecht'");
   }
 }

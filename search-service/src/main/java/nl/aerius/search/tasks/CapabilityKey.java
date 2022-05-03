@@ -21,7 +21,7 @@ import java.util.Objects;
 import nl.aerius.search.domain.SearchCapability;
 import nl.aerius.search.domain.SearchRegion;
 
-public class CapabilityKey {
+public final class CapabilityKey {
   private SearchCapability capability;
   private SearchRegion region;
 
