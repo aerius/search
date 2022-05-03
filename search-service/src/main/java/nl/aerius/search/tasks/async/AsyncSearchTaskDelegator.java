@@ -85,9 +85,7 @@ public class AsyncSearchTaskDelegator {
         .parallel()
         .runOn(Schedulers.io())
         .map(v -> v.retrieveSearchResults(query))
-        .doOnError(e -> {
-          LOG.error("Error while executing search task:", e);
-        })
+        .doOnError(e -> LOG.error("Error while executing search task:", e))
         .flatMap(Single::toFlowable)
         .doAfterNext(r -> task.complete(r))
         .sequential()

@@ -18,6 +18,7 @@ package nl.aerius.search.rest;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -38,6 +39,7 @@ import nl.aerius.search.tasks.async.SearchResult;
 public class SearchRestService {
   private static final String DEFAULT_CAPABILITIES = "MOCK_0,MOCK_01,MOCK_05,RECEPTOR";
   private static final String DEFAULT_REGION = "NL";
+  private static final Pattern SCRUB_PATTERN = Pattern.compile("[\n\r\t]");
 
   @Autowired SearchTaskDelegator taskDelegator;
 
@@ -72,7 +74,7 @@ public class SearchRestService {
    * Remove newlines, carriage returns, and tabs
    */
   private static String scrub(final String query) {
-    return query.replaceAll("[\n\r\t]", "");
+    return SCRUB_PATTERN.matcher(query).replaceAll("");
   }
 
   @GetMapping(value = "/api/results/{uuid}")

@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -36,13 +37,12 @@ import nl.aerius.search.domain.SearchSuggestion;
  */
 public final class TaskUtils {
   private static final Logger LOG = LoggerFactory.getLogger(TaskUtils.class);
+  private static final Pattern REGION_WARN_PATTERN = Pattern.compile("[\n\r\t]");
 
   private static final Comparator<SearchSuggestion> COMPARATOR = Comparator
       .<SearchSuggestion>comparingDouble(SearchSuggestion::getScore)
       .reversed()
       .thenComparing(SearchSuggestion::getDescription);
-
-  // (o1, o2) -> Double.compare(o1.getScore(), o2.getScore());
 
   private TaskUtils() {}
 
@@ -56,7 +56,7 @@ public final class TaskUtils {
           if (taskFactory.hasCapability(v)) {
             return true;
           } else {
-            log.error("No task for known capability: " + v);
+            log.error("No task for known capability: {}", v);
             return false;
           }
         })
@@ -74,8 +74,8 @@ public final class TaskUtils {
 
   public static Set<CapabilityKey> parseCapabilities(final Collection<String> capabilities, final String region) {
     final SearchRegion reg = SearchRegion.safeValueOf(region);
-    if (reg == null) {
-      LOG.warn("Requested region that does not exist: {}", region.replaceAll("[\n\r\t]", "_"));
+    if (reg == null && LOG.isWarnEnabled()) {
+      LOG.warn("Requested region that does not exist: {}", REGION_WARN_PATTERN.matcher(region).replaceAll("_"));
       return Set.of();
     }
 

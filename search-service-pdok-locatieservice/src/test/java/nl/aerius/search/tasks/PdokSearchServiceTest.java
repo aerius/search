@@ -36,6 +36,6 @@ class PdokSearchServiceTest {
 
     final SearchTaskResult suggestions = result.blockingGet();
 
-    assertEquals(suggestions.getSuggestions().size(), 10, "Expected 10 results for 'utrecht'");
+    assertEquals(10, suggestions.getSuggestions().size(), "Expected 10 results for 'utrecht'");
   }
 }
