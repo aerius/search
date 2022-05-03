@@ -99,15 +99,17 @@ public class MapSearchComponent implements IsVueComponent, HasCreated, HasMounte
   @JsMethod
   public String highlight(final String plain) {
     String result = plain;
-    final String[] split = search.split(" ");
-    for (int i = 0; i < split.length; i++) {
-      final String sample = split[i];
-      if (sample.isEmpty()
-          || BOLD_CHARACTER.equals(sample.toLowerCase())) {
-        continue;
-      }
+    if (hasQuery()) {
+      final String[] split = search.split(" ");
+      for (int i = 0; i < split.length; i++) {
+        final String sample = split[i];
+        if (sample.isEmpty()
+            || BOLD_CHARACTER.equals(sample.toLowerCase())) {
+          continue;
+        }
 
-      result = boldenText(result, sample);
+        result = boldenText(result, sample);
+      }
     }
     return result;
   }
