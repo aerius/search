@@ -65,7 +65,7 @@
     <imaer.version>4.0.2-2</imaer.version>
     <maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
 
-    <aerius.gwt-client-common.version>1.2.1</aerius.gwt-client-common.version>
+    <aerius.gwt-client-common.version>1.5.0-SNAPSHOT</aerius.gwt-client-common.version>
     <aerius.gwt-client-common-json.version>1.3.0</aerius.gwt-client-common-json.version>
     <jacoco.version>0.8.7</jacoco.version>
 
@@ -89,21 +89,10 @@
     <dependencies>
       <dependency>
         <groupId>nl.aerius</groupId>
-        <artifactId>gwt-client-vue</artifactId>
+        <artifactId>gwt-client-common-bom</artifactId>
         <version>${aerius.gwt-client-common.version}</version>
-        <type>gwt-lib</type>
-      </dependency>
-      <dependency>
-        <groupId>nl.aerius</groupId>
-        <artifactId>gwt-client-common</artifactId>
-        <version>${aerius.gwt-client-common.version}</version>
-        <type>gwt-lib</type>
-      </dependency>
-      <dependency>
-        <groupId>nl.aerius</groupId>
-        <artifactId>gwt-client-common-json</artifactId>
-        <version>${aerius.gwt-client-common-json.version}</version>
-        <type>gwt-lib</type>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>org.springframework.boot</groupId>
