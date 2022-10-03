@@ -26,13 +26,12 @@ import nl.aerius.search.domain.SearchSuggestionBuilder;
 import nl.aerius.search.domain.SearchSuggestionType;
 import nl.aerius.search.domain.SearchTaskResult;
 import nl.overheid.aerius.geo.shared.BBox;
-import nl.overheid.aerius.geo.shared.EPSG;
-import nl.overheid.aerius.geo.shared.EPSGProxy;
 import nl.overheid.aerius.shared.domain.geo.HexagonUtil;
 import nl.overheid.aerius.shared.domain.geo.HexagonZoomLevel;
 import nl.overheid.aerius.shared.domain.geo.ReceptorGridSettings;
 import nl.overheid.aerius.shared.domain.v2.geojson.Point;
 import nl.overheid.aerius.shared.domain.v2.geojson.Polygon;
+import nl.overheid.aerius.shared.geo.EPSG;
 import nl.overheid.aerius.shared.geometry.ReceptorUtil;
 
 public final class ReceptorUtils {
@@ -42,8 +41,7 @@ public final class ReceptorUtils {
 
   private ReceptorUtils() {}
 
-  public static ReceptorGridSettings createReceptorUtil(final int srid, final int minSurfaceArea, final int hexHor, final BBox bounds) {
-    final EPSG epsg = EPSGProxy.getEPSG(srid);
+  public static ReceptorGridSettings createReceptorUtil(final EPSG epsg, final int minSurfaceArea, final int hexHor, final BBox bounds) {
     final ArrayList<HexagonZoomLevel> zoomLevels = new ArrayList<>();
     for (int i = 1; i <= ZOOM_LEVEL_NUM; i++) {
       zoomLevels.add(new HexagonZoomLevel(i, minSurfaceArea));
