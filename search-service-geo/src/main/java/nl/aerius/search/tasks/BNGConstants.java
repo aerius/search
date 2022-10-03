@@ -17,8 +17,8 @@
 package nl.aerius.search.tasks;
 
 import nl.overheid.aerius.geo.shared.BBox;
-import nl.overheid.aerius.geo.shared.BNGrid;
 import nl.overheid.aerius.shared.domain.geo.ReceptorGridSettings;
+import nl.overheid.aerius.shared.geo.EPSG;
 
 public final class BNGConstants {
   // NOTE Both of the below values are not yet guaranteed to be as constant as the
@@ -30,6 +30,6 @@ public final class BNGConstants {
   private BNGConstants() {}
 
   public static ReceptorGridSettings create() {
-    return ReceptorUtils.createReceptorUtil(BNGrid.SRID, BNGConstants.MIN_ZL_SURFACE_AREA, BNGConstants.HEX_HOR, BNGConstants.BOUNDS);
+    return ReceptorUtils.createReceptorUtil(EPSG.BNG, BNGConstants.MIN_ZL_SURFACE_AREA, BNGConstants.HEX_HOR, BNGConstants.BOUNDS);
   }
 }

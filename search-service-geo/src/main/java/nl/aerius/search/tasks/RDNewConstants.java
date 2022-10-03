@@ -17,8 +17,8 @@
 package nl.aerius.search.tasks;
 
 import nl.overheid.aerius.geo.shared.BBox;
-import nl.overheid.aerius.geo.shared.RDNew;
 import nl.overheid.aerius.shared.domain.geo.ReceptorGridSettings;
+import nl.overheid.aerius.shared.geo.EPSG;
 
 public final class RDNewConstants {
   public static final int MIN_ZL_SURFACE_AREA = 10_000;
@@ -28,6 +28,6 @@ public final class RDNewConstants {
   private RDNewConstants() {}
 
   public static ReceptorGridSettings create() {
-    return ReceptorUtils.createReceptorUtil(RDNew.SRID, MIN_ZL_SURFACE_AREA, HEX_HOR, BOUNDS);
+    return ReceptorUtils.createReceptorUtil(EPSG.RDNEW, MIN_ZL_SURFACE_AREA, HEX_HOR, BOUNDS);
   }
 }
