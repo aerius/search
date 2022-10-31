@@ -65,7 +65,7 @@
     <imaer.version>4.0.2-2</imaer.version>
     <maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
 
-    <aerius.gwt-client-common.version>1.2.1</aerius.gwt-client-common.version>
+    <aerius.gwt-client-common.version>1.5.0-SNAPSHOT</aerius.gwt-client-common.version>
     <aerius.gwt-client-common-json.version>1.3.0</aerius.gwt-client-common-json.version>
     <jacoco.version>0.8.7</jacoco.version>
 
