@@ -27,6 +27,6 @@ import nl.aerius.search.tasks.ImplementsCapability;
 @ImplementsCapability(value = SearchCapability.COORDINATE, region = SearchRegion.UK)
 public class BNGCoordinateSearchService extends AbstractCoordinateSearchService {
   public BNGCoordinateSearchService() {
-    super(BNGConstants.create());
+    super(BNGConstants.getReceptorUtil());
   }
 }

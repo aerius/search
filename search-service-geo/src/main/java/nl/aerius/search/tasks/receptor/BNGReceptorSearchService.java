@@ -27,6 +27,6 @@ import nl.aerius.search.tasks.ImplementsCapability;
 @ImplementsCapability(value = SearchCapability.RECEPTOR, region = SearchRegion.UK)
 public class BNGReceptorSearchService extends AbstractReceptorSearchService {
   public BNGReceptorSearchService() {
-    super(BNGConstants.create());
+    super(BNGConstants.getReceptorUtil());
   }
 }

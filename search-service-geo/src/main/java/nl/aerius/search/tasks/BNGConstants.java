@@ -16,20 +16,34 @@
  */
 package nl.aerius.search.tasks;
 
+import java.util.ArrayList;
+
 import nl.overheid.aerius.geo.shared.BBox;
+import nl.overheid.aerius.shared.domain.geo.HexagonZoomLevel;
 import nl.overheid.aerius.shared.domain.geo.ReceptorGridSettings;
 import nl.overheid.aerius.shared.geo.EPSG;
 
 public final class BNGConstants {
-  // NOTE Both of the below values are not yet guaranteed to be as constant as the
-  // RDNew counterparts
-  public static final int MIN_ZL_SURFACE_AREA = 250_000;
-  public static final int HEX_HOR = 721;
-  public static final BBox BOUNDS = new BBox(1393.0196, 671196.3657, 13494.9764, 1234954.16);
+  public static final EPSG EPSG = nl.overheid.aerius.shared.geo.EPSG.BNG;
+
+  public static final double DEFAULT_NO2_DEPOSITION_FACTOR = 0.0015;
+  public static final double DEFAULT_NH3_DEPOSITION_FACTOR = 0.02;
+  public static final double NO2_TO_NOX_DEPOSITION_VELOCITY_CONVERSION_FACTOR = 0.7;
+  public static final int HEX_HOR = 1785;
+
+  private static final double MIN_X = -4_000.0;
+  private static final double MAX_X = 660_000.0;
+  private static final double MIN_Y = 4_000.0;
+  private static final double MAX_Y = 1_222_000.0;
+
+  private static final HexagonZoomLevel ZOOM_LEVEL_1 = new HexagonZoomLevel(1, 40_000);
 
   private BNGConstants() {}
 
-  public static ReceptorGridSettings create() {
-    return ReceptorUtils.createReceptorUtil(EPSG.BNG, BNGConstants.MIN_ZL_SURFACE_AREA, BNGConstants.HEX_HOR, BNGConstants.BOUNDS);
+  public static ReceptorGridSettings getReceptorUtil() {
+    final ArrayList<HexagonZoomLevel> hexagonZoomLevels = new ArrayList<>();
+    hexagonZoomLevels.add(ZOOM_LEVEL_1);
+    final BBox boundingBox = new BBox(MIN_X, MIN_Y, MAX_X, MAX_Y);
+    return new ReceptorGridSettings(boundingBox, EPSG, HEX_HOR, hexagonZoomLevels);
   }
 }
