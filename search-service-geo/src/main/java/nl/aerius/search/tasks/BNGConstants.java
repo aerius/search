@@ -24,12 +24,9 @@ import nl.overheid.aerius.shared.domain.geo.ReceptorGridSettings;
 import nl.overheid.aerius.shared.geo.EPSG;
 
 public final class BNGConstants {
-  public static final EPSG EPSG = nl.overheid.aerius.shared.geo.EPSG.BNG;
+  private static final EPSG EPSG = nl.overheid.aerius.shared.geo.EPSG.BNG;
 
-  public static final double DEFAULT_NO2_DEPOSITION_FACTOR = 0.0015;
-  public static final double DEFAULT_NH3_DEPOSITION_FACTOR = 0.02;
-  public static final double NO2_TO_NOX_DEPOSITION_VELOCITY_CONVERSION_FACTOR = 0.7;
-  public static final int HEX_HOR = 1785;
+  private static final int HEX_HOR = 1785;
 
   private static final double MIN_X = -4_000.0;
   private static final double MAX_X = 660_000.0;
