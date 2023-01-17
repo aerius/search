@@ -16,7 +16,8 @@
     along with this program.  If not, see http://www.gnu.org/licenses/.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>nl.aerius</groupId>
@@ -30,6 +31,22 @@
   <packaging>gwt-lib</packaging>
 
   <dependencies>
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-user</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.axellience</groupId>
+      <artifactId>vue-gwt</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.axellience</groupId>
+      <artifactId>vue-gwt-processors</artifactId>
+      <optional>true</optional>
+    </dependency>
+
     <dependency>
       <groupId>nl.aerius</groupId>
       <artifactId>gwt-client-vue</artifactId>
@@ -50,6 +67,11 @@
       <artifactId>search-shared</artifactId>
       <version>${project.version}</version>
       <type>gwt-lib</type>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.elemental2</groupId>
+      <artifactId>elemental2-dom</artifactId>
     </dependency>
   </dependencies>
 
