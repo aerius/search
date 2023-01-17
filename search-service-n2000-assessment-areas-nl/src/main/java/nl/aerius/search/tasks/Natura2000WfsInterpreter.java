@@ -181,8 +181,8 @@ public class Natura2000WfsInterpreter {
   private Geometry readGeometry(final Element protectedSite) {
     final List<?> members = protectedSite
         .element("geometry")
-        .element("MultiSurface")
-        .elements("surfaceMember");
+        .element("MultiGeometry")
+        .elements("geometryMember");
     Geometry finalGeometry = null;
     for (int i = 0; i < members.size(); i++) {
       final Element member = (Element) members.get(i);
