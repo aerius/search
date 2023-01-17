@@ -60,8 +60,12 @@ public class AssessmentAreaSearchService implements SearchTaskService {
   @PostConstruct
   public void init() {
     areas.clear();
-    areas.putAll(interpreter.retrieveAreas());
-    LOG.info("AssessmentAreaSearchService initialized");
+    try {
+      areas.putAll(interpreter.retrieveAreas());
+      LOG.info("AssessmentAreaSearchService initialized");
+    } catch (final Exception e) {
+      LOG.error("Exception while initializing AssessmentAreaSearchService", e);
+    }
   }
 
   @Override
