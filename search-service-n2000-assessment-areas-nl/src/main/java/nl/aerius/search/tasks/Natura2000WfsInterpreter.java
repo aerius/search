@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -90,7 +91,31 @@ public class Natura2000WfsInterpreter {
     if (LOG.isInfoEnabled()) {
       LOG.info("Retrieving from {}", wfsNatura2000Url.split("\\?")[0]);
     }
+    final byte[] body = Unirest.get(wfsNatura2000Url)
+        .asBytes()
+        .getBody();
+    Document document;
+    try (InputStream wfsStream = new ByteArrayInputStream(body)) {
+      document = readDocument(wfsStream);
+    } catch (final IOException e1) {
+      throw new InterpretationRuntimeException(e1);
+    }
 
+    final Map<String, Nature2000Area> areas = new HashMap<>();
+
+    final Element rootElem = document.getRootElement();
+    final List<?> elements = rootElem.elements();
+    elements.forEach(elem -> {
+      if (elem instanceof DefaultElement) {
+        final Nature2000Area area = processArea(((DefaultElement) elem).element("ProtectedSite"));
+        areas.merge(area.getNormalizedName(), area, Natura2000WfsInterpreter::merge);
+      }
+    });
+
+    return areas;
+  }
+
+  protected Document readDocument(final InputStream inputStream) {
     final SAXReader reader = new SAXReader();
     try {
       // https://sonarcloud.io/organizations/aerius/rules?open=java%3AS2755&rule_key=java%3AS2755
@@ -100,19 +125,15 @@ public class Natura2000WfsInterpreter {
       throw new InterpretationRuntimeException("Could not set feature disallow-doctype-decl", e1);
     }
 
-    final byte[] body = Unirest.get(wfsNatura2000Url)
-        .asBytes()
-        .getBody();
-    Document document;
-    try (InputStream wfsStream = new ByteArrayInputStream(body)) {
-      document = reader.read(wfsStream);
+    try {
+      return reader.read(inputStream);
     } catch (final DocumentException e1) {
       LOG.error("Could not interpret WFS response; assessment areas will not be searchable as a result.");
       throw new InterpretationRuntimeException("Could not interpret WFS document", e1);
-    } catch (final IOException e2) {
-      throw new InterpretationRuntimeException(e2);
     }
+  }
 
+  protected Map<String, Nature2000Area> parseAreas(final Document document) {
     final Map<String, Nature2000Area> areas = new HashMap<>();
 
     final Element rootElem = document.getRootElement();
@@ -184,7 +205,7 @@ public class Natura2000WfsInterpreter {
     final List<?> members = geometryElement
         .map(e -> e.element("MultiGeometry"))
         .map(e -> e.elements("geometryMember"))
-        .orElse(geometryElement
+        .orElseGet(() -> geometryElement
             .map(e -> e.element("MultiSurface"))
             .map(e -> e.elements("surfaceMember"))
             .orElseThrow());
