@@ -179,10 +179,15 @@ public class Natura2000WfsInterpreter {
   }
 
   private Geometry readGeometry(final Element protectedSite) {
-    final List<?> members = protectedSite
-        .element("geometry")
-        .element("MultiGeometry")
-        .elements("geometryMember");
+    // Service has returned both MultiSurface and MultiGeometry. To ensure it works, test for both
+    final Optional<Element> geometryElement = Optional.ofNullable(protectedSite.element("geometry"));
+    final List<?> members = geometryElement
+        .map(e -> e.element("MultiGeometry"))
+        .map(e -> e.elements("geometryMember"))
+        .orElse(geometryElement
+            .map(e -> e.element("MultiSurface"))
+            .map(e -> e.elements("surfaceMember"))
+            .orElseThrow());
     Geometry finalGeometry = null;
     for (int i = 0; i < members.size(); i++) {
       final Element member = (Element) members.get(i);
