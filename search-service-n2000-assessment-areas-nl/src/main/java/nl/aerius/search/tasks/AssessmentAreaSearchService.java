@@ -63,7 +63,7 @@ public class AssessmentAreaSearchService implements SearchTaskService {
     try {
       areas.putAll(interpreter.retrieveAreas());
       LOG.info("AssessmentAreaSearchService initialized");
-    } catch (final Exception e) {
+    } catch (final RuntimeException e) {
       LOG.error("Exception while initializing AssessmentAreaSearchService", e);
     }
   }
