@@ -60,9 +60,3 @@ variable "application_host_headers" {
   type        = map
   description = "Map containing host headers for specific applications"
 }
-
-variable "search_apikey" {
-  type        = string
-  description = "The API key used by search"
-  default     = null
-}
