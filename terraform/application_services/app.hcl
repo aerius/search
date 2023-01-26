@@ -14,6 +14,8 @@ locals {
     "rule1"    = {tg = "tg1", application_type = "SEARCH", path_pattern = "/*", cognito = true}
   }
 
+  ssm_passwords = {}
+
   ecs_ctr_fes_1_max_instance_size     = "2"
 
   ecs_capacity_providers = {
