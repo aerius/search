@@ -115,7 +115,9 @@ public class MapSearchComponent implements IsVueComponent, HasCreated, HasMounte
   }
 
   public static native String boldenText(String txt, String query) /*-{
-    var reg = new RegExp('(' + query + ')', 'gi');
+    // Taken from https://stackoverflow.com/a/6969486
+    let escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    let reg = new RegExp('(' + escapedQuery + ')', 'gi');
     return txt.replace(reg, '<b>$1</b>');
   }-*/;
 
