@@ -28,12 +28,12 @@ import nl.aerius.search.domain.SearchSuggestion;
 import nl.aerius.search.domain.SearchSuggestionType;
 import nl.aerius.search.domain.SearchTaskResult;
 
-class RDNewReceptorSearchServiceTest {
-  private RDNewReceptorSearchService service;
+class BNGReceptorSearchServiceTest {
+  private BNGReceptorSearchService service;
 
   @BeforeEach
   void beforeEach() {
-    service = new RDNewReceptorSearchService();
+    service = new BNGReceptorSearchService();
   }
 
   @Test
@@ -44,9 +44,9 @@ class RDNewReceptorSearchServiceTest {
     assertEquals(1, result.getSuggestions().size(), "Result number should be 1");
     final SearchSuggestion suggestion = result.getSuggestions().get(0);
     assertEquals(SearchSuggestionType.RECEPTOR, suggestion.getType());
-    assertEquals("Receptor 123123 - x:152873 y:301098", suggestion.getDescription());
-    assertEquals("POINT(152873.01939997677 301098.27972729417)", suggestion.getCentroid());
-    assertEquals("POLYGON((152904.0 301152.0,152935.0 301098.0,152904.0 301045.0,152842.0 301045.0,152811.0 301098.0,152842.0 301152.0,152904.0 301152.0))",
+    assertEquals("Receptor 123123 - x:644445 y:11307", suggestion.getDescription());
+    assertEquals("POINT(644445.465822343 11307.075536400083)", suggestion.getCentroid());
+    assertEquals("POLYGON((644508.0 11415.0,644570.0 11307.0,644508.0 11200.0,644383.0 11200.0,644321.0 11307.0,644383.0 11415.0,644508.0 11415.0))",
         suggestion.getGeometry());
     assertNull(suggestion.getBbox());
     assertEquals(100.0, suggestion.getScore());
