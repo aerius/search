@@ -26,7 +26,7 @@
     v-show="hasQuery"
     ref="resultsContainer"
     :style='map("maxHeight", maxHeight)'
-    aria-label="search results"
+    :aria-label="i18n.ariaSearchResults()"
     role="tree">
     <vertical-collapse-group>
       <div v-for="Entry entry in results.entrySet()"
