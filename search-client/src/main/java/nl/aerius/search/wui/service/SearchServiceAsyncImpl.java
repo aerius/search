@@ -43,7 +43,7 @@ public class SearchServiceAsyncImpl implements SearchServiceAsync {
   public void retrieveSearchResults(final String query, final Set<SearchCapability> capabilities, final String region,
       final AsyncCallback<SearchSuggestion[]> callback) {
     final String url = InteropRequestUtil.prepareUrl(cfg.getSearchEndpoint(), QUERY_FORMAT,
-        ":query", query,
+        ":query", escapeQuery(query),
         ":capabilities", capabilities.stream().map(SearchCapability::name).collect(Collectors.joining(",")),
         ":region", region);
 
@@ -56,12 +56,16 @@ public class SearchServiceAsyncImpl implements SearchServiceAsync {
     final String method = cancel == null ? QUERY_ASYNC_FORMAT : QUERY_ASYNC_CANCEL_FORMAT;
 
     final String url = InteropRequestUtil.prepareUrl(cfg.getSearchEndpoint(), method,
-        ":query", query,
+        ":query", escapeQuery(query),
         ":capabilities", capabilities.stream().map(SearchCapability::name).collect(Collectors.joining(",")),
         ":region", region,
         ":cancel", cancel);
 
     InteropRequestUtil.doGet(url, callback);
+  }
+
+  public static String escapeQuery(final String query) {
+    return query.replace("\\", "");
   }
 
   @Override
