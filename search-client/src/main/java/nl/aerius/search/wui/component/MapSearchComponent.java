@@ -114,10 +114,12 @@ public class MapSearchComponent implements IsVueComponent, HasCreated, HasMounte
     return result;
   }
 
+  /**
+   * Escape statement taken from https://stackoverflow.com/a/6969486
+   */
   public static native String boldenText(String txt, String query) /*-{
-    // Taken from https://stackoverflow.com/a/6969486
-    let escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    let reg = new RegExp('(' + escapedQuery + ')', 'gi');
+    var escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    var reg = new RegExp('(' + escapedQuery + ')', 'gi');
     return txt.replace(reg, '<b>$1</b>');
   }-*/;
 
