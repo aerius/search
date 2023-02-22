@@ -24,7 +24,7 @@
   <parent>
     <groupId>nl.aerius</groupId>
     <artifactId>search-parent</artifactId>
-    <version>1.6.0</version>
+    <version>1.7.0-SNAPSHOT</version>
   </parent>
   <artifactId>search-service-n2000-assessment-areas-nl</artifactId>
   <name>AERIUS Search :: Service Natura 2000 areas NL</name>
