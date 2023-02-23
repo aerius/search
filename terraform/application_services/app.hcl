@@ -16,6 +16,7 @@ locals {
 
   ssm_passwords = {}
 
+  ecs_ctr_fes_1_instance_type         = "c5.xlarge"
   ecs_ctr_fes_1_max_instance_size     = "2"
 
   ecs_capacity_providers = {
