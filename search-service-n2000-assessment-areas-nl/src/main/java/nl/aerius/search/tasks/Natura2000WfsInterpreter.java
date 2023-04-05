@@ -100,18 +100,7 @@ public class Natura2000WfsInterpreter {
       throw new InterpretationRuntimeException(e1);
     }
 
-    final Map<String, Nature2000Area> areas = new HashMap<>();
-
-    final Element rootElem = document.getRootElement();
-    final List<?> elements = rootElem.elements();
-    elements.forEach(elem -> {
-      if (elem instanceof DefaultElement) {
-        final Nature2000Area area = processArea(((DefaultElement) elem).element("PS.ProtectedSites"));
-        areas.merge(area.getNormalizedName(), area, Natura2000WfsInterpreter::merge);
-      }
-    });
-
-    return areas;
+    return parseAreas(document);
   }
 
   protected Document readDocument(final InputStream inputStream) {
