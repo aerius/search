@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import io.reactivex.rxjava3.core.Single;
@@ -42,13 +43,16 @@ import kong.unirest.json.JSONObject;
 @ImplementsCapability(value = SearchCapability.BASIC_INFO, region = SearchRegion.NL)
 public class PdokSearchService implements SearchTaskService {
   private static final String PDOK_SUGGEST_MODS = "&fl=id,type,weergavenaam,centroide_rd,geometrie_rd,score";
-  private static final String PDOK_SUGGEST_ENDPOINT = "https://geodata.nationaalgeoregister.nl/locatieserver/v3/suggest?q=%s" + PDOK_SUGGEST_MODS;
+  private static final String PDOK_SUGGEST_ENDPOINT = "https://api.pdok.nl/bzk/locatieserver/search/v3_1/suggest?q=%s" + PDOK_SUGGEST_MODS;
 
   private static final Logger LOG = LoggerFactory.getLogger(PdokSearchService.class);
 
+  @Value("${nl.aerius.pdok.locatieserver:" + PDOK_SUGGEST_ENDPOINT + "}")
+  private String endpointUrl;
+
   @Override
   public Single<SearchTaskResult> retrieveSearchResults(final String query) {
-    final String url = String.format(PDOK_SUGGEST_ENDPOINT, query);
+    final String url = String.format(endpointUrl, query);
     final HttpResponse<JsonNode> json = Unirest.get(url).asJson();
     final JSONObject body = json.getBody().getObject();
 
