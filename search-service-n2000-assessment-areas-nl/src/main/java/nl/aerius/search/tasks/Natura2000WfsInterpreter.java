@@ -74,11 +74,10 @@ public class Natura2000WfsInterpreter {
 
   // @formatter:off
   /**
-   * @see <a href="https://www.nationaalgeoregister.nl/geonetwork/srv/api/records/280ed37a-b8d2-4ac5-8567-04d84fad3a41">Resource URL</a>
-   * @see <a href="https://nationaalgeoregister.nl/geonetwork/srv/dut/catalog.search#/metadata/280ed37a-b8d2-4ac5-8567-04d84fad3a41">Catalog URL</a>
+   * @see <a href='https://www.pdok.nl/introductie/-/article/beschermde-gebieden-natura2000-inspire-geharmoniseerd-">pdok page</a>
    */
-  @Value("${nl.aerius.wfs.n2000:http://geodata.nationaalgeoregister.nl/inspire/ps-natura2000/wfs?"
-      + "request=GetFeature&service=WFS&version=2.0.0&typeName=ps-natura2000:ProtectedSite&outputFormat=application%2Fgml%2Bxml%3B%20version%3D3.2}")
+  @Value("${nl.aerius.wfs.n2000:https://service.pdok.nl/rvo/beschermdegebieden/natura2000/wfs/v1_0?"
+      + "request=GetFeature&service=WFS&version=2.0.0&typeName=beschermdegebieden:PS.ProtectedSites&outputFormat=application%2Fgml%2Bxml%3B%20version%3D3.2}")
   private String wfsNatura2000Url;
   // @formatter:on
 
@@ -101,18 +100,7 @@ public class Natura2000WfsInterpreter {
       throw new InterpretationRuntimeException(e1);
     }
 
-    final Map<String, Nature2000Area> areas = new HashMap<>();
-
-    final Element rootElem = document.getRootElement();
-    final List<?> elements = rootElem.elements();
-    elements.forEach(elem -> {
-      if (elem instanceof DefaultElement) {
-        final Nature2000Area area = processArea(((DefaultElement) elem).element("ProtectedSite"));
-        areas.merge(area.getNormalizedName(), area, Natura2000WfsInterpreter::merge);
-      }
-    });
-
-    return areas;
+    return parseAreas(document);
   }
 
   protected Document readDocument(final InputStream inputStream) {
@@ -139,8 +127,8 @@ public class Natura2000WfsInterpreter {
     final Element rootElem = document.getRootElement();
     final List<?> elements = rootElem.elements();
     elements.forEach(elem -> {
-      if (elem instanceof DefaultElement) {
-        final Nature2000Area area = processArea(((DefaultElement) elem).element("ProtectedSite"));
+      if (elem instanceof DefaultElement && ((DefaultElement) elem).element("PS.ProtectedSites") != null) {
+        final Nature2000Area area = processArea(((DefaultElement) elem).element("PS.ProtectedSites"));
         areas.merge(area.getNormalizedName(), area, Natura2000WfsInterpreter::merge);
       }
     });
@@ -176,15 +164,9 @@ public class Natura2000WfsInterpreter {
 
   private Nature2000Area processArea(final Element protectedSite) {
     final String id = protectedSite
-        .element("inspireID")
-        .element("Identifier")
-        .elementTextTrim("localId");
+        .elementTextTrim("inspireId");
     final String name = protectedSite
-        .element("siteName")
-        .element("GeographicalName")
-        .element("spelling")
-        .element("SpellingOfName")
-        .elementTextTrim("text");
+        .elementTextTrim("geographicalname");
 
     final String normalizedName = normalize(name);
 
@@ -201,14 +183,14 @@ public class Natura2000WfsInterpreter {
 
   private Geometry readGeometry(final Element protectedSite) {
     // Service has returned both MultiSurface and MultiGeometry. To ensure it works, test for both
-    final Optional<Element> geometryElement = Optional.ofNullable(protectedSite.element("geometry"));
+    final Optional<Element> geometryElement = Optional.ofNullable(protectedSite.element("geom"));
     final List<?> members = geometryElement
         .map(e -> e.element("MultiGeometry"))
         .map(e -> e.elements("geometryMember"))
         .orElseGet(() -> geometryElement
             .map(e -> e.element("MultiSurface"))
             .map(e -> e.elements("surfaceMember"))
-            .orElseThrow());
+            .orElseGet(() -> geometryElement.map(List::of).orElseThrow()));
     Geometry finalGeometry = null;
     for (int i = 0; i < members.size(); i++) {
       final Element member = (Element) members.get(i);
@@ -269,7 +251,7 @@ public class Natura2000WfsInterpreter {
   private static MathTransform createCRSTransform() {
     final CoordinateReferenceSystem targetCRS;
     try {
-      final CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:4258");
+      final CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:3035");
       targetCRS = CRS.decode("EPSG:28992");
 
       return CRS.findMathTransform(sourceCRS, targetCRS);
