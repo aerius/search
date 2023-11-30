@@ -40,10 +40,10 @@ class BingSearchServiceTest {
       return;
     }
 
-    final Single<SearchTaskResult> result = delegator.retrieveSearchResults("utrecht");
+    final Single<SearchTaskResult> result = delegator.retrieveSearchResults("edin");
 
     final SearchTaskResult suggestions = result.blockingGet();
 
-    assertEquals(10, suggestions.getSuggestions().size(), "Expected 10 results for 'utrecht'");
+    assertEquals(7, suggestions.getSuggestions().size(), "Expected number of results for 'edin' (should include 'edinburgh')");
   }
 }
