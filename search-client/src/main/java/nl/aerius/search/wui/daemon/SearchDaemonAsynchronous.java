@@ -23,6 +23,7 @@ import java.util.stream.Stream;
 import javax.inject.Inject;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
 import com.google.web.bindery.event.shared.binder.EventBinder;
@@ -67,6 +68,7 @@ public class SearchDaemonAsynchronous extends BasicEventComponent {
 
   interface SearchDaemonAsynchronousEventBinder extends EventBinder<SearchDaemonAsynchronous> {}
 
+  private static final int START_SEARCH_DELAY = 500;
   private static final int DELAY = 250;
 
   @Inject SearchContext context;
@@ -77,6 +79,14 @@ public class SearchDaemonAsynchronous extends BasicEventComponent {
   private final GWTAtomicInteger cacheCounter = new GWTAtomicInteger();
   private final GWTAtomicInteger counter = new GWTAtomicInteger();
 
+  private final Timer startSearchTimer = new Timer() {
+    @Override
+    public void run() {
+      startSearch();
+    }
+  };
+
+  private String currentQuery;
   private String currentSearchId;
 
   private final IntFunction<AsyncCallback<SearchResult>> callbackFactory = count -> AppAsyncCallback
@@ -107,22 +117,31 @@ public class SearchDaemonAsynchronous extends BasicEventComponent {
   @EventHandler
   public void onSearchTextCommand(final SearchTextCommand c) {
     final String query = c.getValue();
+    // Not directly required, but if someone clears the input might as well cancel the timer.
+    startSearchTimer.cancel();
 
     if (query == null || query.trim().isEmpty()) {
       clear();
       return;
     }
-
+    currentQuery = query;
     context.beginSearch();
+    startSearchTimer.schedule(START_SEARCH_DELAY);
+  }
+
+  private void startSearch() {
+    if (currentQuery == null) {
+      return;
+    }
     final int count = counter.incrementAndGet();
 
-    service.startSearchQuery(query, config.getSearchCapabilities(), config.getSearchRegion(), null, callbackFactory.apply(count));
+    service.startSearchQuery(currentQuery, config.getSearchCapabilities(), config.getSearchRegion(), null, callbackFactory.apply(count));
   }
 
   /**
    * Process old results, by actualizing the cache result set (but not the
    * 'actual' result set).
-   * 
+   *
    * @param count
    */
   private void processOldResults(final Integer count, final SearchResult result) {
@@ -169,6 +188,7 @@ public class SearchDaemonAsynchronous extends BasicEventComponent {
   }
 
   private void clear() {
+    currentQuery = null;
     currentSearchId = null;
     context.clear();
     counter.incrementAndGet();
