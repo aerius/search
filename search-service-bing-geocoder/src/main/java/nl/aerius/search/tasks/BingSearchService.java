@@ -58,11 +58,10 @@ public class BingSearchService implements SearchTaskService {
       + "&includeEntityTypes=Address,Place"
       + "&c=" + CULTURE
       + "&userMapView=" + BNG_BOUNDS
-      + "&maxResults=10";
-  private static final String BING_lOCATIONS_ENDPOINT = "https://dev.virtualearth.net/REST/v1/Locations?"
+      + "&maxResults=5";
+  private static final String BING_LOCATIONS_ENDPOINT = "https://dev.virtualearth.net/REST/v1/Locations?"
       + "key=%s"
       + "&userRegion=" + REGION
-      + "&countryRegion=" + REGION
       + "&c=" + CULTURE
       + "&userMapView=" + BNG_BOUNDS
       + "&maxResults=1"
@@ -97,18 +96,13 @@ public class BingSearchService implements SearchTaskService {
     final String url = String.format(BING_SUGGEST_ENDPOINT, query, apiKey);
 
     // First obtain suggestions, then translate them to actual locations.
-    final HttpResponse<JsonNode> json = Unirest.get(url).asJson();
-    final JSONObject body = json.getBody().getObject();
-
-    final JSONArray arr = body
-        .getJSONArray("resourceSets").getJSONObject(0)
-        .getJSONArray("resources").getJSONObject(0)
+    final JSONArray arr = obtainResources(url).getJSONObject(0)
         .getJSONArray("value");
     // As the list of suggestions can contain duplicates when we translate them to actual locations, filter those out by using a set
     // Use a LinkedHashSet to keep the order.
     final Set<SuggestedLocation> suggestedLocations = new LinkedHashSet<>();
     for (int i = 0; i < arr.length(); i++) {
-      final JSONObject jsonObject = arr.getJSONObject(i).getJSONObject("address");
+      final JSONObject jsonObject = arr.getJSONObject(i);
       final SuggestedLocation suggestedLocation = createSuggestedLocation(jsonObject);
       suggestedLocations.add(suggestedLocation);
     }
@@ -124,18 +118,29 @@ public class BingSearchService implements SearchTaskService {
     }
   }
 
+  private JSONArray obtainResources(final String url) {
+    final HttpResponse<JsonNode> json = Unirest.get(url).asJson();
+    final JSONObject body = json.getBody().getObject();
+    return body.getJSONArray("resourceSets").getJSONObject(0).getJSONArray("resources");
+  }
+
   private SuggestedLocation createSuggestedLocation(final JSONObject jsonObject) {
-    return new SuggestedLocation(jsonObject.optString("locality"),
-        jsonObject.optString("adminDistrict2"),
-        jsonObject.optString("addressLine"),
-        jsonObject.optString("formattedAddress"));
+    final JSONObject addressObject = jsonObject.getJSONObject("address");
+    return new SuggestedLocation(jsonObject.optString("name"),
+        addressObject.optString("locality"),
+        addressObject.optString("adminDistrict2"),
+        addressObject.optString("addressLine"),
+        addressObject.optString("formattedAddress"));
   }
 
   private JSONObject obtainLocation(final SuggestedLocation location) {
-    final String url = String.format(BING_lOCATIONS_ENDPOINT, apiKey, location.toUrlParameters());
-    final HttpResponse<JsonNode> json = Unirest.get(url).asJson();
-    final JSONObject body = json.getBody().getObject();
-    final JSONArray arr = body.getJSONArray("resourceSets").getJSONObject(0).getJSONArray("resources");
+    final String url;
+    if (location.name != null && !location.name.isEmpty()) {
+      url = String.format(BING_LOCATIONS_ENDPOINT, apiKey, "&query=" + location.name);
+    } else {
+      url = String.format(BING_LOCATIONS_ENDPOINT, apiKey, location.toAddressUrlParameters());
+    }
+    final JSONArray arr = obtainResources(url);
     return arr.length() == 0 ? null : arr.getJSONObject(0);
   }
 
@@ -199,12 +204,14 @@ public class BingSearchService implements SearchTaskService {
 
   private static class SuggestedLocation {
 
+    private final String name;
     private final String locality;
     private final String adminDistrict;
     private final String addressLine;
     private final String formattedAddress;
 
-    SuggestedLocation(final String locality, final String adminDistrict, final String addressLine, final String formattedAddress) {
+    SuggestedLocation(final String name, final String locality, final String adminDistrict, final String addressLine, final String formattedAddress) {
+      this.name = name;
       this.locality = locality;
       this.adminDistrict = adminDistrict;
       this.addressLine = addressLine;
@@ -213,7 +220,7 @@ public class BingSearchService implements SearchTaskService {
 
     @Override
     public int hashCode() {
-      return Objects.hash(addressLine, adminDistrict, formattedAddress, locality);
+      return Objects.hash(addressLine, adminDistrict, formattedAddress, locality, name);
     }
 
     @Override
@@ -226,11 +233,13 @@ public class BingSearchService implements SearchTaskService {
         return false;
       final SuggestedLocation other = (SuggestedLocation) obj;
       return Objects.equals(addressLine, other.addressLine) && Objects.equals(adminDistrict, other.adminDistrict)
-          && Objects.equals(formattedAddress, other.formattedAddress) && Objects.equals(locality, other.locality);
+          && Objects.equals(formattedAddress, other.formattedAddress) && Objects.equals(locality, other.locality)
+          && Objects.equals(name, other.name);
     }
 
-    String toUrlParameters() {
+    String toAddressUrlParameters() {
       final Map<String, String> parameters = new HashMap<>();
+      parameters.put("countryRegion", REGION);
       if (locality != null) {
         parameters.put("locality", locality);
       }

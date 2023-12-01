@@ -44,6 +44,6 @@ class BingSearchServiceTest {
 
     final SearchTaskResult suggestions = result.blockingGet();
 
-    assertEquals(7, suggestions.getSuggestions().size(), "Expected number of results for 'edin' (should include 'edinburgh')");
+    assertEquals(5, suggestions.getSuggestions().size(), "Expected number of results for 'edin' (should include 'edinburgh')");
   }
 }
