@@ -68,7 +68,7 @@ public class SearchDaemonAsynchronous extends BasicEventComponent {
 
   interface SearchDaemonAsynchronousEventBinder extends EventBinder<SearchDaemonAsynchronous> {}
 
-  private static final int START_SEARCH_DELAY = 1000;
+  private static final int START_SEARCH_DELAY = 500;
   private static final int DELAY = 250;
 
   @Inject SearchContext context;
