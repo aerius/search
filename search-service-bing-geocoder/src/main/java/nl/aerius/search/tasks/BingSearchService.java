@@ -18,7 +18,11 @@ package nl.aerius.search.tasks;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,8 +51,21 @@ public class BingSearchService implements SearchTaskService {
   private static final String REGION = "GB";
   private static final String CULTURE = "en-GB";
   private static final String BNG_BOUNDS = "49.79,-8.82,60.94,1.92";
-  private static final String PDOK_SUGGEST_ENDPOINT = "https://dev.virtualearth.net/REST/v1/Locations?query=%s"
-      + "&key=%s&include=ciso2&userRegion=" + REGION + "&c=" + CULTURE + "&userMapView=" + BNG_BOUNDS;
+  private static final String BING_SUGGEST_ENDPOINT = "https://dev.virtualearth.net/REST/v1/Autosuggest?query=%s"
+      + "&key=%s"
+      + "&userRegion=" + REGION
+      + "&countryFilter=" + REGION
+      + "&includeEntityTypes=Address,Place"
+      + "&c=" + CULTURE
+      + "&userMapView=" + BNG_BOUNDS
+      + "&maxResults=5";
+  private static final String BING_LOCATIONS_ENDPOINT = "https://dev.virtualearth.net/REST/v1/Locations?"
+      + "key=%s"
+      + "&userRegion=" + REGION
+      + "&c=" + CULTURE
+      + "&userMapView=" + BNG_BOUNDS
+      + "&maxResults=1"
+      + "%s";
 
   private static final Logger LOG = LoggerFactory.getLogger(BingSearchService.class);
 
@@ -76,29 +93,64 @@ public class BingSearchService implements SearchTaskService {
   }
 
   private void retrieveSuggestions(final String query, final Map<String, SearchSuggestion> sugs) {
-    final String url = String.format(PDOK_SUGGEST_ENDPOINT, query, apiKey);
+    final String url = String.format(BING_SUGGEST_ENDPOINT, query, apiKey);
 
-    final HttpResponse<JsonNode> json = Unirest.get(url).asJson();
-    final JSONObject body = json.getBody().getObject();
-
-    final JSONArray arr = body.getJSONArray("resourceSets").getJSONObject(0).getJSONArray("resources");
+    // First obtain suggestions, then translate them to actual locations.
+    final JSONArray arr = obtainResources(url).getJSONObject(0)
+        .getJSONArray("value");
+    // As the list of suggestions can contain duplicates when we translate them to actual locations, filter those out by using a set
+    // Use a LinkedHashSet to keep the order.
+    final Set<SuggestedLocation> suggestedLocations = new LinkedHashSet<>();
     for (int i = 0; i < arr.length(); i++) {
       final JSONObject jsonObject = arr.getJSONObject(i);
-
-      // Skip if the result is not in GB
-      if (!jsonObject.getJSONObject("address").getString("countryRegionIso2").equals(REGION)) {
-        continue;
-      }
-
-      final SearchSuggestion sug = createSuggestion(query, i, jsonObject);
-      sugs.merge(sug.getDescription(), sug, (a, b) -> a.getScore() > b.getScore() ? a : b);
+      final SuggestedLocation suggestedLocation = createSuggestedLocation(jsonObject);
+      suggestedLocations.add(suggestedLocation);
     }
+    // Now convert the suggestions by Bing to actual locations, to obtain geo information.
+    int i = 0;
+    for (final SuggestedLocation suggestedLocation : suggestedLocations) {
+      final JSONObject jsonObject = obtainLocation(suggestedLocation);
+      if (jsonObject != null) {
+        final SearchSuggestion sug = createSuggestion(query, i, jsonObject);
+        sugs.merge(sug.getDescription(), sug, (a, b) -> a.getScore() > b.getScore() ? a : b);
+        i++;
+      }
+    }
+  }
+
+  private JSONArray obtainResources(final String url) {
+    final HttpResponse<JsonNode> json = Unirest.get(url).asJson();
+    final JSONObject body = json.getBody().getObject();
+    return body.getJSONArray("resourceSets").getJSONObject(0).getJSONArray("resources");
+  }
+
+  private SuggestedLocation createSuggestedLocation(final JSONObject jsonObject) {
+    final JSONObject addressObject = jsonObject.getJSONObject("address");
+    return new SuggestedLocation(jsonObject.optString("name"),
+        addressObject.optString("locality"),
+        addressObject.optString("adminDistrict2"),
+        addressObject.optString("addressLine"),
+        addressObject.optString("formattedAddress"));
+  }
+
+  private JSONObject obtainLocation(final SuggestedLocation location) {
+    final String url;
+    if (location.name != null && !location.name.isEmpty()) {
+      url = String.format(BING_LOCATIONS_ENDPOINT, apiKey, "&query=" + location.name);
+    } else {
+      url = String.format(BING_LOCATIONS_ENDPOINT, apiKey, location.toAddressUrlParameters());
+    }
+    final JSONArray arr = obtainResources(url);
+    return arr.length() == 0 ? null : arr.getJSONObject(0);
   }
 
   private SearchSuggestion createSuggestion(final String query, final int idx, final JSONObject jsonObject) {
     final String id = "id-" + query + "-" + idx;
     final String displayText = jsonObject.getString("name");
-    final double score = getScoreFromConfidence(jsonObject.getString("confidence"));
+    // While there is a confidence bit, as we use a 2nd call we can't really use it
+    /// (the confidence is always based on input for that second call, which isn't user input)
+    // Instead, assume that Bing knows what it's doing with the autosuggest and score earlier records higher
+    final double score = 90D - idx;
     final SearchSuggestionType type = determineType(jsonObject.getString("entityType"));
     final JSONArray bbox = jsonObject.getJSONArray("bbox");
     final String wktBbox = "POLYGON(("
@@ -116,19 +168,6 @@ public class BingSearchService implements SearchTaskService {
     final SearchSuggestion suggestion = SearchSuggestionBuilder.create(displayText, score, type, wktCentroidBng, null, wktBboxBng);
     suggestion.setId(id);
     return suggestion;
-  }
-
-  private static double getScoreFromConfidence(final String confidence) {
-    switch (confidence) {
-    case "High":
-      return 90D;
-    case "Medium":
-      return 50D;
-    case "Low":
-      return 30D;
-    default:
-      return 15D;
-    }
   }
 
   private static SearchSuggestionType determineType(final String type) {
@@ -161,5 +200,63 @@ public class BingSearchService implements SearchTaskService {
     }
 
     return suggestionType;
+  }
+
+  private static class SuggestedLocation {
+
+    private final String name;
+    private final String locality;
+    private final String adminDistrict;
+    private final String addressLine;
+    private final String formattedAddress;
+
+    SuggestedLocation(final String name, final String locality, final String adminDistrict, final String addressLine, final String formattedAddress) {
+      this.name = name;
+      this.locality = locality;
+      this.adminDistrict = adminDistrict;
+      this.addressLine = addressLine;
+      this.formattedAddress = formattedAddress;
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(addressLine, adminDistrict, formattedAddress, locality, name);
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+      if (this == obj)
+        return true;
+      if (obj == null)
+        return false;
+      if (getClass() != obj.getClass())
+        return false;
+      final SuggestedLocation other = (SuggestedLocation) obj;
+      return Objects.equals(addressLine, other.addressLine) && Objects.equals(adminDistrict, other.adminDistrict)
+          && Objects.equals(formattedAddress, other.formattedAddress) && Objects.equals(locality, other.locality)
+          && Objects.equals(name, other.name);
+    }
+
+    String toAddressUrlParameters() {
+      final Map<String, String> parameters = new HashMap<>();
+      parameters.put("countryRegion", REGION);
+      if (locality != null) {
+        parameters.put("locality", locality);
+      }
+      if (adminDistrict != null) {
+        parameters.put("adminDistrict", adminDistrict);
+      }
+      if (addressLine != null) {
+        parameters.put("addressLine", addressLine);
+      }
+      if (formattedAddress != null) {
+        parameters.put("query", formattedAddress);
+      }
+      return parameters.isEmpty()
+          ? ""
+          : "&" + parameters.entrySet().stream()
+              .map(e -> e.getKey() + "=" + e.getValue())
+              .collect(Collectors.joining("&"));
+    }
   }
 }
