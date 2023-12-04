@@ -36,7 +36,9 @@ public enum SearchCapability {
   MOCK_5,
 
   MOCK_GROUP_0,
-  MOCK_GROUP_1;
+  MOCK_GROUP_1,
+
+  MOCK_RUNTIME_EXCEPTION;
 
   public static SearchCapability safeValueOf(final String name) {
     try {

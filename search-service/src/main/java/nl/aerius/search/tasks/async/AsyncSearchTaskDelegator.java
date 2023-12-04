@@ -85,12 +85,14 @@ public class AsyncSearchTaskDelegator {
         .parallel()
         .runOn(Schedulers.io())
         .map(v -> v.retrieveSearchResults(query))
-        .doOnError(e -> LOG.error("Error while executing search task:", e))
         .flatMap(Single::toFlowable)
-        .doAfterNext(r -> task.complete(r))
+        .doAfterNext(task::complete)
         .sequential()
-        .doOnComplete(() -> task.complete())
-        .subscribe();
+        .doOnComplete(task::fullyComplete)
+        .subscribe(x -> {}, e -> {
+          LOG.error("General error while executing search task:", e);
+          task.failureComplete();
+        });
 
     disposables.put(task.getUuid(), disposable);
 
