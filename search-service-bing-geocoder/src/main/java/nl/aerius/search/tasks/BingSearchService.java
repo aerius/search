@@ -137,10 +137,10 @@ public class BingSearchService implements SearchTaskService {
           Thread.currentThread().interrupt();
         }
       } else {
-        throw new RuntimeException("Unexpected status code: " + statusCode);
+        throw new BingServiceException("Unexpected status code: " + statusCode);
       }
     }
-    throw new RuntimeException("Retries failed, last returned: " + body);
+    throw new BingServiceException("Retries failed, last returned: " + body);
   }
 
   private SuggestedLocation createSuggestedLocation(final JSONObject jsonObject) {
