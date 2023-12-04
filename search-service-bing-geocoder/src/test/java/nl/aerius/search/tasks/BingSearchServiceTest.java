@@ -45,5 +45,11 @@ class BingSearchServiceTest {
     final SearchTaskResult suggestions = result.blockingGet();
 
     assertEquals(5, suggestions.getSuggestions().size(), "Expected number of results for 'edin' (should include 'edinburgh')");
+
+    final Single<SearchTaskResult> resultYork = delegator.retrieveSearchResults("york");
+
+    final SearchTaskResult suggestionsYork = resultYork.blockingGet();
+
+    assertEquals(4, suggestionsYork.getSuggestions().size(), "Expected number of results for 'edin' (should include 'edinburgh')");
   }
 }
