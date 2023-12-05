@@ -14,37 +14,11 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see http://www.gnu.org/licenses/.
  */
-package nl.aerius.search.domain;
+package nl.aerius.search.tasks;
 
-public enum SearchCapability {
-  RECEPTOR,
-  COORDINATE,
-  ASSESSMENT_AREA,
+public class BingServiceException extends RuntimeException {
 
-  /**
-   * Addresses, municipalities, postal codes, etc.
-   */
-  BASIC_INFO,
-
-  /**
-   * Capabilities used for testing purposes
-   */
-  MOCK_0,
-  MOCK_01,
-  MOCK_05,
-  MOCK_1,
-  MOCK_5,
-
-  MOCK_GROUP_0,
-  MOCK_GROUP_1,
-
-  MOCK_RUNTIME_EXCEPTION;
-
-  public static SearchCapability safeValueOf(final String name) {
-    try {
-      return name == null ? null : valueOf(name);
-    } catch (final IllegalArgumentException e) {
-      return null;
-    }
+  public BingServiceException(final String message) {
+    super(message);
   }
 }

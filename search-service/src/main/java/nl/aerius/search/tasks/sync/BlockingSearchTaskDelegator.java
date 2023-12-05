@@ -30,6 +30,7 @@ import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 import nl.aerius.search.domain.SearchSuggestion;
+import nl.aerius.search.domain.SearchSuggestionBuilder;
 import nl.aerius.search.tasks.CapabilityKey;
 import nl.aerius.search.tasks.SearchTaskService;
 import nl.aerius.search.tasks.TaskFactory;
@@ -69,6 +70,10 @@ public class BlockingSearchTaskDelegator {
         .flatMap(v -> Flowable.fromIterable(v.getSuggestions()))
         .sorted(TaskUtils.getResultComparator())
         .toList()
+        .onErrorReturn(e -> {
+          LOG.error("General error while executing search task:", e);
+          return List.of(SearchSuggestionBuilder.create("Failure during search, please contact the helpdesk"));
+        })
         .blockingGet();
   }
 }

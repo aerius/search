@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import nl.aerius.search.domain.SearchSuggestion;
+import nl.aerius.search.domain.SearchSuggestionBuilder;
 import nl.aerius.search.domain.SearchTaskResult;
 
 public class SearchResult {
@@ -45,7 +46,16 @@ public class SearchResult {
     return complete;
   }
 
-  public void complete() {
+  public void failureComplete() {
+    if (LOG.isTraceEnabled()) {
+      LOG.error("Search task {} has completed with a failure.", uuid);
+    }
+    results.add(SearchSuggestionBuilder.create("Failure during search, please contact the helpdesk"));
+
+    complete = true;
+  }
+
+  public void fullyComplete() {
     if (LOG.isTraceEnabled()) {
       LOG.trace("Search task {} has fully completed.", uuid);
     }

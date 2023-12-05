@@ -22,6 +22,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -76,6 +77,7 @@ public class BingSearchService implements SearchTaskService {
    * https://docs.microsoft.com/en-us/bingmaps/getting-started/bing-maps-api-best-practices#reducing-usage-transactions
    */
   @Value("${nl.aerius.bing.apiKey:#{null}}") private String apiKey;
+  @Value("${nl.aerius.bing.maxRetries:3}") private int maxRetries;
 
   @Override
   public Single<SearchTaskResult> retrieveSearchResults(final String query) {
@@ -119,9 +121,26 @@ public class BingSearchService implements SearchTaskService {
   }
 
   private JSONArray obtainResources(final String url) {
-    final HttpResponse<JsonNode> json = Unirest.get(url).asJson();
-    final JSONObject body = json.getBody().getObject();
-    return body.getJSONArray("resourceSets").getJSONObject(0).getJSONArray("resources");
+    JSONObject body = null;
+    int retry = 0;
+    while (retry++ < maxRetries) {
+      final HttpResponse<JsonNode> json = Unirest.get(url).asJson();
+      body = json.getBody().getObject();
+      final int statusCode = body.getInt("statusCode");
+      if (statusCode == 200) {
+        return body.getJSONArray("resourceSets").getJSONObject(0).getJSONArray("resources");
+      } else if (statusCode == 429) {
+        LOG.info("Got too many retries status code from Bing, attempt {}.", retry);
+        try {
+          TimeUnit.SECONDS.sleep(1);
+        } catch (final InterruptedException ie) {
+          Thread.currentThread().interrupt();
+        }
+      } else {
+        throw new BingServiceException("Unexpected status code: " + statusCode);
+      }
+    }
+    throw new BingServiceException("Retries failed, last returned: " + body);
   }
 
   private SuggestedLocation createSuggestedLocation(final JSONObject jsonObject) {

@@ -33,6 +33,7 @@ import nl.aerius.search.domain.SearchRegion;
 import nl.aerius.search.tasks.CapabilityKey;
 import nl.aerius.search.tasks.Mock0SecondTask;
 import nl.aerius.search.tasks.MockHalfSecondTask;
+import nl.aerius.search.tasks.MockRuntimeExceptionTask;
 import nl.aerius.search.tasks.MockTenthSecondTask;
 import nl.aerius.search.tasks.SearchTaskService;
 import nl.aerius.search.tasks.TaskFactory;
@@ -69,14 +70,17 @@ class AsyncSearchTaskDelegatorTest {
     TimeUnit.MILLISECONDS.sleep(50);
     final SearchResult result3 = delegator.retrieveSearchTask(uuid);
     assertEquals(1, result3.getResults().size(), "Should have 1 results at this point.");
+    assertFalse(result3.isComplete(), "Result should not be complete at this point.");
 
     TimeUnit.MILLISECONDS.sleep(100);
     final SearchResult result4 = delegator.retrieveSearchTask(uuid);
     assertEquals(2, result4.getResults().size(), "Should have 2 results at this point.");
+    assertFalse(result4.isComplete(), "Result should not be complete at this point.");
 
     TimeUnit.MILLISECONDS.sleep(400);
     final SearchResult result5 = delegator.retrieveSearchTask(uuid);
     assertEquals(3, result5.getResults().size(), "Should have 3 results at this point.");
+    assertTrue(result5.isComplete(), "Result should now be complete at this point.");
   }
 
   @Test
@@ -97,5 +101,36 @@ class AsyncSearchTaskDelegatorTest {
     assertFalse(result1.isComplete(), "Result should not be complete, because the query should be cancelled - the reactor was not cancelled");
     assertTrue(result1.getResults().isEmpty(),
         "Results should still be empty after the task completes (>100ms) - the individual task was not cancelled");
+  }
+
+  @Test
+  void testResponseRuntimeException() throws InterruptedException {
+    final SearchTaskService mock0Task = new Mock0SecondTask();
+    final SearchTaskService mock01Task = new MockTenthSecondTask();
+    final SearchTaskService mockRuntimeException = new MockRuntimeExceptionTask();
+
+    final Set<SearchTaskService> tasks = Set.of(mock0Task, mock01Task, mockRuntimeException);
+
+    final TaskFactory factory = new TaskFactory(tasks);
+    factory.onFactoryConstructed();
+    delegator = new AsyncSearchTaskDelegator(factory);
+
+    final Set<CapabilityKey> caps = Set.of(CapabilityKey.of(SearchCapability.MOCK_0, SearchRegion.NL),
+        CapabilityKey.of(SearchCapability.MOCK_01, SearchRegion.NL),
+        CapabilityKey.of(SearchCapability.MOCK_RUNTIME_EXCEPTION, SearchRegion.NL));
+    final SearchResult result1 = delegator.retrieveSearchResultsAsync("test", caps);
+    final String uuid = result1.getUuid();
+
+    final SearchResult result2 = delegator.retrieveSearchTask(uuid);
+
+    assertFalse(result2.isComplete(), "Result should not be complete at this point.");
+    assertNotNull(result2.getResults(), "Results should not be null at this point.");
+
+    TimeUnit.MILLISECONDS.sleep(50);
+    final SearchResult result3 = delegator.retrieveSearchTask(uuid);
+    assertEquals(1, result3.getResults().size(), "Should have 1 results at this point.");
+    assertTrue(result3.isComplete(), "Result should now be complete at this point, runtime exception should have triggered.");
+    assertEquals("Failure during search, please contact the helpdesk", result3.getResults().get(0).getDescription(),
+        "Description in case of failure");
   }
 }
