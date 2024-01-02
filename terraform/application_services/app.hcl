@@ -1,7 +1,7 @@
 locals {
   basicinfra_version                       = "v1"
 
-  ecr_repo                                 = "028339422996.dkr.ecr.eu-west-1.amazonaws.com"
+  ecr_repo                                 = "nexus-docker.aerius.nl"
 
   app_name                                 = "aerius"
   app_timezone                             = "Europe/Amsterdam"
