@@ -21,6 +21,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
           NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
+          JDK_VERSION: 17
 
       - uses: aerius/github-actions/extras/docker-build-or-publish-based-on-maven-project-version-action@v1.0.2
         with:
@@ -29,3 +30,4 @@ jobs:
           DOCKER_REGISTRY_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
           DOCKER_IMAGE_NAME: ${{ github.event.repository.name }}
           DOCKERFILE_LOCATION: docker/service/Dockerfile
+          JDK_VERSION: 17

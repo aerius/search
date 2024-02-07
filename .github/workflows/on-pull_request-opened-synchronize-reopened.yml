@@ -19,6 +19,7 @@ jobs:
       - uses: aerius/github-actions/events/pull_request-event-action@v1.0.2
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JDK_VERSION: 17
 
       - uses: aerius/github-actions/extras/docker-build-action@v1.0.2
         with:
