@@ -1,10 +1,7 @@
 # Builder part for maven packaging.
-FROM eclipse-temurin:17 as builder
+FROM maven:3-eclipse-temurin-17 as builder
 
 WORKDIR /app
-
-RUN apt-get update && \
-    apt-get install -y maven
 
 # Do the actual build
 COPY . /app
