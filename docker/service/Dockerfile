@@ -1,5 +1,5 @@
 # Builder part for maven packaging.
-FROM maven:3-openjdk-11 as builder
+FROM maven:3-openjdk-17 as builder
 
 WORKDIR /app
 
