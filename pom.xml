@@ -22,7 +22,7 @@
 
   <groupId>nl.aerius</groupId>
   <artifactId>search-parent</artifactId>
-  <version>1.9.0-SNAPSHOT</version>
+  <version>1.8.1</version>
   <packaging>pom</packaging>
   <name>AERIUS Search</name>
   <url>https://www.aerius.nl</url>
@@ -66,7 +66,7 @@
     <imaer.version>5.1.0-2</imaer.version>
     <maven.compiler.plugin.version>3.10.1</maven.compiler.plugin.version>
 
-    <aerius.gwt-client-common.version>1.9.0-SNAPSHOT</aerius.gwt-client-common.version>
+    <aerius.gwt-client-common.version>1.8.1</aerius.gwt-client-common.version>
     <jacoco.version>0.8.8</jacoco.version>
 
     <aerius.tools.version>1.2.0</aerius.tools.version>
