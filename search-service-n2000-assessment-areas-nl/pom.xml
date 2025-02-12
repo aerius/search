@@ -29,11 +29,6 @@
   <artifactId>search-service-n2000-assessment-areas-nl</artifactId>
   <name>AERIUS Search :: Service Natura 2000 areas NL</name>
 
-  <properties>
-    <maven.compiler.source>11</maven.compiler.source>
-    <maven.compiler.target>11</maven.compiler.target>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -51,15 +46,8 @@
       <artifactId>unirest-java</artifactId>
     </dependency>
     <dependency>
-      <groupId>dom4j</groupId>
+      <groupId>org.dom4j</groupId>
       <artifactId>dom4j</artifactId>
-      <version>1.6.1</version>
-      <exclusions>
-        <exclusion>
-          <groupId>xml-apis</groupId>
-          <artifactId>xml-apis</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.locationtech.jts</groupId>
@@ -67,7 +55,7 @@
     </dependency>
     <dependency>
       <groupId>org.geotools</groupId>
-      <artifactId>gt-geometry</artifactId>
+      <artifactId>gt-main</artifactId>
     </dependency>
     <dependency>
       <groupId>org.geotools</groupId>
