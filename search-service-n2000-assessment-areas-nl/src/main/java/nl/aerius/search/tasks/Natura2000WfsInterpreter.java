@@ -54,7 +54,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.xml.sax.SAXException;
 
-import kong.unirest.Unirest;
+import kong.unirest.core.Unirest;
 
 /**
  * Rinky dink wfs interpreter that fetches natura 2000 areas and geometries from
