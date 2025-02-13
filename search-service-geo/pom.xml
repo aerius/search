@@ -26,12 +26,6 @@
   <artifactId>search-service-geo</artifactId>
   <name>AERIUS Search :: Service Geo Capabilities</name>
 
-  <properties>
-    <maven.compiler.source>11</maven.compiler.source>
-    <maven.compiler.target>11</maven.compiler.target>
-    <jacoco.version>0.8.7</jacoco.version>
-  </properties>
-
   <repositories>
     <repository>
       <id>aerius-nexus-public</id>
@@ -42,18 +36,6 @@
       </snapshots>
     </repository>
   </repositories>
-
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-dependencies</artifactId>
-        <version>${spring.boot.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
 
   <dependencies>
     <dependency>
@@ -76,6 +58,12 @@
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+    	<artifactId>mockito-core</artifactId>
+    	<scope>test</scope>
     </dependency>
   </dependencies>
 

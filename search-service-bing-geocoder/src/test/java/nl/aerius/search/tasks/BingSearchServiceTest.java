@@ -17,6 +17,7 @@
 package nl.aerius.search.tasks;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,9 +37,7 @@ class BingSearchServiceTest {
   @Test
   void testWorksAtAll() {
     // Don't do anything if there is no apiKey
-    if (apiKey == null) {
-      return;
-    }
+    assumeFalse(apiKey == null, "No Bing API key available, skipping test");
 
     final Single<SearchTaskResult> result = delegator.retrieveSearchResults("edin");
 

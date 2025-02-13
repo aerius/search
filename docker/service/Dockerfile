@@ -1,5 +1,5 @@
 # Builder part for maven packaging.
-FROM maven:3-eclipse-temurin-17 as builder
+FROM maven:3-eclipse-temurin-21 as builder
 
 WORKDIR /app
 
@@ -12,7 +12,7 @@ RUN mv -v search-service/target/search-service-*.jar app.jar \
 # Clean up image so we can rerun without the cache being invalidated because target files are changed
     && mvn clean
 
-FROM eclipse-temurin:17-jre
+FROM eclipse-temurin:21-jre
 
 WORKDIR /app
 
