@@ -28,6 +28,11 @@
   <name>AERIUS Search :: Shared</name>
   <packaging>gwt-lib</packaging>
 
+  <properties>
+    <!-- For GWT, keep target java version on 17 to avoid using unusable language features -->
+    <java.version>17</java.version>
+  </properties>
+
   <build>
     <resources>
       <resource>
