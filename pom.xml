@@ -20,7 +20,13 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>nl.aerius</groupId>
+  <parent>
+    <groupId>nl.aerius</groupId>
+    <artifactId>aerius-root-pom</artifactId>
+    <version>1.1.0-SNAPSHOT</version>
+    <relativePath /> <!-- lookup parent from repository -->
+  </parent>
+
   <artifactId>search-parent</artifactId>
   <version>1.9.0-SNAPSHOT</version>
   <packaging>pom</packaging>
@@ -58,28 +64,20 @@
   </distributionManagement>
 
   <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
-    <maven.compiler.source>17</maven.compiler.source>
-    <maven.compiler.target>17</maven.compiler.target>
-
-    <imaer.version>5.1.0-2</imaer.version>
-    <maven.compiler.plugin.version>3.10.1</maven.compiler.plugin.version>
-
-    <aerius.gwt-client-common.version>1.8.1</aerius.gwt-client-common.version>
-    <jacoco.version>0.8.8</jacoco.version>
-
-    <aerius.tools.version>1.2.0</aerius.tools.version>
-    <spotless.version>2.29.0</spotless.version>
-
-    <spring.boot.version>2.7.7</spring.boot.version>
+    <imaer.version>6.0.0-5-SNAPSHOT</imaer.version>
+    <aerius.gwt-client-common.version>1.9.0-SNAPSHOT</aerius.gwt-client-common.version>
+    <!-- Not updating JTS to 1.20.0 due to change in coordinates (rounding) -->
+    <jts.version>1.19.0</jts.version>
+    <unirest-java.version>4.4.5</unirest-java.version>
+    <geotools.version>32.2</geotools.version>
+    <rxjava.version>3.1.10</rxjava.version>
+    <dom4j.version>2.1.4</dom4j.version>
+    
+    <gwt-maven-plugin.version>1.1.0</gwt-maven-plugin.version>
 
     <sonar.language>java</sonar.language>
-    <sonar.maven.plugin.version>3.9.1.2184</sonar.maven.plugin.version>
     <sonar.projectKey>aerius_search</sonar.projectKey>
     <sonar.moduleKey>${project.artifactId}</sonar.moduleKey>
-    <sonar.organization>aerius</sonar.organization>
-    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
 
     <aggregate.report.dir>search-sonar-report/target/site/jacoco-aggregate/jacoco.xml</aggregate.report.dir>
     <sonar.coverage.jacoco.xmlReportPaths>${basedir}/../${aggregate.report.dir}</sonar.coverage.jacoco.xmlReportPaths>
@@ -88,46 +86,47 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-dependencies</artifactId>
-        <version>${spring.boot.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
         <groupId>nl.aerius</groupId>
         <artifactId>gwt-client-common-bom</artifactId>
         <version>${aerius.gwt-client-common.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
-
+      
       <dependency>
         <groupId>com.konghq</groupId>
-        <artifactId>unirest-java</artifactId>
-        <version>3.14.1</version>
+        <artifactId>unirest-java-bom</artifactId>
+        <version>${unirest-java.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.dom4j</groupId>
+        <artifactId>dom4j</artifactId>
+        <version>${dom4j.version}</version>
       </dependency>
 
       <dependency>
         <groupId>org.locationtech.jts</groupId>
         <artifactId>jts-core</artifactId>
-        <version>1.19.0</version>
+        <version>${jts.version}</version>
       </dependency>
       <dependency>
         <groupId>org.geotools</groupId>
-        <artifactId>gt-geometry</artifactId>
-        <version>24.6</version>
+        <artifactId>gt-main</artifactId>
+        <version>${geotools.version}</version>
       </dependency>
       <dependency>
         <groupId>org.geotools</groupId>
         <artifactId>gt-epsg-hsql</artifactId>
-        <version>28.0</version>
+        <version>${geotools.version}</version>
       </dependency>
 
       <dependency>
         <groupId>io.reactivex.rxjava3</groupId>
         <artifactId>rxjava</artifactId>
-        <version>3.1.5</version>
+        <version>${rxjava.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -155,50 +154,9 @@
     <pluginManagement>
       <plugins>
         <plugin>
-          <groupId>org.springframework.boot</groupId>
-          <artifactId>spring-boot-maven-plugin</artifactId>
-          <version>${spring.boot.version}</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-source-plugin</artifactId>
-          <version>3.2.1</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-jar-plugin</artifactId>
-          <version>3.3.0</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-shade-plugin</artifactId>
-          <version>3.4.1</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-clean-plugin</artifactId>
-          <version>3.2.0</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-deploy-plugin</artifactId>
-          <version>3.0.0</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-install-plugin</artifactId>
-          <version>3.1.0</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-site-plugin</artifactId>
-          <version>3.12.1</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-resources-plugin</artifactId>
-          <version>3.3.0</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>${maven.compiler.plugin.version}</version>
-        </plugin>
-        <plugin>
           <groupId>net.ltgt.gwt.maven</groupId>
           <artifactId>gwt-maven-plugin</artifactId>
-          <version>1.0.1</version>
+          <version>${gwt-maven-plugin.version}</version>
           <extensions>true</extensions>
           <configuration>
             <sourceLevel>${maven.compiler.source}</sourceLevel>
@@ -211,162 +169,8 @@
             </compilerArgs>
           </configuration>
         </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <version>3.0.0-M5</version>
-        </plugin>
-
-        <plugin>
-          <groupId>com.mycila</groupId>
-          <artifactId>license-maven-plugin</artifactId>
-          <version>4.1</version>
-          <configuration>
-            <header>license-header.txt</header>
-
-            <mapping>
-              <java>SLASHSTAR_STYLE</java>
-              <swagger-codegen-ignore>SCRIPT_STYLE</swagger-codegen-ignore>
-              <cl>SLASHSTAR_STYLE</cl>
-            </mapping>
-
-            <includes>
-              <include>**/*.java</include>
-              <include>**/pom.xml</include>
-              <include>**/web.xml</include>
-            </includes>
-
-            <excludes>
-            </excludes>
-          </configuration>
-          <dependencies>
-            <dependency>
-              <groupId>nl.aerius</groupId>
-              <artifactId>tools</artifactId>
-              <version>${aerius.tools.version}</version>
-            </dependency>
-          </dependencies>
-        </plugin>
-
-        <plugin>
-          <groupId>com.diffplug.spotless</groupId>
-          <artifactId>spotless-maven-plugin</artifactId>
-          <version>${spotless.version}</version>
-          <configuration>
-            <formats>
-              <format>
-                <includes>
-                  <include>pom.xml</include>
-                </includes>
-                <licenseHeader>
-                  <file>pom-xml-header.txt</file>
-                  <delimiter>&lt;project</delimiter>
-                </licenseHeader>
-                <trimTrailingWhitespace />
-                <endWithNewline />
-                <eclipseWtp>
-                  <type>XML</type>
-                  <files>
-                    <file>pom-xml.prefs</file>
-                  </files>
-                </eclipseWtp>
-              </format>
-            </formats>
-            <java>
-              <includes>
-                <include>src/*/java/nl/aerius/**/*.java</include>
-              </includes>
-              <licenseHeader>
-                <file>checkstyle-header.txt</file>
-              </licenseHeader>
-              <eclipse>
-                <file>eclipse_code_formatter_profile.xml</file>
-              </eclipse>
-              <importOrder>
-                <file>eclipse.importorder</file>
-              </importOrder>
-            </java>
-          </configuration>
-
-          <dependencies>
-            <dependency>
-              <groupId>nl.aerius</groupId>
-              <artifactId>tools</artifactId>
-              <version>${aerius.tools.version}</version>
-            </dependency>
-          </dependencies>
-        </plugin>
-
-        <plugin>
-          <groupId>org.sonarsource.scanner.maven</groupId>
-          <artifactId>sonar-maven-plugin</artifactId>
-          <version>${sonar.maven.plugin.version}</version>
-          <configuration>
-            <reuse>true</reuse>
-          </configuration>
-        </plugin>
-
-        <plugin>
-          <groupId>org.jacoco</groupId>
-          <artifactId>jacoco-maven-plugin</artifactId>
-          <version>${jacoco.version}</version>
-          <executions>
-            <execution>
-              <id>prepare-agent</id>
-              <goals>
-                <goal>prepare-agent</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>versions-maven-plugin</artifactId>
-          <version>2.14.2</version>
-          <configuration>
-            <rulesUri>classpath:///versions_maven_plugin_rules.xml</rulesUri>
-            <allowMajorUpdates>false</allowMajorUpdates>
-          </configuration>
-          <dependencies>
-            <dependency>
-              <groupId>nl.aerius</groupId>
-              <artifactId>tools</artifactId>
-              <version>${aerius.tools.version}</version>
-            </dependency>
-          </dependencies>
-        </plugin>
-
-        <plugin>
-          <groupId>org.owasp</groupId>
-          <artifactId>dependency-check-maven</artifactId>
-          <version>7.4.4</version>
-        </plugin>
       </plugins>
     </pluginManagement>
-
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-enforcer-plugin</artifactId>
-        <version>3.1.0</version>
-        <executions>
-          <execution>
-            <id>enforce-maven</id>
-            <goals>
-              <goal>enforce</goal>
-            </goals>
-            <configuration>
-              <rules>
-                <requireMavenVersion>
-                  <version>[3.6.3,)</version>
-                </requireMavenVersion>
-              </rules>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
   </build>
 
   <profiles>
@@ -420,23 +224,6 @@
             <groupId>org.owasp</groupId>
             <artifactId>dependency-check-maven</artifactId>
             <inherited>false</inherited>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>aggregate</goal>
-                </goals>
-              </execution>
-            </executions>
-            <configuration>
-              <!-- If we ever want to fail on high CVSS scores, this is an example how -->
-              <!-- <failBuildOnCVSS>8</failBuildOnCVSS> -->
-              <!-- Generate all report formats -->
-              <format>ALL</format>
-              <!-- Don't use Nexus Analyzer -->
-              <centralAnalyzerEnabled>false</centralAnalyzerEnabled>
-              <!-- Am I the latest version? -->
-              <versionCheckEnabled>true</versionCheckEnabled>
-            </configuration>
           </plugin>
         </plugins>
       </build>
