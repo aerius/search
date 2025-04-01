@@ -21,6 +21,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import io.reactivex.rxjava3.core.Single;
 
@@ -36,9 +38,10 @@ class RDNewCoordinateSearchServiceTest {
     service = new RDNewCoordinateSearchService();
   }
 
-  @Test
-  void testCoordinateNonNull() {
-    final Single<SearchTaskResult> single = service.retrieveSearchResults("x:123123 y:456456");
+  @ParameterizedTest
+  @ValueSource(strings = {"x:123123 y:456456", "123123.0,456456.0", "123123,   456456.0", "123123   456456.0"})
+  void testCoordinateNonNull(final String query) {
+    final Single<SearchTaskResult> single = service.retrieveSearchResults(query);
     final SearchTaskResult result = single.blockingGet();
 
     assertEquals(2, result.getSuggestions().size(), "Result number should be 2");

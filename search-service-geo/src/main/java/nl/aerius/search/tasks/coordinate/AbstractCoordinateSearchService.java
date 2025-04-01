@@ -39,7 +39,7 @@ public abstract class AbstractCoordinateSearchService implements SearchTaskServi
 
   // Regex used to identify a x:{x} y:{y} string
   private static final Pattern SEARCH_TERM_COORDINATE_REGEX = Pattern
-      .compile("(x:)(\\d{1,6}).(y:)(\\d{1,6})", Pattern.CASE_INSENSITIVE);
+      .compile("(x:)?(\\d{1,6}\\.?\\d{1,6}?).\\s*(y:)?(\\d{1,6}\\.?\\d{1,6}?)", Pattern.CASE_INSENSITIVE);
 
   // The relevant groups in the above regular expression that identify the X and Y
   // coordinates respectively.
@@ -57,9 +57,10 @@ public abstract class AbstractCoordinateSearchService implements SearchTaskServi
   @Override
   public Single<SearchTaskResult> retrieveSearchResults(final String query) {
     final Matcher coordinateMatch = SEARCH_TERM_COORDINATE_REGEX.matcher(query);
+
     if (coordinateMatch.matches()) {
-      final int x = Integer.parseInt(coordinateMatch.group(SEARCH_TERM_COORDINATE_REGEX_GROUP_X));
-      final int y = Integer.parseInt(coordinateMatch.group(SEARCH_TERM_COORDINATE_REGEX_GROUP_Y));
+      final int x = (int) Math.round(Double.parseDouble(coordinateMatch.group(SEARCH_TERM_COORDINATE_REGEX_GROUP_X)));
+      final int y = (int) Math.round(Double.parseDouble(coordinateMatch.group(SEARCH_TERM_COORDINATE_REGEX_GROUP_Y)));
 
       final Point point = new Point(x, y);
       final int recId = util.getReceptorIdFromPoint(point);
