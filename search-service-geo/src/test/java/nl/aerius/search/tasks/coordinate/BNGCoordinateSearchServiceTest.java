@@ -63,7 +63,7 @@ class BNGCoordinateSearchServiceTest {
     final SearchSuggestion receptorSuggestion = result.getSuggestions().stream()
         .filter(v -> v.getType() == SearchSuggestionType.RECEPTOR)
         .findFirst().orElseThrow();
-    assertEquals("Receptor 7516977 - x:123120 y:456501", receptorSuggestion.getDescription());
+    assertEquals("Receptor 7516977 - x:123121 y:456501", receptorSuggestion.getDescription());
     assertEquals("POINT(123120.62375334681 456501.39829089347)", receptorSuggestion.getCentroid());
     assertEquals(
         "POLYGON((123183.0 456609.0,123245.0 456501.0,123183.0 456394.0,123059.0 456394.0,122997.0 456501.0,123059.0 456609.0,123183.0 456609.0))",
