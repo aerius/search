@@ -66,7 +66,7 @@ class RDNewCoordinateSearchServiceTest {
     final SearchSuggestion receptorSuggestion = result.getSuggestions().stream()
         .filter(v -> v.getType() == SearchSuggestionType.RECEPTOR)
         .findFirst().orElseThrow();
-    assertEquals("Receptor 4544831 - x:123093 y:456481", receptorSuggestion.getDescription());
+    assertEquals("Receptor 4544831 - x:123094 y:456481", receptorSuggestion.getDescription());
     assertEquals("POINT(123093.6639087096 456481.09186897834)", receptorSuggestion.getCentroid());
     assertEquals(
         "POLYGON((123125.0 456535.0,123156.0 456481.0,123125.0 456427.0,123063.0 456427.0,123032.0 456481.0,123063.0 456535.0,123125.0 456535.0))",
