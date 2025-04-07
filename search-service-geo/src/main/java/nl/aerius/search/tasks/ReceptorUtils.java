@@ -59,7 +59,7 @@ public final class ReceptorUtils {
   public static SearchSuggestion getReceptorSuggestion(final int id, final ReceptorUtil receptorUtil, final HexagonZoomLevel zoomLevel) {
     final Point rec = receptorUtil.getPointFromReceptorId(id);
 
-    final String label = String.format(RECEPTOR_FORMAT, id, (int) rec.getX(), (int) rec.getY());
+    final String label = String.format(RECEPTOR_FORMAT, id, Math.round(rec.getX()), Math.round(rec.getY()));
 
     final String wktCentroid = "POINT(" + rec.getX() + " " + rec.getY() + ")";
 
