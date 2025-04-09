@@ -19,6 +19,7 @@ jobs:
       - uses: aerius/github-actions/events/pull_request-event-action@v1.1
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          IGNORE_TEST_FAILURES: false
 
       - uses: aerius/github-actions/extras/docker-build-action@v1.1
         with:
