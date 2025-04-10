@@ -119,7 +119,6 @@
       <plugin>
         <groupId>io.github.git-commit-id</groupId>
         <artifactId>git-commit-id-maven-plugin</artifactId>
-        <version>9.0.1</version>
         <executions>
           <execution>
             <goals>
@@ -127,11 +126,6 @@
             </goals>
           </execution>
         </executions>
-        <configuration>
-          <verbose>true</verbose>
-          <generateGitPropertiesFile>true</generateGitPropertiesFile>
-          <generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties</generateGitPropertiesFilename>
-        </configuration>
       </plugin>
       <plugin>
         <groupId>org.jacoco</groupId>

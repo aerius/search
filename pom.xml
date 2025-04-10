@@ -23,7 +23,7 @@
   <parent>
     <groupId>nl.aerius</groupId>
     <artifactId>aerius-root-pom</artifactId>
-    <version>1.1.0-SNAPSHOT</version>
+    <version>1.1.0</version>
     <relativePath /> <!-- lookup parent from repository -->
   </parent>
 
@@ -64,8 +64,8 @@
   </distributionManagement>
 
   <properties>
-    <imaer.version>6.0.0-5-SNAPSHOT</imaer.version>
-    <aerius.gwt-client-common.version>1.9.0-SNAPSHOT</aerius.gwt-client-common.version>
+    <imaer.version>6.0.1-1</imaer.version>
+    <aerius.gwt-client-common.version>1.9.0</aerius.gwt-client-common.version>
     <!-- Not updating JTS to 1.20.0 due to change in coordinates (rounding) -->
     <jts.version>1.19.0</jts.version>
     <unirest-java.version>4.4.5</unirest-java.version>
