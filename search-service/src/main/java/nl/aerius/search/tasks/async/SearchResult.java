@@ -50,6 +50,7 @@ public class SearchResult {
     if (LOG.isTraceEnabled()) {
       LOG.error("Search task {} has completed with a failure.", uuid);
     }
+    results.clear();
     results.add(SearchSuggestionBuilder.create("Failure during search, please contact the helpdesk"));
 
     complete = true;

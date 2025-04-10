@@ -74,9 +74,9 @@ class BNGCoordinateSearchServiceTest {
 
   @Test
   void testCoordinateNull() {
-    final Single<SearchTaskResult> single = service.retrieveSearchResults("nothing");
+    final Single<SearchTaskResult> single = service.retrieveSearchResults("4277497");
     final SearchTaskResult result = single.blockingGet();
 
-    assertEquals(0, result.getSuggestions().size(), "Result number should be 0");
+    assertEquals(0, result.getSuggestions().size(), "Result number should be 0: " + result.getSuggestions());
   }
 }

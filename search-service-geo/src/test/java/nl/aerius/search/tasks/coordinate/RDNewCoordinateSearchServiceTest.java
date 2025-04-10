@@ -39,7 +39,7 @@ class RDNewCoordinateSearchServiceTest {
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"x:123123 y:456456", "123123.0,456456.0", "123123,   456456.0", "123123   456456.0"})
+  @ValueSource(strings = {"x:123123 y:456456", "123123.0,456456.0", "123123 456456.0", "123123,  456456.0", "123123  ,456456.0", "123123   456456.0"})
   void testCoordinateNonNull(final String query) {
     final Single<SearchTaskResult> single = service.retrieveSearchResults(query);
     final SearchTaskResult result = single.blockingGet();
@@ -77,9 +77,9 @@ class RDNewCoordinateSearchServiceTest {
 
   @Test
   void testCoordinateNull() {
-    final Single<SearchTaskResult> single = service.retrieveSearchResults("nothing");
+    final Single<SearchTaskResult> single = service.retrieveSearchResults("4277497");
     final SearchTaskResult result = single.blockingGet();
 
-    assertEquals(0, result.getSuggestions().size(), "Result number should be 0");
+    assertEquals(0, result.getSuggestions().size(), "Result number should be 0: " + result.getSuggestions());
   }
 }

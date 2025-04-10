@@ -115,7 +115,8 @@ class AsyncSearchTaskDelegatorTest {
     factory.onFactoryConstructed();
     delegator = new AsyncSearchTaskDelegator(factory);
 
-    final Set<CapabilityKey> caps = Set.of(CapabilityKey.of(SearchCapability.MOCK_0, SearchRegion.NL),
+    final Set<CapabilityKey> caps = Set.of(
+        CapabilityKey.of(SearchCapability.MOCK_0, SearchRegion.NL),
         CapabilityKey.of(SearchCapability.MOCK_01, SearchRegion.NL),
         CapabilityKey.of(SearchCapability.MOCK_RUNTIME_EXCEPTION, SearchRegion.NL));
     final SearchResult result1 = delegator.retrieveSearchResultsAsync("test", caps);
