@@ -52,20 +52,22 @@ public final class TaskUtils {
   public static Map<CapabilityKey, SearchTaskService> findTaskServices(final TaskFactory taskFactory, final Collection<CapabilityKey> capabilities,
       final Logger log) {
     return capabilities.stream()
-        .filter(v -> {
-          if (taskFactory.hasCapability(v)) {
-            return true;
-          } else {
-            log.error("No task for known capability: {}", v);
-            return false;
-          }
-        })
+        .filter(v -> checkCapcability(taskFactory, log, v))
         .collect(Collectors.toMap(v -> v, v -> taskFactory.getTask(v)))
         .entrySet().stream()
         .flatMap(e -> e.getValue().stream()
             .map(v -> new AbstractMap.SimpleImmutableEntry<CapabilityKey, SearchTaskService>(e.getKey(), v)))
         .collect(Collectors.toMap(SimpleImmutableEntry::getKey, SimpleImmutableEntry::getValue));
 
+  }
+
+  private static boolean checkCapcability(final TaskFactory taskFactory, final Logger log, final CapabilityKey v) {
+    if (taskFactory.hasCapability(v)) {
+      return true;
+    } else {
+      log.error("No task for known capability: {}", v);
+      return false;
+    }
   }
 
   public static Comparator<SearchSuggestion> getResultComparator() {

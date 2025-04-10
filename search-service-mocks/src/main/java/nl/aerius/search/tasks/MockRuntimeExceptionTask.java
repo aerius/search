@@ -32,7 +32,7 @@ public class MockRuntimeExceptionTask implements SearchTaskService {
 
   @Override
   public Single<SearchTaskResult> retrieveSearchResults(final String query) {
-    LOG.debug("Mocking runtim exception for query [{}]", query);
+    LOG.debug("Mocking runtime exception for query [{}]", query);
     throw new NullPointerException("Some mocked nullpointer");
   }
 }
