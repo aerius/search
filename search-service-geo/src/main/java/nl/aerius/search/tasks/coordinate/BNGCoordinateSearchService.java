@@ -20,13 +20,13 @@ import org.springframework.stereotype.Component;
 
 import nl.aerius.search.domain.SearchCapability;
 import nl.aerius.search.domain.SearchRegion;
-import nl.aerius.search.tasks.BNGConstants;
 import nl.aerius.search.tasks.ImplementsCapability;
+import nl.overheid.aerius.shared.domain.geo.ReceptorGridSettings;
 
 @Component
 @ImplementsCapability(value = SearchCapability.COORDINATE, region = SearchRegion.UK)
 public class BNGCoordinateSearchService extends AbstractCoordinateSearchService {
   public BNGCoordinateSearchService() {
-    super(BNGConstants.getReceptorUtil());
+    super(ReceptorGridSettings.UK);
   }
 }

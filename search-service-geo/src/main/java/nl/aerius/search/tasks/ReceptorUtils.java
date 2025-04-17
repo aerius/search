@@ -16,7 +16,6 @@
  */
 package nl.aerius.search.tasks;
 
-import java.util.ArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -25,29 +24,17 @@ import nl.aerius.search.domain.SearchSuggestion;
 import nl.aerius.search.domain.SearchSuggestionBuilder;
 import nl.aerius.search.domain.SearchSuggestionType;
 import nl.aerius.search.domain.SearchTaskResult;
-import nl.overheid.aerius.geo.shared.BBox;
 import nl.overheid.aerius.shared.domain.geo.HexagonUtil;
 import nl.overheid.aerius.shared.domain.geo.HexagonZoomLevel;
-import nl.overheid.aerius.shared.domain.geo.ReceptorGridSettings;
 import nl.overheid.aerius.shared.domain.v2.geojson.Point;
 import nl.overheid.aerius.shared.domain.v2.geojson.Polygon;
-import nl.overheid.aerius.shared.geo.EPSG;
 import nl.overheid.aerius.shared.geometry.ReceptorUtil;
 
 public final class ReceptorUtils {
-  private static final int ZOOM_LEVEL_NUM = 5;
   // TODO i18n
   private static final String RECEPTOR_FORMAT = "Receptor %s - x:%s y:%s";
 
   private ReceptorUtils() {}
-
-  public static ReceptorGridSettings createReceptorUtil(final EPSG epsg, final int minSurfaceArea, final int hexHor, final BBox bounds) {
-    final ArrayList<HexagonZoomLevel> zoomLevels = new ArrayList<>();
-    for (int i = 1; i <= ZOOM_LEVEL_NUM; i++) {
-      zoomLevels.add(new HexagonZoomLevel(i, minSurfaceArea));
-    }
-    return new ReceptorGridSettings(bounds, epsg, hexHor, zoomLevels);
-  }
 
   public static SearchTaskResult tryParse(final String query, final ReceptorUtil receptorUtil, final HexagonZoomLevel zoomLevel)
       throws NumberFormatException {

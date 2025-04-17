@@ -21,12 +21,12 @@ import org.springframework.stereotype.Component;
 import nl.aerius.search.domain.SearchCapability;
 import nl.aerius.search.domain.SearchRegion;
 import nl.aerius.search.tasks.ImplementsCapability;
-import nl.aerius.search.tasks.RDNewConstants;
+import nl.overheid.aerius.shared.domain.geo.ReceptorGridSettings;
 
 @Component
 @ImplementsCapability(value = SearchCapability.RECEPTOR, region = SearchRegion.NL)
 public class RDNewReceptorSearchService extends AbstractReceptorSearchService {
   public RDNewReceptorSearchService() {
-    super(RDNewConstants.create());
+    super(ReceptorGridSettings.NL);
   }
 }
