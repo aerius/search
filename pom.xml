@@ -64,7 +64,7 @@
   </distributionManagement>
 
   <properties>
-    <imaer.version>6.0.1-1</imaer.version>
+    <imaer.version>6.0.1-2-SNAPSHOT</imaer.version>
     <aerius.gwt-client-common.version>1.9.0</aerius.gwt-client-common.version>
     <!-- Not updating JTS to 1.20.0 due to change in coordinates (rounding) -->
     <jts.version>1.19.0</jts.version>
