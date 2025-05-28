@@ -1,0 +1,122 @@
+// Define shared constants for the pipeline
+def PIPELINE_AGENT_LABEL    = 'Build-Medium'                  // Jenkins agent label
+def DOCKER_MAVEN_IMAGE      = 'maven:3-eclipse-temurin-21'    // Docker image for Maven build
+def CICD_LAST_STARTED_STAGE = ''                              // Track the last started stage
+
+pipeline {
+  agent {
+    label PIPELINE_AGENT_LABEL // Use the defined agent for the entire pipeline
+  }
+
+  environment {
+    // Normalize job name
+    JOB_NAME_CLEAN           = env.JOB_BASE_NAME.toLowerCase()
+
+    // Generate a unique build name using an external script
+    GENERATED_BUILD_NAME     = sh(script: "${CICD_SCRIPTS_DIR}/job/get_build_name.sh", returnStdout: true)
+
+    // Load Docker registry credentials and configuration and image tag using external scripts
+    AERIUS_REGISTRY_HOSTNAME = credentials('DOCKER_REGISTRY_HOSTNAME')
+    AERIUS_REGISTRY_PATH     = sh(script: "${CICD_SCRIPTS_DIR}/docker/get_registry_path.sh", returnStdout: true)
+    AERIUS_REGISTRY_URL      = "${env.AERIUS_REGISTRY_HOSTNAME}/${env.AERIUS_REGISTRY_PATH}/"
+    AERIUS_IMAGE_TAG         = sh(script: "${CICD_SCRIPTS_DIR}/docker/get_image_tag.sh", returnStdout: true)
+
+  }
+
+  stages {
+    stage('Init') {
+      steps {
+         // Set the display name of the build in Jenkins UI
+        buildName GENERATED_BUILD_NAME
+      }
+    }
+
+    stage('Maven') {
+      agent {
+        docker {
+          label PIPELINE_AGENT_LABEL
+          image DOCKER_MAVEN_IMAGE
+          reuseNode true
+        }
+      }
+      steps {
+        script { CICD_LAST_STARTED_STAGE = STAGE_NAME }
+
+        // Compile the Java project and package it
+        sh '''
+          mvn -f source/pom.xml clean versions:set -DnewVersion="${AERIUS_IMAGE_TAG}" -Pdeploy --no-transfer-progress
+          mvn -f source/pom.xml clean package -Pdeploy -DskipTests -DfailIfNoTests=true --no-transfer-progress
+        '''
+      }
+    }
+
+    stage('Docker Images') {
+      environment {
+
+        // Credentials for downloading additional Docker data
+        HTTPS_DATA_USERNAME = credentials('HTTPS_DBDATA_USERNAME')
+        HTTPS_DATA_PASSWORD = credentials('HTTPS_DBDATA_PASSWORD')
+      }
+
+      steps {
+        script { CICD_LAST_STARTED_STAGE = STAGE_NAME }
+        sh '''
+          cd docker
+
+          # Prepare step - generate Dockerfiles/copy over assets
+          ./prepare.sh
+
+          # Run CICD-script to do extra work if needed for the images
+          "${CICD_SCRIPTS_DIR}"/docker/prescript_v1.0.sh
+
+          # Build
+          ./build.sh
+
+          # Push images
+          ./push.sh
+        '''
+      }
+    }
+
+    stage('Post job') {
+      environment {
+
+        // Credentials for deployment
+        DEPLOY_OTA_ENVIRONMENT_CICD_URL   = credentials('DEPLOY_OTA_ENVIRONMENT_CICD_URL')
+        DEPLOY_OTA_ENVIRONMENT_CICD_LOGIN = credentials('DEPLOY_OTA_ENVIRONMENT_CICD_LOGIN')
+
+        // Build flags including any job-specific flags
+        FLAGS                             = "FAME-DEV/API,DOCS_BASE_URL_GRIP-DOCS-DEV,${env.JOB_SPECIFIC_FLAGS ?: ''}"
+
+        // Generate build duration message for reporting
+        CICD_JOB_MESSAGES                 = sh(script: """${CICD_SCRIPTS_DIR}/job/add_job_duration.sh build "${currentBuild.durationString}" """, returnStdout: true)
+      }
+
+      steps {
+        script { CICD_LAST_STARTED_STAGE = STAGE_NAME }
+        sh '''
+          "${CICD_SCRIPTS_DIR}"/job/postscript_v1.0.sh
+        '''
+      }
+    }
+  }
+
+  post {
+    always {
+      withBuildUser {
+        script {
+
+          // On failure send a Mattermost notification with details
+          if (currentBuild.result != 'SUCCESS') {
+            env.CICD_LAST_STARTED_STAGE = CICD_LAST_STARTED_STAGE
+            mattermostSend(
+              channel: (env.MATTERMOST_CHANNEL ? "#${env.MATTERMOST_CHANNEL}" : null),
+              color: sh(script: """${CICD_SCRIPTS_DIR}/job/notify_mattermost_color.sh "${currentBuild.result}" """, returnStdout: true),
+              message: sh(script: """${CICD_SCRIPTS_DIR}/job/notify_mattermost_message.sh "${currentBuild.result}" "${currentBuild.durationString}" build """, returnStdout: true)
+            )
+          }
+        }
+      }
+    }
+  }
+}
