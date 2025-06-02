@@ -1,21 +1,16 @@
-// Define shared constants for the pipeline
-def PIPELINE_AGENT_LABEL    = 'Build-Medium'                  // Jenkins agent label
-def DOCKER_MAVEN_IMAGE      = 'maven:3-eclipse-temurin-21'    // Docker image for Maven build
-def CICD_LAST_STARTED_STAGE = ''                              // Track the last started stage
+def PIPELINE_AGENT_LABEL    = 'Build-Medium'
+def DOCKER_MAVEN_IMAGE      = 'maven:3-eclipse-temurin-21'
+def CICD_LAST_STARTED_STAGE = ''
 
 pipeline {
   agent {
-    label PIPELINE_AGENT_LABEL // Use the defined agent for the entire pipeline
+    label PIPELINE_AGENT_LABEL
   }
 
   environment {
-    // Normalize job name
     JOB_NAME_CLEAN           = env.JOB_BASE_NAME.toLowerCase()
-
-    // Generate a unique build name using an external script
     GENERATED_BUILD_NAME     = sh(script: "${CICD_SCRIPTS_DIR}/job/get_build_name.sh", returnStdout: true)
 
-    // Load Docker registry credentials and configuration and image tag using external scripts
     AERIUS_REGISTRY_HOSTNAME = credentials('DOCKER_REGISTRY_HOSTNAME')
     AERIUS_REGISTRY_PATH     = sh(script: "${CICD_SCRIPTS_DIR}/docker/get_registry_path.sh", returnStdout: true)
     AERIUS_REGISTRY_URL      = "${env.AERIUS_REGISTRY_HOSTNAME}/${env.AERIUS_REGISTRY_PATH}/"
@@ -26,7 +21,6 @@ pipeline {
   stages {
     stage('Init') {
       steps {
-         // Set the display name of the build in Jenkins UI
         buildName GENERATED_BUILD_NAME
       }
     }
@@ -41,8 +35,6 @@ pipeline {
       }
       steps {
         script { CICD_LAST_STARTED_STAGE = STAGE_NAME }
-
-        // Compile the Java project and package it
         sh '''
           mvn -f source/pom.xml clean versions:set -DnewVersion="${AERIUS_IMAGE_TAG}" -Pdeploy --no-transfer-progress
           mvn -f source/pom.xml clean package -Pdeploy -DskipTests -DfailIfNoTests=true --no-transfer-progress
@@ -52,8 +44,6 @@ pipeline {
 
     stage('Docker Images') {
       environment {
-
-        // Credentials for downloading additional Docker data
         HTTPS_DATA_USERNAME = credentials('HTTPS_DBDATA_USERNAME')
         HTTPS_DATA_PASSWORD = credentials('HTTPS_DBDATA_PASSWORD')
       }
@@ -80,15 +70,9 @@ pipeline {
 
     stage('Post job') {
       environment {
-
-        // Credentials for deployment
         DEPLOY_OTA_ENVIRONMENT_CICD_URL   = credentials('DEPLOY_OTA_ENVIRONMENT_CICD_URL')
         DEPLOY_OTA_ENVIRONMENT_CICD_LOGIN = credentials('DEPLOY_OTA_ENVIRONMENT_CICD_LOGIN')
-
-        // Build flags including any job-specific flags
-        FLAGS                             = "FAME-DEV/API,DOCS_BASE_URL_GRIP-DOCS-DEV,${env.JOB_SPECIFIC_FLAGS ?: ''}"
-
-        // Generate build duration message for reporting
+        FLAGS                             = "${env.JOB_SPECIFIC_FLAGS ?: ''}"
         CICD_JOB_MESSAGES                 = sh(script: """${CICD_SCRIPTS_DIR}/job/add_job_duration.sh build "${currentBuild.durationString}" """, returnStdout: true)
       }
 
@@ -105,8 +89,6 @@ pipeline {
     always {
       withBuildUser {
         script {
-
-          // On failure send a Mattermost notification with details
           if (currentBuild.result != 'SUCCESS') {
             env.CICD_LAST_STARTED_STAGE = CICD_LAST_STARTED_STAGE
             mattermostSend(

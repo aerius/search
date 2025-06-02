@@ -1,14 +1,12 @@
-// Define shared constants for the pipeline
-def PIPELINE_AGENT_LABEL = 'PullRequestChecker'              // Jenkins agent label
-def DOCKER_MAVEN_IMAGE   = 'maven:3-eclipse-temurin-21'      // Docker image for Maven build
+def PIPELINE_AGENT_LABEL = 'PullRequestChecker'
+def DOCKER_MAVEN_IMAGE   = 'maven:3-eclipse-temurin-21'
 
 pipeline {
   agent {
-    label PIPELINE_AGENT_LABEL  // Use the defined agent for the entire pipeline
+    label PIPELINE_AGENT_LABEL
   }
 
   stages {
-
     stage('Build Maven') {
       agent {
         docker {
@@ -19,35 +17,17 @@ pipeline {
       }
 
       steps {
-        // Provide the SonarQube authentication token from Jenkins credentials
         withCredentials([string(credentialsId: 'SONAR_TOKEN', variable: 'SONAR_TOKEN')]) {
-
-          // Run Maven build with SonarQube analysis for a pull request
-          sh '''
-            mvn -f source/pom.xml clean verify \
-              org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-              -Pdeploy,sonar \
-              --no-transfer-progress \
-              -Dsonar.java.binaries=target \
-              -Dsonar.pullrequest.key=${CHANGE_ID} \             // PR number
-              -Dsonar.pullrequest.branch=PR-${CHANGE_ID} \       // Temporary branch name
-              -Dsonar.pullrequest.base=${CHANGE_TARGET}          // Target branch of the PR
-          '''
+          sh 'mvn -f source/pom.xml clean verify org.sonarsource.scanner.maven:sonar-maven-plugin::sonar -Pdeploy,sonar --no-transfer-progress -Dsonar.java.binaries=target -Dsonar.pullrequest.key=${CHANGE_ID} -Dsonar.pullrequest.branch=PR-${CHANGE_ID} -Dsonar.pullrequest.base=${CHANGE_TARGET}'
         }
       }
     }
 
     stage('Build Docker') {
       steps {
-
-        // Build Docker images with a profile tailored for PR checks
         sh '''
           cd docker
-
-          # Prepare Docker build context using a specific profile for pull requests
           PROFILE=pullrequestchecker ./prepare.sh
-
-          # Build the Docker image
           ./build.sh
         '''
       }
