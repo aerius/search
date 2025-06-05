@@ -36,8 +36,8 @@ pipeline {
       steps {
         script { CICD_LAST_STARTED_STAGE = STAGE_NAME }
         sh '''
-          mvn -f source/pom.xml clean versions:set -DnewVersion="${AERIUS_IMAGE_TAG}" -Pdeploy --no-transfer-progress
-          mvn -f source/pom.xml clean package -Pdeploy -DskipTests -DfailIfNoTests=true --no-transfer-progress
+          mvn -f pom.xml clean versions:set -DnewVersion="${AERIUS_IMAGE_TAG}" -Pdeploy --no-transfer-progress
+          mvn -f pom.xml clean package -Pdeploy -DskipTests -DfailIfNoTests=true --no-transfer-progress
         '''
       }
     }
@@ -47,8 +47,6 @@ pipeline {
       steps {
         script { CICD_LAST_STARTED_STAGE = STAGE_NAME }
         sh '''
-          export AERIUS_GITHASH="$(git log -1 --pretty=format:%h)"
-
           cd docker
           "${CICD_SCRIPTS_DIR}"/docker/images_v1.0.sh
         '''
