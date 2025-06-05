@@ -27,8 +27,7 @@ pipeline {
       steps {
         sh '''
           cd docker
-          PROFILE=pullrequestchecker ./prepare.sh
-          ./build.sh
+          PROFILE=pullrequestchecker "${CICD_SCRIPTS_DIR}"/docker/images_v1.0.sh --no-push
         '''
       }
     }

@@ -43,27 +43,14 @@ pipeline {
     }
 
     stage('Docker Images') {
-      environment {
-        HTTPS_DATA_USERNAME = credentials('HTTPS_DBDATA_USERNAME')
-        HTTPS_DATA_PASSWORD = credentials('HTTPS_DBDATA_PASSWORD')
-      }
 
       steps {
         script { CICD_LAST_STARTED_STAGE = STAGE_NAME }
         sh '''
+          export AERIUS_GITHASH="$(git log -1 --pretty=format:%h)"
+
           cd docker
-
-          # Prepare step - generate Dockerfiles/copy over assets
-          ./prepare.sh
-
-          # Run CICD-script to do extra work if needed for the images
-          "${CICD_SCRIPTS_DIR}"/docker/prescript_v1.0.sh
-
-          # Build
-          ./build.sh
-
-          # Push images
-          ./push.sh
+          "${CICD_SCRIPTS_DIR}"/docker/images_v1.0.sh
         '''
       }
     }
