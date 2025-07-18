@@ -1,0 +1,35 @@
+def PIPELINE_AGENT_LABEL = 'PullRequestChecker'
+def DOCKER_MAVEN_IMAGE   = 'maven:3-eclipse-temurin-21'
+
+pipeline {
+  agent {
+    label PIPELINE_AGENT_LABEL
+  }
+
+  stages {
+    stage('Build Maven') {
+      agent {
+        docker {
+          label PIPELINE_AGENT_LABEL
+          image DOCKER_MAVEN_IMAGE
+          reuseNode true
+        }
+      }
+
+      steps {
+        withCredentials([string(credentialsId: 'SONAR_TOKEN', variable: 'SONAR_TOKEN')]) {
+          sh 'mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin::sonar -Pdeploy,sonar --no-transfer-progress -Dsonar.java.binaries=target -Dsonar.pullrequest.key=${CHANGE_ID} -Dsonar.pullrequest.branch=PR-${CHANGE_ID} -Dsonar.pullrequest.base=${CHANGE_TARGET}'
+        }
+      }
+    }
+
+    stage('Build Docker') {
+      steps {
+        sh '''
+          cd docker
+          "${CICD_SCRIPTS_DIR}"/docker/images_v1.0.sh --no-push
+        '''
+      }
+    }
+  }
+}
