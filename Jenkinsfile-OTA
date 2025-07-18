@@ -16,6 +16,8 @@ pipeline {
     AERIUS_REGISTRY_URL      = "${env.AERIUS_REGISTRY_HOSTNAME}/${env.AERIUS_REGISTRY_PATH}/"
     AERIUS_IMAGE_TAG         = sh(script: "${CICD_SCRIPTS_DIR}/docker/get_image_tag.sh", returnStdout: true)
 
+    SERVICE_THEME            = "${env.SERVICE_THEME ?: 'NL'}"
+
   }
 
   stages {

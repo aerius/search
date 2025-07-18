@@ -15,15 +15,14 @@
 # along with this program.  If not, see http://www.gnu.org/licenses/.
 #
 
-version: "3"
+version: "3.8"
 
 services:
 
   service:
-    build:
-      context: .
-      dockerfile: docker/service/Dockerfile
-    image: ${REGISTRY_URL}service:${IMAGE_TAG}
+    build: 
+      context: ../common/service
+    image: ${AERIUS_REGISTRY_URL}service:${AERIUS_IMAGE_TAG}
     restart: unless-stopped
     environment:
       - TZ=${TIMEZONE}
