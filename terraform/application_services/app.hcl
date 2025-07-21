@@ -9,7 +9,7 @@ locals {
   }
 
   listener_rules = {
-    "rule1"    = {tg = "tg1", application_type = "SEARCH", path_pattern = "/*", cognito = true}
+    "rule1"    = {tg = "tg1", application_type = "SEARCH", path_pattern = "/*", cognito = false}
   }
 
   ssm_passwords = {}
