@@ -18,7 +18,7 @@ source "${CICD_SCRIPTS_DIR}"/docker/images/v1.0/functions.sh
 
 # worker
 if _cicd_is_module_enabled "${1}" 'service'; then
-  cp -auv "${SOURCE_DIR}"/search-service/target/app.jar \
+  cp -auv "${SOURCE_DIR}"/search-service/target/search-service-*.jar \
           "${DOCKER_COMMON_DIR}"/service/app.jar
 fi
 

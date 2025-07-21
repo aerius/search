@@ -1,17 +1,3 @@
-# Builder part for maven packaging.
-FROM maven:3-eclipse-temurin-21 as builder
-
-WORKDIR /app
-
-# Do the actual build
-COPY . /app
-RUN mvn --no-transfer-progress -DskipTests=true clean package
-
-# Move the resultant jar to a known name so it can be picked up by the final image.
-RUN mv -v search-service/target/search-service-*.jar app.jar \
-# Clean up image so we can rerun without the cache being invalidated because target files are changed
-    && mvn clean
-
 FROM eclipse-temurin:21-jre
 
 WORKDIR /app
@@ -20,7 +6,7 @@ WORKDIR /app
 ENV JAVA_OPTIONS="-XX:MaxRAMPercentage=75"
 
 # Copy the app
-COPY --from=builder /app/app.jar /app/
+COPY common/service/app.jar /app/app.jar
 
 # Start application
 CMD java $JAVA_OPTIONS -jar app.jar
