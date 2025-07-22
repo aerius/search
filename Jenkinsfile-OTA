@@ -59,7 +59,7 @@ pipeline {
       environment {
         DEPLOY_OTA_ENVIRONMENT_CICD_URL   = credentials('DEPLOY_OTA_ENVIRONMENT_CICD_URL')
         DEPLOY_OTA_ENVIRONMENT_CICD_LOGIN = credentials('DEPLOY_OTA_ENVIRONMENT_CICD_LOGIN')
-        FLAGS                             = "${env.JOB_SPECIFIC_FLAGS ?: ''}"
+        FLAGS                             = "DISABLE_COGNITO, ${env.JOB_SPECIFIC_FLAGS ?: ''}"
         CICD_JOB_MESSAGES                 = sh(script: """${CICD_SCRIPTS_DIR}/job/add_job_duration.sh build "${currentBuild.durationString}" """, returnStdout: true)
       }
 
