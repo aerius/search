@@ -21,16 +21,6 @@ variable "environment" {
   description = "A string for the Environment used in the terragrunt repository directory structure. E.g development, test, apps_shared_service. etc"
 }
 
-variable "loc" {
-  type        = string
-  description = "A string containing the region Code e.g LDN"
-}
-
-variable "tf_bucket_key_prefix" {
-  type        = string
-  description = "A string containing the region Code e.g LDN"
-}
-
 #==========================
 # ECS Service Variables
 #==========================
