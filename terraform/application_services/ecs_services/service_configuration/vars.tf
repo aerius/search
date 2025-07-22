@@ -46,17 +46,6 @@ variable "ecr_directory" {
   default     = null
 }
 
-variable "asg_name_suffix" {
-  type        = string
-  description = "A string containing the suffix name for the ASG to support ECS cluster"
-}
-
-variable "ssm_passwords" {
-  type        = map(string)
-  sensitive   = true
-  description = "The generated SSM passwords"
-}
-
 variable "application_host_headers" {
   type        = map
   description = "Map containing host headers for specific applications"
