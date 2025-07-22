@@ -21,8 +21,8 @@ services:
 
   service:
     build: 
-      context: ../common/service
-      dockerfile: Dockerfile
+      context: ../../
+      dockerfile: docker/common/service/Dockerfile
     image: ${AERIUS_REGISTRY_URL}service:${AERIUS_IMAGE_TAG}
     restart: unless-stopped
     environment:
