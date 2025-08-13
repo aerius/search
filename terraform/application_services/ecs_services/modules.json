@@ -1,7 +1,7 @@
 [
     {
-      "url": "git@github.com:aerius/Cloud-infra-modules.git",
-      "version": "v1.1",
+      "url": "git@github.com:SerhatG/Cloud-infra-modules.git",
+      "version": "alb",
       "checkout_path": "ecs_services"
     }
   ]

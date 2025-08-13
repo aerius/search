@@ -6,15 +6,21 @@ locals {
 
   target_groups = {
     "tg1" = {name = "search",  protocol = "HTTP", port = "8090", path = "/", matcher = "200-399"}
+    "tg2" = {name = "health",  protocol = "HTTP", port = "8090", path = "/actuator/health", matcher = "200-399"}
   }
 
   listener_rules = {
-    "rule1"    = {tg = "tg1", application_type = "SEARCH", path_pattern = "/*", cognito = false}
+    "rule1"    = {tg = "tg1", application_type = "SEARCH", path_pattern = "/a", cognito = true}
+    "rule2"    = {tg = "tg1", application_type = "SEARCH", path_pattern = "/b", cognito = false}
+    "rule3"    = {tg = "tg1", application_type = "SEARCH", path_pattern = "/c", cognito = false}
+    "rule4"    = {tg = "tg1", application_type = "SEARCH", path_pattern = "/d", cognito = true}
+    "rule5"    = {tg = "tg1", application_type = "SEARCH", path_pattern = "/e", cognito = false}
+    "rule6"    = {tg = "tg1", application_type = "SEARCH", path_pattern = "/f", cognito = true}
+    "fallback" = {tg = "tg1", application_type = "SEARCH", path_pattern = "/*", cognito = true}
   }
 
   ssm_passwords = {}
 
   ecs_ctr_fes_1_instance_type         = "m5.large"
   ecs_ctr_fes_1_max_instance_size     = "2"
-
 }
