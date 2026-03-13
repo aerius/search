@@ -74,10 +74,10 @@ public class Natura2000WfsInterpreter {
 
   // @formatter:off
   /**
-   * @see <a href='https://www.pdok.nl/introductie/-/article/beschermde-gebieden-natura2000-inspire-geharmoniseerd-">pdok page</a>
+   * @see <a href='https://www.pdok.nl/introductie/-/article/natura2000-inspire-geharmoniseerd-">pdok page</a>
    */
-  @Value("${nl.aerius.wfs.n2000:https://service.pdok.nl/rvo/beschermdegebieden/natura2000/wfs/v1_0?"
-      + "request=GetFeature&service=WFS&version=2.0.0&typeName=beschermdegebieden:PS.ProtectedSites&outputFormat=application%2Fgml%2Bxml%3B%20version%3D3.2}")
+  @Value("${nl.aerius.wfs.n2000:https://service.pdok.nl/rvo/beschermde-gebieden/natura2000/wfs/v2_0?"
+      + "request=GetFeature&service=WFS&version=2.0.0&typeName=beschermde-gebieden:protectedsite&outputFormat=application%2Fgml%2Bxml%3B%20version%3D3.2}")
   private String wfsNatura2000Url;
   // @formatter:on
 
@@ -127,8 +127,8 @@ public class Natura2000WfsInterpreter {
     final Element rootElem = document.getRootElement();
     final List<?> elements = rootElem.elements();
     elements.forEach(elem -> {
-      if (elem instanceof DefaultElement && ((DefaultElement) elem).element("PS.ProtectedSites") != null) {
-        final Nature2000Area area = processArea(((DefaultElement) elem).element("PS.ProtectedSites"));
+      if (elem instanceof DefaultElement && ((DefaultElement) elem).element("protectedsite") != null) {
+        final Nature2000Area area = processArea(((DefaultElement) elem).element("protectedsite"));
         areas.merge(area.getNormalizedName(), area, Natura2000WfsInterpreter::merge);
       }
     });
@@ -164,9 +164,9 @@ public class Natura2000WfsInterpreter {
 
   private Nature2000Area processArea(final Element protectedSite) {
     final String id = protectedSite
-        .elementTextTrim("inspireId");
+        .elementTextTrim("inspireidIdentifierLocalid");
     final String name = protectedSite
-        .elementTextTrim("geographicalname");
+        .elementTextTrim("sitenameGeographicalnameSpellingSpellingofnameText");
 
     final String normalizedName = normalize(name);
 
