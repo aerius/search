@@ -34,8 +34,7 @@ class Natura2000WfsInterpreterTest {
 
   @ParameterizedTest
   @ValueSource(strings = {
-      "wfs_result_pdok_multigeometry.xml",
-      "wfs_result_pdok_multisurface.xml"
+      "wfs_result_pdok.xml",
   })
   void testParseAreas(final String fileName) throws IOException {
     final Natura2000WfsInterpreter interpreter = new Natura2000WfsInterpreter();
@@ -52,11 +51,12 @@ class Natura2000WfsInterpreterTest {
     assertTrue(mappedAreas.containsKey("binnenveld"), "Should contain binnenveld area");
 
     final Nature2000Area lepelaarplassen = mappedAreas.get("lepelaarplassen");
-    assertArea(lepelaarplassen, "L_938a09b7-a5c9-4deb-add1-9e87b79b3c1b", "Lepelaarplassen", "lepelaarplassen", "POLYGON ((", "POINT (142831.32257115166 491155.18332434446)",
-        3564691);
+    assertArea(lepelaarplassen, "L_ff79e30b-f9d5-406b-94c0-7b3222ec4204", "Lepelaarplassen", "lepelaarplassen", "POLYGON ((",
+        "POINT (142831.32257141997 491155.1833244898)", 3564691);
 
     final Nature2000Area binnenveld = mappedAreas.get("binnenveld");
-    assertArea(binnenveld, "L_38daf8f5-0e7e-436f-9cb4-7c9267b2c09b", "Binnenveld", "binnenveld", "MULTIPOLYGON ((", "POINT (168590.92165728856 446854.7658207245)", 1114151);
+    assertArea(binnenveld, "L_7b89a66e-7f44-40f0-9d98-c7245f2c04c1", "Binnenveld", "binnenveld", "MULTIPOLYGON ((",
+        "POINT (168590.92165693894 446854.7658209189)", 1114151);
   }
 
   private void assertArea(final Nature2000Area naturea2000Area, final String id, final String name, final String normalizedName,
