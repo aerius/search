@@ -14,7 +14,7 @@ locals {
 
   ssm_passwords = {}
 
-  ecs_ctr_fes_1_instance_type         = "m5.large"
+  ecs_ctr_fes_1_instance_type         = "c6a.large"
   ecs_ctr_fes_1_max_instance_size     = "2"
 
 }
