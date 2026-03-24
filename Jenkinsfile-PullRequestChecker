@@ -9,7 +9,7 @@ cicdPipeline(agentLabel: PIPELINE_AGENT_LABEL) {
     docker.image(DOCKER_MAVEN_IMAGE).inside {
 
       sh '''
-        mvn clean verify -Pdeploy -DskipTests --no-transfer-progress
+        mvn clean verify --no-transfer-progress
       '''
 
     }
