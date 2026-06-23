@@ -33,7 +33,7 @@ class CacheMapTest {
   private static final int NEVER_SWEEP = 3600;
 
   @Test
-  void shouldStoreAndRetrieveValues() {
+  void testStoreAndRetrieveValues() {
     final CacheMap<String, String> cache = new CacheMap<>(NEVER_SWEEP, NEVER_SWEEP, traceLogger());
 
     cache.put("a", "1");
@@ -45,7 +45,7 @@ class CacheMapTest {
   }
 
   @Test
-  void shouldRemoveExpiredEntriesOnSweep() throws Exception {
+  void testRemoveExpiredEntriesOnSweep() throws Exception {
     // Time to live of 0 means every entry is immediately considered expired.
     final CacheMap<String, String> cache = new CacheMap<>(0, NEVER_SWEEP, traceLogger());
     cache.put("a", "1");
@@ -58,7 +58,7 @@ class CacheMapTest {
   }
 
   @Test
-  void shouldKeepLivingEntriesOnSweep() throws Exception {
+  void testKeepLivingEntriesOnSweep() throws Exception {
     // Long time to live: nothing is old enough to be removed, so the sweep should break out early.
     final CacheMap<String, String> cache = new CacheMap<>(NEVER_SWEEP, NEVER_SWEEP, debugLogger());
     cache.put("a", "1");
@@ -69,7 +69,7 @@ class CacheMapTest {
   }
 
   @Test
-  void shouldConstructWithDefaults() {
+  void testConstructWithDefaults() {
     assertEquals(0, new CacheMap<>().size(), "Default constructed cache should start empty");
     assertEquals(0, new CacheMap<>(traceLogger()).size(), "Logger constructed cache should start empty");
   }

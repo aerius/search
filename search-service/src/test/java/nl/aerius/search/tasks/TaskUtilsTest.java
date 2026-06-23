@@ -32,7 +32,7 @@ import nl.aerius.search.domain.SearchSuggestionBuilder;
 class TaskUtilsTest {
 
   @Test
-  void shouldParseKnownCapabilities() {
+  void testParseKnownCapabilities() {
     final Set<CapabilityKey> keys = TaskUtils.parseCapabilities(List.of("RECEPTOR", "COORDINATE"), "NL");
 
     assertEquals(2, keys.size(), "Both known capabilities should be parsed");
@@ -41,14 +41,14 @@ class TaskUtilsTest {
   }
 
   @Test
-  void shouldReturnEmptyForUnknownRegion() {
+  void testReturnEmptyForUnknownRegion() {
     final Set<CapabilityKey> keys = TaskUtils.parseCapabilities(List.of("RECEPTOR"), "ATLANTIS");
 
     assertTrue(keys.isEmpty(), "An unknown region should yield no capabilities");
   }
 
   @Test
-  void shouldStillKeyUnknownCapability() {
+  void testStillKeyUnknownCapability() {
     // An unknown capability resolves to a null capability but a valid region, so a key is still produced.
     final Set<CapabilityKey> keys = TaskUtils.parseCapabilities(List.of("DOES_NOT_EXIST"), "NL");
 
@@ -56,7 +56,7 @@ class TaskUtilsTest {
   }
 
   @Test
-  void shouldOrderSuggestionsByScoreDescending() {
+  void testOrderSuggestionsByScoreDescending() {
     final SearchSuggestion low = SearchSuggestionBuilder.create("low", 10D);
     final SearchSuggestion high = SearchSuggestionBuilder.create("high", 90D);
 

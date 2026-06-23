@@ -26,31 +26,34 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.ui.Model;
 
 import nl.aerius.search.domain.SearchSuggestion;
 import nl.aerius.search.domain.SearchSuggestionBuilder;
-import nl.aerius.search.tasks.CapabilityKey;
 import nl.aerius.search.tasks.sync.BlockingSearchTaskDelegator;
 
+@ExtendWith(MockitoExtension.class)
 class SearchViewControllerTest {
 
+  @Mock private BlockingSearchTaskDelegator delegator;
+  @InjectMocks private SearchViewController controller;
+
   @Test
-  void shouldServeSynchronousForm() {
-    assertEquals("synchronous-form", new SearchViewController().searchForm(mock(Model.class)), "Root should serve the synchronous form");
+  void testServeSynchronousForm() {
+    assertEquals("synchronous-form", controller.searchForm(mock(Model.class)), "Root should serve the synchronous form");
   }
 
   @Test
-  void shouldServeAsynchronousForm() {
-    assertEquals("asynchronous-form", new SearchViewController().searchFormAsync(mock(Model.class)), "/async should serve the asynchronous form");
+  void testServeAsynchronousForm() {
+    assertEquals("asynchronous-form", controller.searchFormAsync(mock(Model.class)), "/async should serve the asynchronous form");
   }
 
   @Test
-  void shouldPopulateModelAndServeResults() {
-    final SearchViewController controller = new SearchViewController();
-    final BlockingSearchTaskDelegator delegator = mock(BlockingSearchTaskDelegator.class);
-    controller.delegator = delegator;
-
+  void testPopulateModelAndServeResults() {
     final List<SearchSuggestion> results = List.of(SearchSuggestionBuilder.create("amsterdam", 90D));
     when(delegator.retrieveSearchResults(eq("ams"), any())).thenReturn(results);
 
@@ -59,8 +62,8 @@ class SearchViewControllerTest {
 
     assertEquals("synchronous-results", view, "Search should serve the results view");
     verify(delegator).retrieveSearchResults(eq("ams"), any());
-    verify(model).addAttribute(eq("query"), eq("ams"));
-    verify(model).addAttribute(eq("region"), eq("NL"));
-    verify(model).addAttribute(eq("results"), eq(results));
+    verify(model).addAttribute("query", "ams");
+    verify(model).addAttribute("region", "NL");
+    verify(model).addAttribute("results", results);
   }
 }

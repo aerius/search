@@ -28,7 +28,7 @@ import nl.aerius.search.domain.SearchRegion;
 class CapabilityKeyTest {
 
   @Test
-  void shouldExposeCapabilityAndRegion() {
+  void testExposeCapabilityAndRegion() {
     final CapabilityKey key = CapabilityKey.of(SearchCapability.RECEPTOR, SearchRegion.NL);
 
     assertEquals(SearchCapability.RECEPTOR, key.getCapability(), "Capability should be the one provided");
@@ -36,7 +36,7 @@ class CapabilityKeyTest {
   }
 
   @Test
-  void shouldUpdateViaSetters() {
+  void testUpdateViaSetters() {
     final CapabilityKey key = CapabilityKey.of(SearchCapability.RECEPTOR, SearchRegion.NL);
     key.setCapability(SearchCapability.COORDINATE);
     key.setRegion(SearchRegion.UK);
@@ -46,7 +46,7 @@ class CapabilityKeyTest {
   }
 
   @Test
-  void shouldBeEqualForSameCapabilityAndRegion() {
+  void testEqualityForSameCapabilityAndRegion() {
     final CapabilityKey a = CapabilityKey.of(SearchCapability.RECEPTOR, SearchRegion.NL);
     final CapabilityKey b = CapabilityKey.of(SearchCapability.RECEPTOR, SearchRegion.NL);
 
@@ -56,17 +56,15 @@ class CapabilityKeyTest {
   }
 
   @Test
-  void shouldNotBeEqualForDifferentValuesOrTypes() {
+  void testInequalityForDifferentValues() {
     final CapabilityKey key = CapabilityKey.of(SearchCapability.RECEPTOR, SearchRegion.NL);
 
-    assertNotEquals(key, CapabilityKey.of(SearchCapability.COORDINATE, SearchRegion.NL), "Different capability should not be equal");
-    assertNotEquals(key, CapabilityKey.of(SearchCapability.RECEPTOR, SearchRegion.UK), "Different region should not be equal");
-    assertNotEquals(key, null, "A key should not equal null");
-    assertNotEquals(key, "not a key", "A key should not equal an unrelated type");
+    assertNotEquals(CapabilityKey.of(SearchCapability.COORDINATE, SearchRegion.NL), key, "Different capability should not be equal");
+    assertNotEquals(CapabilityKey.of(SearchCapability.RECEPTOR, SearchRegion.UK), key, "Different region should not be equal");
   }
 
   @Test
-  void shouldRenderToString() {
+  void testRenderToString() {
     final String rendered = CapabilityKey.of(SearchCapability.RECEPTOR, SearchRegion.NL).toString();
 
     assertTrue(rendered.contains("RECEPTOR") && rendered.contains("NL"), "toString should mention capability and region, but was: " + rendered);

@@ -28,6 +28,10 @@ import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import nl.aerius.search.domain.SearchSuggestion;
 import nl.aerius.search.domain.SearchSuggestionBuilder;
@@ -35,14 +39,15 @@ import nl.aerius.search.tasks.async.AsyncSearchTaskDelegator;
 import nl.aerius.search.tasks.async.SearchResult;
 import nl.aerius.search.tasks.sync.BlockingSearchTaskDelegator;
 
+@ExtendWith(MockitoExtension.class)
 class SearchTaskDelegatorImplTest {
 
-  private final BlockingSearchTaskDelegator blocking = mock(BlockingSearchTaskDelegator.class);
-  private final AsyncSearchTaskDelegator async = mock(AsyncSearchTaskDelegator.class);
-  private final SearchTaskDelegatorImpl delegator = newDelegator();
+  @Mock private BlockingSearchTaskDelegator blocking;
+  @Mock private AsyncSearchTaskDelegator async;
+  @InjectMocks private SearchTaskDelegatorImpl delegator;
 
   @Test
-  void shouldDelegateBlockingSearch() {
+  void testDelegateBlockingSearch() {
     final List<SearchSuggestion> expected = List.of(SearchSuggestionBuilder.create("x", 1D));
     when(blocking.retrieveSearchResults(eq("q"), any())).thenReturn(expected);
 
@@ -50,7 +55,7 @@ class SearchTaskDelegatorImplTest {
   }
 
   @Test
-  void shouldDelegateAsyncSearch() {
+  void testDelegateAsyncSearch() {
     final SearchResult expected = mock(SearchResult.class);
     when(async.retrieveSearchResultsAsync(eq("q"), any())).thenReturn(expected);
 
@@ -58,7 +63,7 @@ class SearchTaskDelegatorImplTest {
   }
 
   @Test
-  void shouldDelegateTaskRetrieval() {
+  void testDelegateTaskRetrieval() {
     final SearchResult expected = mock(SearchResult.class);
     when(async.retrieveSearchTask("uuid")).thenReturn(expected);
 
@@ -66,16 +71,9 @@ class SearchTaskDelegatorImplTest {
   }
 
   @Test
-  void shouldDelegateCancellation() {
+  void testDelegateCancellation() {
     delegator.cancelSearchTask("uuid");
 
     verify(async).cancelSearchTask("uuid");
-  }
-
-  private SearchTaskDelegatorImpl newDelegator() {
-    final SearchTaskDelegatorImpl impl = new SearchTaskDelegatorImpl();
-    impl.blockingDelegator = blocking;
-    impl.asyncDelegator = async;
-    return impl;
   }
 }

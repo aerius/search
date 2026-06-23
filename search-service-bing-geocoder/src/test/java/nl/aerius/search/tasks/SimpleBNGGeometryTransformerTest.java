@@ -26,22 +26,22 @@ class SimpleBNGGeometryTransformerTest {
   private final SimpleBNGGeometryTransformer transformer = new SimpleBNGGeometryTransformer();
 
   @Test
-  void shouldTransformWgsPointToBng() {
-    // A point in the UK (ETRS89 lat/lon) should transform to a British National Grid point.
+  void testTransformWgsPointToBng() {
+    // A point in the UK (WGS84 lat/lon) should transform to a British National Grid point.
     final String result = transformer.toBNGWKT("POINT (51.5074 -0.1278)");
 
     assertTrue(result.startsWith("POINT"), "Transformed geometry should remain a point, but was: " + result);
   }
 
   @Test
-  void shouldTransformWgsPolygonToBng() {
+  void testTransformWgsPolygonToBng() {
     final String result = transformer.toBNGWKT("POLYGON ((51.5 -0.13, 51.6 -0.13, 51.6 -0.10, 51.5 -0.10, 51.5 -0.13))");
 
     assertTrue(result.startsWith("POLYGON"), "Transformed geometry should remain a polygon, but was: " + result);
   }
 
   @Test
-  void shouldThrowOnInvalidWkt() {
+  void testThrowOnInvalidWkt() {
     assertThrows(InterpretationRuntimeException.class, () -> transformer.toBNGWKT("not a geometry"),
         "Invalid WKT should raise an InterpretationRuntimeException");
   }
