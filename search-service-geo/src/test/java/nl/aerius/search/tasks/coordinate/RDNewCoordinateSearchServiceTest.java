@@ -48,7 +48,7 @@ class RDNewCoordinateSearchServiceTest {
     assertEquals(1, result.getSuggestions().stream()
         .map(SearchSuggestion::getType)
         .filter(v -> v == SearchSuggestionType.COORDINATE)
-        .count(), "Expecting 1 receptor result.");
+        .count(), "Expecting 1 coordinate result.");
     assertEquals(1, result.getSuggestions().stream()
         .map(SearchSuggestion::getType)
         .filter(v -> v == SearchSuggestionType.RECEPTOR)
