@@ -49,6 +49,6 @@ class BingSearchServiceIT {
 
     final SearchTaskResult suggestionsYork = resultYork.blockingGet();
 
-    assertEquals(4, suggestionsYork.getSuggestions().size(), "Expected number of results for 'edin' (should include 'edinburgh')");
+    assertEquals(4, suggestionsYork.getSuggestions().size(), "Expected number of results for 'york'");
   }
 }
