@@ -103,15 +103,15 @@ public class BingSearchService implements SearchTaskService {
         .getJSONArray("value");
     // As the list of suggestions can contain duplicates when we translate them to actual locations, filter those out by using a set
     // Use a LinkedHashSet to keep the order.
-    final Set<SuggestedLocation> suggestedLocations = new LinkedHashSet<>();
+    final Set<BingSuggestedLocation> suggestedLocations = new LinkedHashSet<>();
     for (int i = 0; i < arr.length(); i++) {
       final JSONObject jsonObject = arr.getJSONObject(i);
-      final SuggestedLocation suggestedLocation = createSuggestedLocation(jsonObject);
+      final BingSuggestedLocation suggestedLocation = createSuggestedLocation(jsonObject);
       suggestedLocations.add(suggestedLocation);
     }
     // Now convert the suggestions by Bing to actual locations, to obtain geo information.
     int i = 0;
-    for (final SuggestedLocation suggestedLocation : suggestedLocations) {
+    for (final BingSuggestedLocation suggestedLocation : suggestedLocations) {
       final JSONObject jsonObject = obtainLocation(suggestedLocation);
       if (jsonObject != null) {
         final SearchSuggestion sug = createSuggestion(query, i, jsonObject);
@@ -143,19 +143,19 @@ public class BingSearchService implements SearchTaskService {
     throw new BingServiceException("Retries failed, last returned: " + body);
   }
 
-  private static SuggestedLocation createSuggestedLocation(final JSONObject jsonObject) {
+  private static BingSuggestedLocation createSuggestedLocation(final JSONObject jsonObject) {
     final JSONObject addressObject = jsonObject.getJSONObject("address");
-    return new SuggestedLocation(jsonObject.optString("name"),
+    return new BingSuggestedLocation(jsonObject.optString("name"),
         addressObject.optString("locality"),
         addressObject.optString("adminDistrict2"),
         addressObject.optString("addressLine"),
         addressObject.optString("formattedAddress"));
   }
 
-  private JSONObject obtainLocation(final SuggestedLocation location) {
+  private JSONObject obtainLocation(final BingSuggestedLocation location) {
     final String url;
-    if (location.name != null && !location.name.isEmpty()) {
-      url = String.format(BING_LOCATIONS_ENDPOINT, apiKey, "&query=" + location.name);
+    if (location.name() != null && !location.name().isEmpty()) {
+      url = String.format(BING_LOCATIONS_ENDPOINT, apiKey, "&query=" + location.name());
     } else {
       url = String.format(BING_LOCATIONS_ENDPOINT, apiKey, location.toAddressUrlParameters(REGION));
     }

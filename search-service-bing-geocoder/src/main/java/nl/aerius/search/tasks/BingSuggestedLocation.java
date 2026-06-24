@@ -18,46 +18,12 @@ package nl.aerius.search.tasks;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
  * A location suggested by the Bing autosuggest endpoint, to be translated into an actual location.
  */
-final class SuggestedLocation {
-  final String name;
-  private final String locality;
-  private final String adminDistrict;
-  private final String addressLine;
-  private final String formattedAddress;
-
-  SuggestedLocation(final String name, final String locality, final String adminDistrict, final String addressLine, final String formattedAddress) {
-    this.name = name;
-    this.locality = locality;
-    this.adminDistrict = adminDistrict;
-    this.addressLine = addressLine;
-    this.formattedAddress = formattedAddress;
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(addressLine, adminDistrict, formattedAddress, locality, name);
-  }
-
-  @Override
-  public boolean equals(final Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if (obj == null || getClass() != obj.getClass()) {
-      return false;
-    }
-    final SuggestedLocation other = (SuggestedLocation) obj;
-    return Objects.equals(addressLine, other.addressLine) && Objects.equals(adminDistrict, other.adminDistrict)
-        && Objects.equals(formattedAddress, other.formattedAddress) && Objects.equals(locality, other.locality)
-        && Objects.equals(name, other.name);
-  }
-
+record BingSuggestedLocation(String name, String locality, String adminDistrict, String addressLine, String formattedAddress) {
   String toAddressUrlParameters(final String countryRegion) {
     final Map<String, String> parameters = new HashMap<>();
     parameters.put("countryRegion", countryRegion);
