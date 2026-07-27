@@ -5,7 +5,7 @@ output "services" {
       APP_VERSION   = var.app_version,
       REGISTRY_URL  = var.ecr_directory == null ? "${var.ecr_repo}/${lower(var.environment)}" : "${var.ecr_repo}/${var.ecr_directory}",
 
-      BING_APIKEY = nonsensitive(data.aws_ssm_parameter.bing_apikey_search.value)
+      BING_APIKEY = nonsensitive(data.aws_secretsmanager_secret_version.bing_api_key_search.secret_string)
 
   })).services
 }
