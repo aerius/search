@@ -1,7 +1,7 @@
 [
     {
-      "url": "git@github.com:aerius/Cloud-infra-modules.git",
-      "version": "v1.1",
+      "url": "git@github.com:htetlwin945/Cloud-infra-modules.git",
+      "version": "CT110-Fetch-Bing-Key",
       "checkout_path": "ecs_services"
     }
   ]
