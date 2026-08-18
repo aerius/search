@@ -10,7 +10,7 @@ cicdPipeline(
     SERVICE_THEME : "${env.SERVICE_THEME ?: 'NL'}"
   ],
 
-  deployFlags: "DISABLE_COGNITO,${env.JOB_SPECIFIC_FLAGS ?: ''}"
+  deployFlags: "DISABLE_COGNITO,BING_SECRET_PATH,${env.JOB_SPECIFIC_FLAGS ?: ''}"
   ) {
 
   cicdStage('Maven') {

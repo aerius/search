@@ -50,3 +50,8 @@ variable "application_host_headers" {
   type        = map
   description = "Map containing host headers for specific applications"
 }
+
+variable "bing_secret_path" {
+  type        = string
+  description = "Secrets Manager name/path containing the Bing API key"
+}
