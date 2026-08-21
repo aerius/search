@@ -4,7 +4,6 @@ output "services" {
       APP_TIMEZONE  = var.app_timezone,
       APP_VERSION   = var.app_version,
       REGISTRY_URL  = var.ecr_directory == null ? "${var.ecr_repo}/${lower(var.environment)}" : "${var.ecr_repo}/${var.ecr_directory}",
-
       BING_SECRET_ARN = data.aws_secretsmanager_secret.bing_api_key_search.arn
 
   })).services
