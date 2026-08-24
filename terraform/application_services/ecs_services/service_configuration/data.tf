@@ -3,7 +3,4 @@
 #############################
 
 ## Bing API Key from Secrets Manager
-
-data "aws_secretsmanager_secret" "bing_api_key_search" {
-  name = "/aerius/shared/search/bing-api-key"
-}
+## Deleted since we will let the cloud-infra-modules do its magic and data.tf can also be deleted later. This is for reference.
