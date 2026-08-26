@@ -28,7 +28,7 @@ services:
         hostPort: 8090
     secrets: 
       - name: NL_AERIUS_BING_APIKEY
-        sharedSecretName: "/shared/keys/bing-api-key"
+        sharedSecretName: "/shared/keys/bing"
     environment:
       - name: TZ
         value: ${APP_TIMEZONE}
