@@ -16,6 +16,7 @@
  */
 package nl.aerius.search.tasks;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriUtils;
 
 import io.reactivex.rxjava3.core.Single;
 
@@ -52,7 +54,7 @@ public class PdokSearchService implements SearchTaskService {
 
   @Override
   public Single<SearchTaskResult> retrieveSearchResults(final String query) {
-    final String url = String.format(endpointUrl, query);
+    final String url = String.format(endpointUrl, UriUtils.encodePathSegment(query, StandardCharsets.UTF_8));
     final HttpResponse<JsonNode> json = Unirest.get(url).asJson();
     final JSONObject body = json.getBody().getObject();
 
