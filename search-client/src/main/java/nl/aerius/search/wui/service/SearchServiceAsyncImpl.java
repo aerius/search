@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import nl.aerius.search.domain.SearchCapability;
@@ -43,7 +44,7 @@ public class SearchServiceAsyncImpl implements SearchServiceAsync {
   public void retrieveSearchResults(final String query, final Set<SearchCapability> capabilities, final String region,
       final AsyncCallback<SearchSuggestion[]> callback) {
     final String url = InteropRequestUtil.prepareUrl(cfg.getSearchEndpoint(), QUERY_FORMAT,
-        ":query", escapeQuery(query),
+        ":query", URL.encodePathSegment(query),
         ":capabilities", capabilities.stream().map(SearchCapability::name).collect(Collectors.joining(",")),
         ":region", region);
 
@@ -56,7 +57,7 @@ public class SearchServiceAsyncImpl implements SearchServiceAsync {
     final String method = cancel == null ? QUERY_ASYNC_FORMAT : QUERY_ASYNC_CANCEL_FORMAT;
 
     final String url = InteropRequestUtil.prepareUrl(cfg.getSearchEndpoint(), method,
-        ":query", escapeQuery(query),
+        ":query", URL.encodePathSegment(query),
         ":capabilities", capabilities.stream().map(SearchCapability::name).collect(Collectors.joining(",")),
         ":region", region,
         ":cancel", cancel);
@@ -64,14 +65,9 @@ public class SearchServiceAsyncImpl implements SearchServiceAsync {
     InteropRequestUtil.doGet(url, callback);
   }
 
-  public static String escapeQuery(final String query) {
-    return query.replace("\\", "");
-  }
-
   @Override
   public void retrieveSearchResults(final String uuid, final AsyncCallback<SearchResult> callback) {
-    final String url = InteropRequestUtil.prepareUrl(cfg.getSearchEndpoint(), RESULT_FORMAT,
-        ":uuid", uuid);
+    final String url = InteropRequestUtil.prepareUrl(cfg.getSearchEndpoint(), RESULT_FORMAT, ":uuid", uuid);
 
     InteropRequestUtil.doGet(url, callback);
   }
