@@ -17,6 +17,9 @@
 package nl.aerius.search.tasks;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +28,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import io.reactivex.rxjava3.core.Single;
 
 import nl.aerius.search.domain.SearchTaskResult;
+
+import kong.unirest.core.GetRequest;
+import kong.unirest.core.HttpResponse;
 
 @SpringBootTest
 class PdokSearchServiceTest {
@@ -37,5 +43,19 @@ class PdokSearchServiceTest {
     final SearchTaskResult suggestions = result.blockingGet();
 
     assertEquals(10, suggestions.getSuggestions().size(), "Expected 10 results for 'utrecht'");
+  }
+
+  @Test
+  void testNullBody() {
+    final PdokSearchService delegator = new PdokSearchService() {
+      @Override
+      protected GetRequest get(final String url) {
+        final GetRequest request = mock(GetRequest.class);
+        doReturn(mock(HttpResponse.class)).when(request).asJson();
+        return request;
+      }
+    };
+    delegator.setEndpointUrl("");
+    assertTrue(delegator.retrieveSearchResults("ab;d").blockingGet().getSuggestions().isEmpty(), "Should just return empty results.");
   }
 }

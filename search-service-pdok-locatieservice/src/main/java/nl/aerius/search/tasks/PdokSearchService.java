@@ -19,6 +19,7 @@ package nl.aerius.search.tasks;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +36,7 @@ import nl.aerius.search.domain.SearchSuggestionBuilder;
 import nl.aerius.search.domain.SearchSuggestionType;
 import nl.aerius.search.domain.SearchTaskResult;
 
+import kong.unirest.core.GetRequest;
 import kong.unirest.core.HttpResponse;
 import kong.unirest.core.JsonNode;
 import kong.unirest.core.Unirest;
@@ -55,16 +57,18 @@ public class PdokSearchService implements SearchTaskService {
   @Override
   public Single<SearchTaskResult> retrieveSearchResults(final String query) {
     final String url = String.format(endpointUrl, UriUtils.encodePathSegment(query, StandardCharsets.UTF_8));
-    final HttpResponse<JsonNode> json = Unirest.get(url).asJson();
-    final JSONObject body = json.getBody().getObject();
-
+    final HttpResponse<JsonNode> json = get(url).asJson();
+    final JSONObject body = Optional.ofNullable(json.getBody()).map(JsonNode::getObject).orElse(null);
     final List<SearchSuggestion> sugs = new ArrayList<>();
-    final JSONArray arr = body.getJSONObject("response").getJSONArray("docs");
-    for (int i = 0; i < arr.length(); i++) {
-      final JSONObject jsonObject = arr.getJSONObject(i);
 
-      final SearchSuggestion sug = createSuggestion(jsonObject);
-      sugs.add(sug);
+    if (body != null) {
+      final JSONArray arr = body.getJSONObject("response").getJSONArray("docs");
+      for (int i = 0; i < arr.length(); i++) {
+        final JSONObject jsonObject = arr.getJSONObject(i);
+
+        final SearchSuggestion sug = createSuggestion(jsonObject);
+        sugs.add(sug);
+      }
     }
 
     final SearchTaskResult result = new SearchTaskResult();
@@ -112,5 +116,15 @@ public class PdokSearchService implements SearchTaskService {
     }
 
     return suggestionType;
+  }
+
+  // Methods for testing only
+
+  protected void setEndpointUrl(final String endpointUrl) {
+    this.endpointUrl = endpointUrl;
+  }
+
+  protected GetRequest get(final String url) {
+    return Unirest.get(url);
   }
 }
