@@ -52,16 +52,15 @@ public class PdokSearchService implements SearchTaskService {
   private static final Logger LOG = LoggerFactory.getLogger(PdokSearchService.class);
 
   @Value("${nl.aerius.pdok.locatieserver:" + PDOK_SUGGEST_ENDPOINT + "}")
-  private String endpointUrl;
+  private String endpointUrl = "";
 
   @Override
   public Single<SearchTaskResult> retrieveSearchResults(final String query) {
     final String url = String.format(endpointUrl, UriUtils.encodePathSegment(query, StandardCharsets.UTF_8));
     final HttpResponse<JsonNode> json = get(url).asJson();
-    final JSONObject body = Optional.ofNullable(json.getBody()).map(JsonNode::getObject).orElse(null);
     final List<SearchSuggestion> sugs = new ArrayList<>();
 
-    if (body != null) {
+    Optional.ofNullable(json.getBody()).map(JsonNode::getObject).ifPresent(body -> {
       final JSONArray arr = body.getJSONObject("response").getJSONArray("docs");
       for (int i = 0; i < arr.length(); i++) {
         final JSONObject jsonObject = arr.getJSONObject(i);
@@ -69,7 +68,7 @@ public class PdokSearchService implements SearchTaskService {
         final SearchSuggestion sug = createSuggestion(jsonObject);
         sugs.add(sug);
       }
-    }
+    });
 
     final SearchTaskResult result = new SearchTaskResult();
     result.setSuggestions(sugs);
@@ -119,10 +118,6 @@ public class PdokSearchService implements SearchTaskService {
   }
 
   // Methods for testing only
-
-  protected void setEndpointUrl(final String endpointUrl) {
-    this.endpointUrl = endpointUrl;
-  }
 
   protected GetRequest get(final String url) {
     return Unirest.get(url);

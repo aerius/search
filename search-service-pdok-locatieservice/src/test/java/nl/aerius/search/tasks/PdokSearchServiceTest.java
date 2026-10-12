@@ -47,7 +47,7 @@ class PdokSearchServiceTest {
 
   @Test
   void testNullBody() {
-    final PdokSearchService delegator = new PdokSearchService() {
+    final PdokSearchService service = new PdokSearchService() {
       @Override
       protected GetRequest get(final String url) {
         final GetRequest request = mock(GetRequest.class);
@@ -55,7 +55,6 @@ class PdokSearchServiceTest {
         return request;
       }
     };
-    delegator.setEndpointUrl("");
-    assertTrue(delegator.retrieveSearchResults("ab;d").blockingGet().getSuggestions().isEmpty(), "Should just return empty results.");
+    assertTrue(service.retrieveSearchResults("ab;d").blockingGet().getSuggestions().isEmpty(), "Should just return empty results.");
   }
 }
