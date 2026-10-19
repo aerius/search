@@ -176,6 +176,48 @@
 
   <profiles>
     <profile>
+      <id>apple-silicon-jsass</id>
+      <activation>
+        <os>
+          <family>mac</family>
+          <arch>aarch64</arch>
+        </os>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <configuration>
+              <annotationProcessorPaths>
+                <path>
+                  <groupId>io.bit3</groupId>
+                  <artifactId>jsass</artifactId>
+                  <version>5.11.1</version>
+                </path>
+                <path>
+                  <groupId>commons-io</groupId>
+                  <artifactId>commons-io</artifactId>
+                  <version>2.18.0</version>
+                </path>
+                <path>
+                  <groupId>org.slf4j</groupId>
+                  <artifactId>slf4j-api</artifactId>
+                  <version>2.0.16</version>
+                </path>
+                <path>
+                  <groupId>com.axellience</groupId>
+                  <artifactId>vue-gwt-processors</artifactId>
+                  <version>1.1.0-AERIUS-1</version>
+                </path>
+              </annotationProcessorPaths>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
       <id>vue-gwt-resources</id>
       <activation>
         <property>
