@@ -23,6 +23,7 @@
     </div>
   </vertical-collapse>
   <div class="resultsContainer"
+    :class='map("hidden", !hasQuery)'
     ref="resultsContainer"
     :style='map("maxHeight", maxHeight)'
     :aria-label="i18n.ariaSearchResults()"
@@ -91,6 +92,10 @@
   width: 100%;
   z-index: 1;
   height: var(--search-height);
+}
+
+.hidden {
+  visibility: hidden;
 }
 
 .noResultsContainer {
