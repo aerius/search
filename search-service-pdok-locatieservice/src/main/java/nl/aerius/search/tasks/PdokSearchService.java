@@ -36,7 +36,6 @@ import nl.aerius.search.domain.SearchSuggestionBuilder;
 import nl.aerius.search.domain.SearchSuggestionType;
 import nl.aerius.search.domain.SearchTaskResult;
 
-import kong.unirest.core.GetRequest;
 import kong.unirest.core.HttpResponse;
 import kong.unirest.core.JsonNode;
 import kong.unirest.core.Unirest;
@@ -52,14 +51,14 @@ public class PdokSearchService implements SearchTaskService {
   private static final Logger LOG = LoggerFactory.getLogger(PdokSearchService.class);
 
   @Value("${nl.aerius.pdok.locatieserver:" + PDOK_SUGGEST_ENDPOINT + "}")
-  private String endpointUrl = "";
+  private final String endpointUrl = "";
 
   @Override
   public Single<SearchTaskResult> retrieveSearchResults(final String query) {
     final String url = String.format(endpointUrl, UriUtils.encodePathSegment(query, StandardCharsets.UTF_8));
-    final HttpResponse<JsonNode> json = get(url).asJson();
-    final List<SearchSuggestion> sugs = new ArrayList<>();
+    final HttpResponse<JsonNode> json = Unirest.get(url).asJson();
 
+    final List<SearchSuggestion> sugs = new ArrayList<>();
     Optional.ofNullable(json.getBody()).map(JsonNode::getObject).ifPresent(body -> {
       final JSONArray arr = body.getJSONObject("response").getJSONArray("docs");
       for (int i = 0; i < arr.length(); i++) {
@@ -115,11 +114,5 @@ public class PdokSearchService implements SearchTaskService {
     }
 
     return suggestionType;
-  }
-
-  // Methods for testing only
-
-  protected GetRequest get(final String url) {
-    return Unirest.get(url);
   }
 }
