@@ -17,25 +17,92 @@
 package nl.aerius.search.tasks;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 
+import java.util.List;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import io.reactivex.rxjava3.core.Single;
 
+import nl.aerius.search.domain.SearchSuggestion;
+import nl.aerius.search.domain.SearchSuggestionType;
 import nl.aerius.search.domain.SearchTaskResult;
 
+import kong.unirest.core.GetRequest;
+import kong.unirest.core.HttpResponse;
+import kong.unirest.core.JsonNode;
+import kong.unirest.core.Unirest;
+
+/**
+ * Test class for {@link PdokSearchService}.
+ */
 @SpringBootTest
 class PdokSearchServiceTest {
   @Autowired PdokSearchService delegator;
 
+  private MockedStatic<Unirest> unirest;
+  private final HttpResponse<JsonNode> response = mock(HttpResponse.class);
+
+  @BeforeEach
+  void beforeEach() {
+    final GetRequest request = mock(GetRequest.class);
+    doReturn(response).when(request).asJson();
+    unirest = mockStatic(Unirest.class);
+    unirest.when(() -> Unirest.get(any())).thenReturn(request);
+  }
+
+  @AfterEach
+  void afterEach() {
+    unirest.close();
+  }
+
   @Test
   void testWorksAtAll() {
+    final String json = """
+        {
+          "response": {
+            "docs": [
+              {
+                "type": "gemeente",
+                "weergavenaam": "Gemeente Utrecht",
+                "geometrie_rd": "MULTIPOLYGON(((127157 456956,127739)))",
+                "centroide_rd": "POINT(133587.182 455921.594)",
+                "id": "gem-df0ca8ab37eccea5217e2a13f74d2833",
+                "score": 9.48769
+              }
+            ]
+          }
+        }
+        """;
+
+    doReturn(new JsonNode(json)).when(response).getBody();
     final Single<SearchTaskResult> result = delegator.retrieveSearchResults("utrecht");
+    final List<SearchSuggestion> suggestions = result.blockingGet().getSuggestions();
 
-    final SearchTaskResult suggestions = result.blockingGet();
+    assertEquals(1, suggestions.size(), "Expected 1 result for 'utrecht'");
+    final SearchSuggestion firstSuggestion = suggestions.get(0);
+    assertEquals("gem-df0ca8ab37eccea5217e2a13f74d2833", firstSuggestion.getId(), "Didn't get correct id");
+    assertEquals("Gemeente Utrecht", firstSuggestion.getDescription(), "Didn't get correct weergavenaam");
+    assertEquals(SearchSuggestionType.MUNICIPALITY, firstSuggestion.getType(), "Didn't get correct type");
+    assertEquals("POINT(133587.182 455921.594)", firstSuggestion.getCentroid() , "Didn't get correct Centroid");
+    assertEquals("MULTIPOLYGON(((127157 456956,127739)))", firstSuggestion.getGeometry(), "Didn't get correct Geometry");
+    assertEquals(9.48769, firstSuggestion.getScore(), 1E-10, "Didn't get correct score");
+  }
 
-    assertEquals(10, suggestions.getSuggestions().size(), "Expected 10 results for 'utrecht'");
+  @Test
+  void testNullBody() {
+    final PdokSearchService service = new PdokSearchService();
+
+    assertTrue(service.retrieveSearchResults("ab;d").blockingGet().getSuggestions().isEmpty(), "Should return empty result.");
   }
 }

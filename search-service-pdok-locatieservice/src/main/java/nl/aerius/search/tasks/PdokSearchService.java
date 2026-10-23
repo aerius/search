@@ -19,6 +19,7 @@ package nl.aerius.search.tasks;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +36,7 @@ import nl.aerius.search.domain.SearchSuggestionBuilder;
 import nl.aerius.search.domain.SearchSuggestionType;
 import nl.aerius.search.domain.SearchTaskResult;
 
+import kong.unirest.core.GetRequest;
 import kong.unirest.core.HttpResponse;
 import kong.unirest.core.JsonNode;
 import kong.unirest.core.Unirest;
@@ -50,23 +52,24 @@ public class PdokSearchService implements SearchTaskService {
   private static final Logger LOG = LoggerFactory.getLogger(PdokSearchService.class);
 
   @Value("${nl.aerius.pdok.locatieserver:" + PDOK_SUGGEST_ENDPOINT + "}")
-  private String endpointUrl;
+  private String endpointUrl = "";
 
   @Override
   public Single<SearchTaskResult> retrieveSearchResults(final String query) {
     final String url = String.format(endpointUrl, UriUtils.encodePathSegment(query, StandardCharsets.UTF_8));
-    final HttpResponse<JsonNode> json = Unirest.get(url).asJson();
-    final JSONObject body = json.getBody().getObject();
+    final GetRequest request = Unirest.get(url);
+    final HttpResponse<JsonNode> json = request.asJson();
 
     final List<SearchSuggestion> sugs = new ArrayList<>();
-    final JSONArray arr = body.getJSONObject("response").getJSONArray("docs");
-    for (int i = 0; i < arr.length(); i++) {
-      final JSONObject jsonObject = arr.getJSONObject(i);
+    Optional.ofNullable(json.getBody()).map(JsonNode::getObject).ifPresentOrElse(body -> {
+      final JSONArray arr = body.getJSONObject("response").getJSONArray("docs");
+      for (int i = 0; i < arr.length(); i++) {
+        final JSONObject jsonObject = arr.getJSONObject(i);
 
-      final SearchSuggestion sug = createSuggestion(jsonObject);
-      sugs.add(sug);
-    }
-
+        final SearchSuggestion sug = createSuggestion(jsonObject);
+        sugs.add(sug);
+      }
+    }, () -> LOG.warn("PDOK service returned '{}' on query: '{}'", request.getBody().orElse(null), query));
     final SearchTaskResult result = new SearchTaskResult();
     result.setSuggestions(sugs);
 
