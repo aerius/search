@@ -170,21 +170,19 @@ public class MapSearchComponent implements IsVueComponent, HasCreated, HasMounte
     }
   }
 
-  @Computed("isShowing")
-  public boolean isShowing() {
-    return context.isSearching()
-        || hasResults();
+  @Computed("isSearchShowing")
+  public boolean isSearchShowing() {
+    return context.isSearchShowing();
   }
 
-  @Watch("isShowing()")
-  public void onShowingChange() {
+  @Watch("isSearchShowing()")
+  public void onSearchShowingChange() {
     resize();
   }
 
   @Override
   public void created() {
     DomGlobal.window.addEventListener("resize", null);
-
     resizeHandler = Window.addResizeHandler(r -> resize());
   }
 
