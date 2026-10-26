@@ -17,7 +17,6 @@
 package nl.aerius.search.tasks;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -85,6 +84,7 @@ class PdokSearchServiceTest {
         }
         """;
 
+    doReturn(true).when(response).isSuccess();
     doReturn(new JsonNode(json)).when(response).getBody();
     final Single<SearchTaskResult> result = delegator.retrieveSearchResults("utrecht");
     final List<SearchSuggestion> suggestions = result.blockingGet().getSuggestions();
@@ -101,8 +101,20 @@ class PdokSearchServiceTest {
 
   @Test
   void testNullBody() {
-    final PdokSearchService service = new PdokSearchService();
+    assertFailureResult(true);
+  }
 
-    assertTrue(service.retrieveSearchResults("ab;d").blockingGet().getSuggestions().isEmpty(), "Should return empty result.");
+  @Test
+  void testNoSuccess() {
+    assertFailureResult(false);
+  }
+
+  private void assertFailureResult(final boolean success) {
+    doReturn(success).when(response).isSuccess();
+    final PdokSearchService service = new PdokSearchService();
+    final List<SearchSuggestion> suggestions = service.retrieveSearchResults("ab;d").blockingGet().getSuggestions();
+
+    assertEquals(1, suggestions.size(), "Expected 1 result");
+    assertEquals("Unable to get results from PDOK service.", suggestions.get(0).getDescription(), "Expected error result text");
   }
 }

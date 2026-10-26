@@ -61,7 +61,11 @@ public class PdokSearchService implements SearchTaskService {
     final HttpResponse<JsonNode> json = request.asJson();
 
     final List<SearchSuggestion> sugs = new ArrayList<>();
-    Optional.ofNullable(json.getBody()).map(JsonNode::getObject).ifPresentOrElse(body -> {
+    Optional.of(json)
+        .filter(HttpResponse::isSuccess)
+        .map(HttpResponse::getBody)
+        .map(JsonNode::getObject)
+        .ifPresentOrElse(body -> {
       final JSONArray arr = body.getJSONObject("response").getJSONArray("docs");
       for (int i = 0; i < arr.length(); i++) {
         final JSONObject jsonObject = arr.getJSONObject(i);
@@ -69,7 +73,10 @@ public class PdokSearchService implements SearchTaskService {
         final SearchSuggestion sug = createSuggestion(jsonObject);
         sugs.add(sug);
       }
-    }, () -> LOG.warn("PDOK service returned '{}' on query: '{}'", request.getBody().orElse(null), query));
+    }, () -> {
+      LOG.warn("PDOK service returned '{}' on query: '{}'", request.getBody().orElse(null), query);
+      sugs.add(SearchSuggestionBuilder.create("Unable to get results from PDOK service."));
+    });
     final SearchTaskResult result = new SearchTaskResult();
     result.setSuggestions(sugs);
 
