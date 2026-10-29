@@ -18,6 +18,7 @@ package nl.aerius.search.tasks;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
@@ -58,6 +59,7 @@ class PdokSearchServiceTest {
     doReturn(response).when(request).asJson();
     unirest = mockStatic(Unirest.class);
     unirest.when(() -> Unirest.get(any())).thenReturn(request);
+    doReturn(request).when(request).requestTimeout(anyInt());
   }
 
   @AfterEach

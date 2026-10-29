@@ -48,6 +48,7 @@ import kong.unirest.core.json.JSONObject;
 public class PdokSearchService implements SearchTaskService {
   private static final String PDOK_SUGGEST_MODS = "&fl=id,type,weergavenaam,centroide_rd,geometrie_rd,score";
   private static final String PDOK_SUGGEST_ENDPOINT = "https://api.pdok.nl/bzk/locatieserver/search/v3_1/suggest?q=%s" + PDOK_SUGGEST_MODS;
+  private static final int REQUEST_TIMEOUT_MS = 10_000;
 
   private static final Logger LOG = LoggerFactory.getLogger(PdokSearchService.class);
 
@@ -57,12 +58,11 @@ public class PdokSearchService implements SearchTaskService {
   @Override
   public Single<SearchTaskResult> retrieveSearchResults(final String query) {
     final String url = String.format(endpointUrl, UriUtils.encodePathSegment(query, StandardCharsets.UTF_8));
-    final GetRequest request = Unirest.get(url);
-    final HttpResponse<JsonNode> json = request.asJson();
+    final GetRequest request = Unirest.get(url).requestTimeout(REQUEST_TIMEOUT_MS);
+    final Optional<HttpResponse<JsonNode>> jsonResponse = Optional.of(request.asJson());
 
     final List<SearchSuggestion> sugs = new ArrayList<>();
-    Optional.of(json)
-        .filter(HttpResponse::isSuccess)
+    jsonResponse.filter(HttpResponse::isSuccess)
         .map(HttpResponse::getBody)
         .map(JsonNode::getObject)
         .ifPresentOrElse(body -> {
@@ -74,7 +74,7 @@ public class PdokSearchService implements SearchTaskService {
         sugs.add(sug);
       }
     }, () -> {
-      LOG.warn("PDOK service returned '{}' on query: '{}'", request.getBody().orElse(null), query);
+      LOG.warn("PDOK service returned (status:{}): '{}' on query: '{}'", jsonResponse.get().getStatus(), jsonResponse.get().getBody(), query);
       sugs.add(SearchSuggestionBuilder.create("Unable to get results from PDOK service."));
     });
     final SearchTaskResult result = new SearchTaskResult();
