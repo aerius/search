@@ -20,6 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +41,7 @@ import kong.unirest.core.GetRequest;
 import kong.unirest.core.HttpResponse;
 import kong.unirest.core.JsonNode;
 import kong.unirest.core.Unirest;
+import kong.unirest.core.UnirestException;
 import kong.unirest.core.json.JSONArray;
 import kong.unirest.core.json.JSONObject;
 
@@ -48,6 +50,7 @@ import kong.unirest.core.json.JSONObject;
 public class PdokSearchService implements SearchTaskService {
   private static final String PDOK_SUGGEST_MODS = "&fl=id,type,weergavenaam,centroide_rd,geometrie_rd,score";
   private static final String PDOK_SUGGEST_ENDPOINT = "https://api.pdok.nl/bzk/locatieserver/search/v3_1/suggest?q=%s" + PDOK_SUGGEST_MODS;
+  private static final int REQUEST_TIMEOUT_MS = 10_000;
 
   private static final Logger LOG = LoggerFactory.getLogger(PdokSearchService.class);
 
@@ -57,33 +60,41 @@ public class PdokSearchService implements SearchTaskService {
   @Override
   public Single<SearchTaskResult> retrieveSearchResults(final String query) {
     final String url = String.format(endpointUrl, UriUtils.encodePathSegment(query, StandardCharsets.UTF_8));
-    final GetRequest request = Unirest.get(url);
-    final HttpResponse<JsonNode> json = request.asJson();
-
-    final List<SearchSuggestion> sugs = new ArrayList<>();
-    Optional.of(json)
-        .filter(HttpResponse::isSuccess)
-        .map(HttpResponse::getBody)
-        .map(JsonNode::getObject)
-        .ifPresentOrElse(body -> {
-      final JSONArray arr = body.getJSONObject("response").getJSONArray("docs");
-      for (int i = 0; i < arr.length(); i++) {
-        final JSONObject jsonObject = arr.getJSONObject(i);
-
-        final SearchSuggestion sug = createSuggestion(jsonObject);
-        sugs.add(sug);
-      }
-    }, () -> {
-      LOG.warn("PDOK service returned '{}' on query: '{}'", request.getBody().orElse(null), query);
-      sugs.add(SearchSuggestionBuilder.create("Unable to get results from PDOK service."));
-    });
+    final GetRequest request = Unirest.get(url).requestTimeout(REQUEST_TIMEOUT_MS);
     final SearchTaskResult result = new SearchTaskResult();
-    result.setSuggestions(sugs);
+    final AtomicBoolean failure = new AtomicBoolean();
 
+    try {
+      final Optional<HttpResponse<JsonNode>> jsonResponse = Optional.of(request.asJson());
+
+      jsonResponse.filter(HttpResponse::isSuccess)
+          .map(HttpResponse::getBody)
+          .map(JsonNode::getObject)
+          .ifPresentOrElse(body -> {
+            final List<SearchSuggestion> sugs = new ArrayList<>();
+            final JSONArray arr = body.getJSONObject("response").getJSONArray("docs");
+            for (int i = 0; i < arr.length(); i++) {
+              final JSONObject jsonObject = arr.getJSONObject(i);
+
+              final SearchSuggestion sug = createSuggestion(jsonObject);
+              sugs.add(sug);
+            }
+            result.setSuggestions(sugs);
+          }, () -> {
+            LOG.warn("PDOK service returned (status:{}): '{}' on query: '{}'", jsonResponse.get().getStatus(), jsonResponse.get().getBody(), query);
+            failure.set(true);
+          });
+    } catch (final UnirestException e) {
+      LOG.warn("PDOK service failed with exception message: '{}' on query: '{}'", e.getMessage(), query);
+      failure.set(true);
+    }
+    if (failure.get()) {
+      result.setSuggestions(List.of(SearchSuggestionBuilder.create("Unable to get results from PDOK service.")));
+    }
     return Single.just(result);
   }
 
-  private static SearchSuggestion createSuggestion(final JSONObject jsonObject) {
+  private SearchSuggestion createSuggestion(final JSONObject jsonObject) {
     final String id = jsonObject.getString("id");
     final String displayText = jsonObject.getString("weergavenaam");
     final double score = jsonObject.getDouble("score");
@@ -96,7 +107,7 @@ public class PdokSearchService implements SearchTaskService {
     return suggestion;
   }
 
-  private static SearchSuggestionType determineType(final String type) {
+  private SearchSuggestionType determineType(final String type) {
     SearchSuggestionType suggestionType;
 
     switch (type) {
