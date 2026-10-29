@@ -24,19 +24,20 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 
 import java.util.List;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import io.reactivex.rxjava3.core.Single;
 
@@ -53,23 +54,34 @@ import kong.unirest.core.UnirestException;
 /**
  * Test class for {@link PdokSearchService}.
  */
-@SpringBootTest
 class PdokSearchServiceTest {
-  @Autowired PdokSearchService delegator;
+  private static final Logger LOGGER = mock(Logger.class);
+  private static MockedStatic<LoggerFactory> loggerFactory;
 
   private final HttpResponse<JsonNode> response = mock(HttpResponse.class);
   private final GetRequest request = mock(GetRequest.class);
-  private final Logger logger = mock(Logger.class);
 
   private MockedStatic<Unirest> unirest;
-  private MockedStatic<LoggerFactory> loggerFactory;
   private ArgumentCaptor<String> logMessageCaptor;
+
+  private PdokSearchService delegator;
+
+  @BeforeAll
+  static void beforeAll() {
+    loggerFactory = mockStatic(LoggerFactory.class);
+    loggerFactory.when(() -> LoggerFactory.getLogger(PdokSearchService.class)).thenReturn(LOGGER);
+  }
+
+  @AfterAll
+  static void afterAll() {
+    loggerFactory.close();
+  }
 
   @BeforeEach
   void beforeEach() {
-    loggerFactory = mockStatic(LoggerFactory.class);
-    loggerFactory.when(() -> LoggerFactory.getLogger(PdokSearchService.class)).thenReturn(logger);
+    reset(LOGGER);
     logMessageCaptor = ArgumentCaptor.forClass(String.class);
+    delegator = new PdokSearchService();
 
     doReturn(response).when(request).asJson();
     unirest = mockStatic(Unirest.class);
@@ -80,7 +92,6 @@ class PdokSearchServiceTest {
   @AfterEach
   void afterEach() {
     unirest.close();
-    loggerFactory.close();
   }
 
   @Test
@@ -140,7 +151,7 @@ class PdokSearchServiceTest {
 
     assertEquals(1, suggestions.size(), "Expected 1 result");
     assertEquals("Unable to get results from PDOK service.", suggestions.get(0).getDescription(), "Expected error result text");
-    final Logger warnVerifier = verify(logger);
+    final Logger warnVerifier = verify(LOGGER);
     if (warnVarArguments == 2) {
       warnVerifier.warn(logMessageCaptor.capture(), any(), any());
     } else {

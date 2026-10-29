@@ -52,7 +52,7 @@ public class PdokSearchService implements SearchTaskService {
   private static final String PDOK_SUGGEST_ENDPOINT = "https://api.pdok.nl/bzk/locatieserver/search/v3_1/suggest?q=%s" + PDOK_SUGGEST_MODS;
   private static final int REQUEST_TIMEOUT_MS = 10_000;
 
-  private final Logger log = LoggerFactory.getLogger(PdokSearchService.class);
+  private static final Logger LOG = LoggerFactory.getLogger(PdokSearchService.class);
 
   @Value("${nl.aerius.pdok.locatieserver:" + PDOK_SUGGEST_ENDPOINT + "}")
   private String endpointUrl = "";
@@ -81,11 +81,11 @@ public class PdokSearchService implements SearchTaskService {
             }
             result.setSuggestions(sugs);
           }, () -> {
-            log.warn("PDOK service returned (status:{}): '{}' on query: '{}'", jsonResponse.get().getStatus(), jsonResponse.get().getBody(), query);
+            LOG.warn("PDOK service returned (status:{}): '{}' on query: '{}'", jsonResponse.get().getStatus(), jsonResponse.get().getBody(), query);
             failure.set(true);
           });
     } catch (final UnirestException e) {
-      log.warn("PDOK service failed with exception message: '{}' on query: '{}'", e.getMessage(), query);
+      LOG.warn("PDOK service failed with exception message: '{}' on query: '{}'", e.getMessage(), query);
       failure.set(true);
     }
     if (failure.get()) {
@@ -127,7 +127,7 @@ public class PdokSearchService implements SearchTaskService {
       suggestionType = SearchSuggestionType.STREET;
       break;
     default:
-      log.warn("No mapping for type: {}", type);
+      LOG.warn("No mapping for type: {}", type);
       suggestionType = SearchSuggestionType.TEXT;
       break;
     }
