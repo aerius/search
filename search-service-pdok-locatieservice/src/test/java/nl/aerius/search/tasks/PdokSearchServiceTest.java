@@ -17,18 +17,24 @@
 package nl.aerius.search.tasks;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.verify;
 
 import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -42,6 +48,7 @@ import kong.unirest.core.GetRequest;
 import kong.unirest.core.HttpResponse;
 import kong.unirest.core.JsonNode;
 import kong.unirest.core.Unirest;
+import kong.unirest.core.UnirestException;
 
 /**
  * Test class for {@link PdokSearchService}.
@@ -50,12 +57,20 @@ import kong.unirest.core.Unirest;
 class PdokSearchServiceTest {
   @Autowired PdokSearchService delegator;
 
-  private MockedStatic<Unirest> unirest;
   private final HttpResponse<JsonNode> response = mock(HttpResponse.class);
+  private final GetRequest request = mock(GetRequest.class);
+  private final Logger logger = mock(Logger.class);
+
+  private MockedStatic<Unirest> unirest;
+  private MockedStatic<LoggerFactory> loggerFactory;
+  private ArgumentCaptor<String> logMessageCaptor;
 
   @BeforeEach
   void beforeEach() {
-    final GetRequest request = mock(GetRequest.class);
+    loggerFactory = mockStatic(LoggerFactory.class);
+    loggerFactory.when(() -> LoggerFactory.getLogger(PdokSearchService.class)).thenReturn(logger);
+    logMessageCaptor = ArgumentCaptor.forClass(String.class);
+
     doReturn(response).when(request).asJson();
     unirest = mockStatic(Unirest.class);
     unirest.when(() -> Unirest.get(any())).thenReturn(request);
@@ -65,6 +80,7 @@ class PdokSearchServiceTest {
   @AfterEach
   void afterEach() {
     unirest.close();
+    loggerFactory.close();
   }
 
   @Test
@@ -96,27 +112,41 @@ class PdokSearchServiceTest {
     assertEquals("gem-df0ca8ab37eccea5217e2a13f74d2833", firstSuggestion.getId(), "Didn't get correct id");
     assertEquals("Gemeente Utrecht", firstSuggestion.getDescription(), "Didn't get correct weergavenaam");
     assertEquals(SearchSuggestionType.MUNICIPALITY, firstSuggestion.getType(), "Didn't get correct type");
-    assertEquals("POINT(133587.182 455921.594)", firstSuggestion.getCentroid() , "Didn't get correct Centroid");
+    assertEquals("POINT(133587.182 455921.594)", firstSuggestion.getCentroid(), "Didn't get correct Centroid");
     assertEquals("MULTIPOLYGON(((127157 456956,127739)))", firstSuggestion.getGeometry(), "Didn't get correct Geometry");
     assertEquals(9.48769, firstSuggestion.getScore(), 1E-10, "Didn't get correct score");
   }
 
   @Test
   void testNullBody() {
-    assertFailureResult(true);
+    assertFailureResult(true, "PDOK service returned", 3);
   }
 
   @Test
   void testNoSuccess() {
-    assertFailureResult(false);
+    assertFailureResult(false, "PDOK service returned", 3);
   }
 
-  private void assertFailureResult(final boolean success) {
+  @Test
+  void testUnirestException() {
+    doThrow(new UnirestException("timeout")).when(request).asJson();
+    assertFailureResult(true, "exception", 2);
+  }
+
+  private <T> void assertFailureResult(final boolean success, final String warningMessagePart, final int warnVarArguments) {
     doReturn(success).when(response).isSuccess();
     final PdokSearchService service = new PdokSearchService();
     final List<SearchSuggestion> suggestions = service.retrieveSearchResults("ab;d").blockingGet().getSuggestions();
 
     assertEquals(1, suggestions.size(), "Expected 1 result");
     assertEquals("Unable to get results from PDOK service.", suggestions.get(0).getDescription(), "Expected error result text");
+    final Logger warnVerifier = verify(logger);
+    if (warnVarArguments == 2) {
+      warnVerifier.warn(logMessageCaptor.capture(), any(), any());
+    } else {
+      warnVerifier.warn(logMessageCaptor.capture(), any(Object[].class));
+    }
+    assertTrue(logMessageCaptor.getValue().contains(warningMessagePart),
+        "Not logged expeced warning message but got: " + logMessageCaptor.getValue());
   }
 }
